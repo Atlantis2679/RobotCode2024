@@ -10,7 +10,7 @@ import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
 public class Intake extends SubsystemBase {
   private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
   private final IntakeIO intakeIO = new IntakeIOSparkMax(fieldsTable);
-  private final PIDController pidControllerIntake = new PIDController(0, 0, 0);
+  private double WantedANGLE;
 
   public Intake() {
     fieldsTable.update();
@@ -25,12 +25,17 @@ public class Intake extends SubsystemBase {
   intakeIO.setIntakeSpeed(intakeSpeed);
   }
   
+  public void setAngleIntake(double speedAngleIntake){
+  intakeIO.setAngleIntake(speedAngleIntake);
+  }
+
+
   public double getAbsoluteAngle(){
     return intakeIO.jointAngleDegrees.getAsDouble();
   }
 
-  
-  public void pidControllerIntake(double angle){
-    
+  public double getCurrentIntakeSpeed(){
+    return intakeIO.CurrentIntakeSpeed.getAsDouble();
   }
+
 }
