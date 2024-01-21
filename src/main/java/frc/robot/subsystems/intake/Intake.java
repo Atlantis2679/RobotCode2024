@@ -1,6 +1,7 @@
 
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
@@ -10,7 +11,17 @@ import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
 public class Intake extends SubsystemBase {
   private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
   private final IntakeIO intakeIO = new IntakeIOSparkMax(fieldsTable);
-  private double WantedANGLE;
+  private final PIDController pidControllerIntake = new PIDController(
+      IntakeConstants.KP,
+      IntakeConstants.KI,
+      IntakeConstants.KD);
+
+  private final ArmFeedforward feedForwardIntake = new ArmFeedforward(
+      IntakeConstants.KS,
+      IntakeConstants.KG,
+      IntakeConstants.KV,
+      IntakeConstants.KA);
+
 
   public Intake() {
     fieldsTable.update();
@@ -20,6 +31,7 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+  
 
   public void setSpeedIntake(double intakeSpeed) {
   intakeIO.setIntakeSpeed(intakeSpeed);
@@ -37,5 +49,17 @@ public class Intake extends SubsystemBase {
   public double getCurrentIntakeSpeed(){
     return intakeIO.CurrentIntakeSpeed.getAsDouble();
   }
+  
+  public double calculateFeedforward(double armAngle, double intakeArmVelocity, boolean usePID){
 
+    double voltages = feedForwardIntake.calculate(Math.toRadians(armAngle), intakeArmVelocity);
+
+      if (usePID) {
+        voltages += pidControllerIntake.calculate(getAbsoluteAngle(),armAngle);
+  }
+  return voltages;
+
+  }
+
+  
 }

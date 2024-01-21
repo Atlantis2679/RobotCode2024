@@ -1,24 +1,24 @@
 
-package frc.robot;
+package frc.robot.subsystems.intake;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeConstants;
 
-public class intakeCommand extends Command {
+public class IntakeMoveToAngle extends Command {
   private final Intake intake;
-  private double startingPositionAngle;
-  private final PIDController pidControllerIntake = new PIDController(
-      IntakeConstants.KP,
-      IntakeConstants.KI,
-      IntakeConstants.KD);
+ // private final TrapezoidProfile trapezoidProfile;
 
-  public intakeCommand(Intake intake) {
+
+ 
+
+  public IntakeMoveToAngle(Intake intake, double angle){
     this.intake = intake;
+
+   // trapezoidProfile.calculate(0, null, null);
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);
-    pidControllerIntake.setSetpoint(IntakeConstants.INTAKE_POSITION_ANGLE);
+    
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +29,8 @@ public class intakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setAngleIntake(pidControllerIntake.calculate(intake.getAbsoluteAngle()));
+    intake.calculateFeedforward(IntakeConstants.ARM_ANGLE, IntakeConstants.INTAKE_ARM_VELOCITY, true);
+
   }
 
   // Called once the command ends or is interrupted.

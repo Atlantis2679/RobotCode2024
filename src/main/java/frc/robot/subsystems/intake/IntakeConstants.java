@@ -11,11 +11,33 @@ public class IntakeConstants {
         public static final double KI = 0;
         public static final double KD = 0;
 
-    //Value
+    //set 
         public static final double SCORING_SPEED = 1;
         public static final double INTAKE_SPEED = -1;
 
+    //Feedforward Intake arm
+        public static final double KS = 0;
+        public static final double KG = 0;
+        public static final double KV = 0;
+        public static final double KA = 0;
+
+    //trapezoidProfile
+
+
+
+    
+        public static final double ARM_ANGLE = 0;
+        public static final double INTAKE_ARM_VELOCITY = 0;
+
+
+
+
+
+
+
+
         public static final double INTAKE_POSITION_ANGLE = 0;
+
         
 
 }
