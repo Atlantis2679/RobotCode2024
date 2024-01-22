@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+
 public class IntakeConstants {
     //Motor and Encoder ID
         public static final int CAN_SPARK_MAX_INTAKE_ID = 0;
@@ -22,19 +23,11 @@ public class IntakeConstants {
         public static final double KA = 0;
 
     //trapezoidProfile
-
-
+        public static final double MAX_ACCELERATION = 0;
+        public static final double MAX_VELOCITY = 0;
 
     
-        public static final double ARM_ANGLE = 0;
-        public static final double INTAKE_ARM_VELOCITY = 0;
-
-
-
-
-
-
-
+        public static final double WANTED_ARM_ANGLE = 0;
 
         public static final double INTAKE_POSITION_ANGLE = 0;
 

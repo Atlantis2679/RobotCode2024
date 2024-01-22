@@ -46,16 +46,20 @@ public class Intake extends SubsystemBase {
     return intakeIO.jointAngleDegrees.getAsDouble();
   }
 
-  public double getCurrentIntakeSpeed(){
-    return intakeIO.CurrentIntakeSpeed.getAsDouble();
+  public double getIntakeSpeed(){
+    return intakeIO.intakeSpeed.getAsDouble();
+  }
+
+  public double getArmSpeed(){
+    return intakeIO.armSpeed.getAsDouble();
   }
   
-  public double calculateFeedforward(double armAngle, double intakeArmVelocity, boolean usePID){
+  public double calculateFeedforward(double wantedArmAngle, double intakeArmVelocity, boolean usePID){
 
-    double voltages = feedForwardIntake.calculate(Math.toRadians(armAngle), intakeArmVelocity);
+    double voltages = feedForwardIntake.calculate(Math.toRadians(wantedArmAngle), intakeArmVelocity);
 
       if (usePID) {
-        voltages += pidControllerIntake.calculate(getAbsoluteAngle(),armAngle);
+        voltages += pidControllerIntake.calculate(getAbsoluteAngle(),wantedArmAngle);
   }
   return voltages;
 

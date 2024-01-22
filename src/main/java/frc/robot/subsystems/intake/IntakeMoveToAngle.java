@@ -2,19 +2,19 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeMoveToAngle extends Command {
   private final Intake intake;
- // private final TrapezoidProfile trapezoidProfile;
-
-
- 
+ private final TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+  IntakeConstants.MAX_VELOCITY,
+  IntakeConstants.MAX_ACCELERATION));
+  
+private final Timer timer = new Timer();
 
   public IntakeMoveToAngle(Intake intake, double angle){
     this.intake = intake;
-
-   // trapezoidProfile.calculate(0, null, null);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);
@@ -24,13 +24,19 @@ public class IntakeMoveToAngle extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.restart();
+    timer.start();
+   
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.calculateFeedforward(IntakeConstants.ARM_ANGLE, IntakeConstants.INTAKE_ARM_VELOCITY, true);
+    intake.calculateFeedforward(IntakeConstants.WANTED_ARM_ANGLE, IntakeConstants.MAX_VELOCITY, true);
 
+    trapezoidProfile.calculate(timer.get(),
+      new TrapezoidProfile.State(intake.getAbsoluteAngle(), intake.getArmSpeed()),
+      new TrapezoidProfile.State(IntakeConstants.WANTED_ARM_ANGLE, 0));
   }
 
   // Called once the command ends or is interrupted.

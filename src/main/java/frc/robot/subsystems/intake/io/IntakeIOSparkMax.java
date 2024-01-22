@@ -35,7 +35,14 @@ public class IntakeIOSparkMax extends IntakeIO {
     }
 
     @Override
-    public double getCurrentIntakeSpeed() {
+    public double getIntakeSpeed() {
         return intakeCANSparkMax.get();
     }
+
+    @Override
+    public double getArmSpeed(){
+        return intakePivotCANSparkMax.get();
+    }
+
+
 }
