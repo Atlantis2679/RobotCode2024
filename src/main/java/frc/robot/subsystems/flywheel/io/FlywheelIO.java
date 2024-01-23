@@ -1,17 +1,17 @@
-package frc.robot.subsystems.shooter.io;
+package frc.robot.subsystems.flywheel.io;
 
 import java.util.function.DoubleSupplier;
 
 import frc.lib.logfields.IOBase;
 import frc.lib.logfields.LogFieldsTable;
 
-public abstract class ShooterIO extends IOBase {
+public abstract class FlywheelIO extends IOBase {
     public final DoubleSupplier upperRollerSpeedRPS = fields.addDouble("upperRollerSpeedRPS",
             this::getUpperRollerSpeedRPS);
     public final DoubleSupplier lowerRollerSpeedRPS = fields.addDouble("lowerRollerSpeedRPS",
             this::getLowerRollerSpeedRPS);
 
-    protected ShooterIO(LogFieldsTable fieldsTable) {
+    protected FlywheelIO(LogFieldsTable fieldsTable) {
         super(fieldsTable);
     }
 
@@ -23,7 +23,7 @@ public abstract class ShooterIO extends IOBase {
 
     // Outputs
 
-    public abstract void setUpperRollerSpeedVoltage(double voltageDemand);
+    public abstract void setUpperRollerVoltage(double voltageDemand);
 
-    public abstract void setLowerRollerSpeedVoltage(double voltageDemand);
+    public abstract void setLowerRollerVoltage(double voltageDemand);
 }
