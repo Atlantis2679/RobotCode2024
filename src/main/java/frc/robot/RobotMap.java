@@ -33,4 +33,13 @@ public class RobotMap {
         public final static int ANGLE_MOTOR_ID = 27;
         public final static int ENCODER_ID = 53;
     }
+
+    public class Flywheel {
+        public final static int UPPER_ROLLER_MOTOR_ID = 0;
+        public final static int LOWER_ROLLER_MOTOR_ID = 0;
+        public final static int UPPER_ROLLER_ENCODER_CHANNEL_A = 0;
+        public final static int UPPER_ROLLER_ENCODER_CHANNEL_B = 0;
+        public final static int LOWER_ROLLER_ENCODER_CHANNEL_A = 0;
+        public final static int LOWER_ROLLER_ENCODER_CHANNEL_B = 0;
+    }
 }
