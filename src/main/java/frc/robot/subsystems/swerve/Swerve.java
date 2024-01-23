@@ -207,7 +207,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
         builder.addChild("Swerve Subsystem", (Sendable) this);
 
         builder.addChild("Modules Angle PID", (Tuneable) (builderPID) -> {
-            builderPID.setSendableType(SendableType.PID);
+            builderPID.setSendableType(SendableType.PIDController);
             builderPID.addDoubleProperty("p", modules[0]::getP, (p) -> {
                 for (SwerveModule module : modules) {
                     module.setP(p);
