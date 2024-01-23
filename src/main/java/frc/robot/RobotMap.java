@@ -33,4 +33,9 @@ public class RobotMap {
         public final static int ANGLE_MOTOR_ID = 27;
         public final static int ENCODER_ID = 53;
     }
+
+    public class Pitcher {
+        public final static int MOTOR_ID = 0;
+        public final static int ENCODER_ID = 0;
+    }
 }
