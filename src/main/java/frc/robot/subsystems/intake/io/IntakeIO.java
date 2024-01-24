@@ -9,23 +9,20 @@ public abstract class IntakeIO extends IOBase {
 
     public final DoubleSupplier jointAngleDegrees = fields.addDouble("jointAngleDegrees", this::getJointAngleDegrees);
     public final DoubleSupplier intakeSpeed = fields.addDouble("intakeSpeed", this::getIntakeSpeed);
-    public final DoubleSupplier armSpeed = fields.addDouble("armSpeed", this::getArmSpeed);
+    public final DoubleSupplier jointSpeed = fields.addDouble("jointSpeed", this::getJointSpeed);
 
     public IntakeIO(LogFieldsTable fieldsTable) {
         super(fieldsTable);
     }
-    
 
-    // inputs
     protected abstract double getJointAngleDegrees();
 
     protected abstract double getIntakeSpeed();
-    
-    protected abstract double getArmSpeed();
 
-    // outputs
+    protected abstract double getJointSpeed();
+
     public abstract void setIntakeSpeed(double speedIntake);
 
-    public abstract void setAngleIntake(double speedAngleIntake);
+    public abstract void setJointSpeed(double speedAngleIntake);
 
 }

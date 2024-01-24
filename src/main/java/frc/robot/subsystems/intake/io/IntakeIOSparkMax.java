@@ -5,23 +5,24 @@ import frc.robot.subsystems.intake.IntakeConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import static frc.robot.subsystems.intake.IntakeConstants.*;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class IntakeIOSparkMax extends IntakeIO {
-    private final CANSparkMax intakeCANSparkMax = new CANSparkMax(IntakeConstants.CAN_SPARK_MAX_INTAKE_ID,
+    private final CANSparkMax intakeCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_INTAKE_ID,
             MotorType.kBrushless);
-    private final CANSparkMax intakePivotCANSparkMax = new CANSparkMax(IntakeConstants.CAN_SPARK_MAX_INTAKE_PIVOT_ID,
+    private final CANSparkMax intakePJointCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_INTAKE_PIVOT_ID,
             MotorType.kBrushless);
-    private final DutyCycleEncoder intakePivotEncoder = new DutyCycleEncoder(IntakeConstants.DUTY_CYCLE_ENCODER);
+    private final DutyCycleEncoder intakeJointEncoder = new DutyCycleEncoder(DUTY_CYCLE_ENCODER);
 
     public IntakeIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
     }
 
     @Override
-    public void setAngleIntake(double speedAngleIntake) {
-        intakePivotCANSparkMax.set(speedAngleIntake);
+    public void setJointSpeed(double speedAngleIntake) {
+        intakePJointCANSparkMax.set(speedAngleIntake);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class IntakeIOSparkMax extends IntakeIO {
 
     @Override
     public double getJointAngleDegrees() {
-        return intakePivotEncoder.getAbsolutePosition();
+        return intakeJointEncoder.getAbsolutePosition();
     }
 
     @Override
@@ -40,9 +41,8 @@ public class IntakeIOSparkMax extends IntakeIO {
     }
 
     @Override
-    public double getArmSpeed(){
-        return intakePivotCANSparkMax.get();
+    public double getJointSpeed() {
+        return intakePJointCANSparkMax.get();
     }
-
 
 }
