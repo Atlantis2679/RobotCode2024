@@ -14,6 +14,13 @@ public abstract class TuneableCommand extends Command implements Tuneable {
         };
     };
 
+    public TuneableCommand extendTuneable(Tuneable tuneable) {
+        return wrap(this, (builder) -> {
+            this.initTuneable(builder);
+            tuneable.initTuneable(builder);
+        });
+    }
+
     public static TuneableCommand wrap(Function<TuneablesTable, Command> commandFactory, SendableType sendableType) {
         return new TuneableWrapperCommand(commandFactory, sendableType);
     }

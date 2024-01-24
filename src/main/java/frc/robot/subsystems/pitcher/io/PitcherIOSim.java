@@ -10,7 +10,7 @@ public class PitcherIOSim extends PitcherIO {
     private FlywheelSim motor = new FlywheelSim(DCMotor.getNEO(1), GEAR_RATIO, 0.003);
     private double angleDegrees = 0;
 
-    protected PitcherIOSim(LogFieldsTable fieldsTable) {
+    public PitcherIOSim(LogFieldsTable fieldsTable) {
         super(fieldsTable);
     }
 
