@@ -16,6 +16,7 @@ public class RobotContainer {
     private final Pitcher pitcher = new Pitcher();
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
+    private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
 
     public RobotContainer() {
         configureBindings();
@@ -39,9 +40,9 @@ public class RobotContainer {
                         driverController::getLeftY,
                         driverController::getRightX).fullTuneable());
 
-        TuneableCommand adjustPitcherToAgnle = new PitcherCommands(pitcher).adjustToAngle(() -> driverController.getLeftY() * 90);
-        pitcher.setDefaultCommand(adjustPitcherToAgnle);
-        TuneablesManager.add("Pitcher/adjust angle", adjustPitcherToAgnle.fullTuneable());
+        TuneableCommand adjustPitcherToAngle = pitcherCommands.adjustToAngle(90);
+        driverController.a().onTrue(adjustPitcherToAngle);
+        TuneablesManager.add("Pitcher/adjust angle", adjustPitcherToAngle.fullTuneable());
     }
 
     public Command getAutonomousCommand() {

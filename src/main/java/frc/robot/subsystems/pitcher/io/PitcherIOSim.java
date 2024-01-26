@@ -1,14 +1,13 @@
 package frc.robot.subsystems.pitcher.io;
 
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.logfields.LogFieldsTable;
 
 import static frc.robot.subsystems.pitcher.PitcherConstants.*;
 
 public class PitcherIOSim extends PitcherIO {
-    private FlywheelSim motor = new FlywheelSim(DCMotor.getNEO(1), GEAR_RATIO, 0.003);
-    private double angleDegrees = 0;
+    private SingleJointedArmSim motor = new SingleJointedArmSim(DCMotor.getNEO(1), GEAR_RATIO, 0.0001, 0.8, -Math.PI, Math.PI, true, 0);
 
     public PitcherIOSim(LogFieldsTable fieldsTable) {
         super(fieldsTable);
@@ -17,12 +16,11 @@ public class PitcherIOSim extends PitcherIO {
     @Override
     protected void periodicBeforeFields() {
         motor.update(0.02);
-        angleDegrees += (motor.getAngularVelocityRPM() / 60) * 0.02;
     }
 
     @Override
     protected double getAngleDegrees() {
-        return angleDegrees;
+        return Math.toDegrees(motor.getAngleRads());
     }
 
     @Override

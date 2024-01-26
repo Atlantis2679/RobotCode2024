@@ -38,7 +38,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
     @Override
     public void periodic() {
         double currTimestampSec = Timer.getFPGATimestamp();
-        double cycleTimeSec = lastTimestampSec - currTimestampSec;
+        double cycleTimeSec = currTimestampSec - lastTimestampSec;
         velocityDegPerSec = (getAngleDegrees() - lastAngleDegree) / cycleTimeSec;
         lastAngleDegree = getAngleDegrees();
         lastTimestampSec = currTimestampSec;
@@ -47,7 +47,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
         fieldsTable.recordOutput("Angle Degrees", getAngleDegrees());
     }
 
-    public LogFieldsTable getFieldsSubTable(String name) {
+    public LogFieldsTable getSubFieldsTable(String name) {
         return fieldsTable.getSubTable(name);
     }
 
