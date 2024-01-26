@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class IntakeConstants {
     // Motor and Encoder ID
@@ -30,5 +29,23 @@ public class IntakeConstants {
     //SlewRateLimiter 
     public static final double INTAKE_LIMIT_ACCELERATION_VOLTEG_PER_SECOND = 12;
     public static final double JOINT_LIMIT_ACCELERATION_VOLTEG_PER_SECOND = 12;
+
+    //Intake Controller
+    public static final double INTAKE_CONTROLLER_MULTIPLIER = 12;
+
+    //Intake button 
+    public static final double STOP_INTAKE_MOTOR = 0;
+
+    //IntakeAngle
+    public static final double STOP_INTAKE_ANGLE_MOTOR = 0;
+
+    //command combination 
+    public static final double COLLECTING_POSITION_DEGREE = 0;
+    public static final double COLLECTING_POSITION_INTAKE_SPEED = 0;
+
+    //sim
+    public static final double GEARING_JOINT = 60;
+    public static final double GEARING_INTAKE = 10;
+
 
 }

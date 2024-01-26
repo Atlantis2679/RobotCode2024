@@ -2,7 +2,7 @@
 package frc.robot.subsystems.intake;
 
 import java.util.function.DoubleSupplier;
-
+import static frc.robot.subsystems.intake.IntakeConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeController extends Command {
@@ -10,9 +10,9 @@ public class IntakeController extends Command {
   private final Intake intake;
   private final DoubleSupplier angleDemandSupplier;
 
-  public IntakeController(Intake intake, DoubleSupplier forwardDemandSupplier, DoubleSupplier backwardDemandSupplier) {
+  public IntakeController(Intake intake, DoubleSupplier angleDemandSupplier) {
     this.intake = intake;
-    this.angleDemandSupplier = backwardDemandSupplier;
+    this.angleDemandSupplier = angleDemandSupplier;
     addRequirements(intake);
   }
 
@@ -23,13 +23,18 @@ public class IntakeController extends Command {
 
   @Override
   public void execute() {
-    intake.setAngleIntake(angleDemandSupplier.getAsDouble());
+    if(angleDemandSupplier.getAsDouble() < 0){
+      intake.setAngleIntake(angleDemandSupplier.getAsDouble() * INTAKE_CONTROLLER_MULTIPLIER );
+    }
 
+    if (angleDemandSupplier.getAsDouble() > 0) {
+      intake.setAngleIntake(angleDemandSupplier.getAsDouble() * INTAKE_CONTROLLER_MULTIPLIER);
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
-  }
+  } 
 
   @Override
   public boolean isFinished() {

@@ -37,7 +37,7 @@ public class IntakeMoveToAngle extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    intake.setAngleIntake(0);
+    intake.setAngleIntake(STOP_INTAKE_ANGLE_MOTOR);
   }
 
   @Override
