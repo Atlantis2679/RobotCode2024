@@ -3,8 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.lib.tuneables.TuneableCommand;
 import frc.lib.tuneables.TuneablesManager;
+import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.subsystems.pitcher.Pitcher;
 import frc.robot.subsystems.pitcher.PitcherCommands;
 import frc.robot.subsystems.swerve.Swerve;
@@ -40,9 +40,10 @@ public class RobotContainer {
                         driverController::getLeftY,
                         driverController::getRightX).fullTuneable());
 
-        TuneableCommand adjustPitcherToAngle = pitcherCommands.adjustToAngle(90);
-        driverController.a().onTrue(adjustPitcherToAngle);
-        TuneablesManager.add("Pitcher/adjust angle", adjustPitcherToAngle.fullTuneable());
+        driverController.a().onTrue(pitcherCommands.adjustToAngle(90));
+        driverController.y().onTrue(pitcherCommands.adjustToAngle(0));
+        driverController.b().whileTrue(pitcherCommands.adjustToAngle(() -> driverController.getLeftY() * 90));
+        pitcher.setDefaultCommand(pitcherCommands.controller(() -> driverController.getLeftY()));
     }
 
     public Command getAutonomousCommand() {

@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.lib.tuneables.extensions;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import frc.lib.tuneables.SendableType;

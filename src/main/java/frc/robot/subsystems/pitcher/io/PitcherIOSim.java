@@ -7,7 +7,15 @@ import frc.lib.logfields.LogFieldsTable;
 import static frc.robot.subsystems.pitcher.PitcherConstants.*;
 
 public class PitcherIOSim extends PitcherIO {
-    private SingleJointedArmSim motor = new SingleJointedArmSim(DCMotor.getNEO(1), GEAR_RATIO, 0.0001, 0.8, -Math.PI, Math.PI, true, 0);
+    private SingleJointedArmSim motor = new SingleJointedArmSim(
+            DCMotor.getNEO(1),
+            GEAR_RATIO,
+            0.01,
+            3,
+            -Math.PI,
+            Math.PI,
+            true,
+            0);
 
     public PitcherIOSim(LogFieldsTable fieldsTable) {
         super(fieldsTable);

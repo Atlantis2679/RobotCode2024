@@ -1,9 +1,12 @@
-package frc.lib.tuneables;
+package frc.lib.tuneables.extensions;
 
 import java.util.function.Function;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.tuneables.SendableType;
+import frc.lib.tuneables.Tuneable;
+import frc.lib.tuneables.TuneablesTable;
 
 public abstract class TuneableCommand extends Command implements Tuneable {
     public Tuneable fullTuneable() {

@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.lib.tuneables.extensions;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
