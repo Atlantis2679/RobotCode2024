@@ -6,7 +6,7 @@ import frc.lib.logfields.IOBase;
 import frc.lib.logfields.LogFieldsTable;
 
 public abstract class ElevatorIO extends IOBase{
-public final DoubleSupplier getEncoder = fields.addDouble("getEncoder", this::getEncoder);
+public final DoubleSupplier encoderValue = fields.addDouble("encoderValue", this::getEncoder);
 
     public ElevatorIO(LogFieldsTable fieldsTable) {
         super(fieldsTable);

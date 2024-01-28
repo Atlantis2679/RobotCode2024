@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator.io;
 
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -28,6 +29,7 @@ public class ElevatorIOSparkMax extends ElevatorIO {
     public void setSpeed(double speed){
         elevatorMotorLeft.set(speed);
     }
+    
 
     public void setP(double p) {
         elevatorPID.setP(p);
