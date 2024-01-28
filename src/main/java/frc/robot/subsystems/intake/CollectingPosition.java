@@ -19,4 +19,5 @@ public class CollectingPosition extends ParallelCommandGroup {
     new intakeButton(intake, COLLECTING_POSITION_INTAKE_SPEED)
     );
   }
+  
 }

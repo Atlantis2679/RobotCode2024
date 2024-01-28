@@ -9,39 +9,39 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class IntakeIOSparkMax extends IntakeIO {
-    private final CANSparkMax intakeCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_INTAKE_ID,
+    private final CANSparkMax rollersCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_ROLLERS_ID,
             MotorType.kBrushless);
-    private final CANSparkMax intakeJointCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_INTAKE_PIVOT_ID,
+    private final CANSparkMax wristCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_WRIST_ID,
             MotorType.kBrushless);
-    private final DutyCycleEncoder intakeJointEncoder = new DutyCycleEncoder(DUTY_CYCLE_ENCODER);
+    private final DutyCycleEncoder WristEncoder = new DutyCycleEncoder(DUTY_CYCLE_ENCODER_WRIST);
 
     public IntakeIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
     }
 
     @Override
-    public void setJointSpeed(double speedAngleIntake) {
-        intakeJointCANSparkMax.set(speedAngleIntake);
+    public void setWristSpeed(double wristSpeed) {
+        wristCANSparkMax.set(wristSpeed);
     }
 
     @Override
-    public void setIntakeSpeed(double speedIntake) {
-        intakeCANSparkMax.set(speedIntake);
+    public void setRollerSpeed(double wristSpeed) {
+        rollersCANSparkMax.set(wristSpeed);
     }
 
     @Override
-    public double getJointAngleDegrees() {
-        return intakeJointEncoder.getAbsolutePosition();
+    public double getWristAngleDegrees() {
+        return WristEncoder.getAbsolutePosition();
     }
 
     @Override
-    public double getIntakeSpeed() {
-        return intakeCANSparkMax.get();
+    public double getRollersSpeed() {
+        return rollersCANSparkMax.get();
     }
 
     @Override
-    public double getJointSpeed() {
-        return intakeJointCANSparkMax.get();
+    public double getWristSpeed() {
+        return wristCANSparkMax.get();
     }
 
 }

@@ -10,7 +10,7 @@ public class IntakeMoveToAngle extends Command {
   private final Intake intake;
   private final TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
       MAX_VELOCITY_JOINT,
-      MAX_ACCELERATION_JOINT));
+      WRIST_MAX_ACCELERATION));
   private final double desiredJointAngle;
   private final Timer timer = new Timer();
 

@@ -23,14 +23,9 @@ public class IntakeController extends Command {
 
   @Override
   public void execute() {
-    if(angleDemandSupplier.getAsDouble() < 0){
       intake.setAngleIntake(angleDemandSupplier.getAsDouble() * INTAKE_CONTROLLER_MULTIPLIER );
     }
 
-    if (angleDemandSupplier.getAsDouble() > 0) {
-      intake.setAngleIntake(angleDemandSupplier.getAsDouble() * INTAKE_CONTROLLER_MULTIPLIER);
-    }
-  }
 
   @Override
   public void end(boolean interrupted) {

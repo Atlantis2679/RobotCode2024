@@ -3,9 +3,9 @@ package frc.robot.subsystems.intake;
 
 public class IntakeConstants {
     // Motor and Encoder ID
-    public static final int CAN_SPARK_MAX_INTAKE_ID = 0;
-    public static final int CAN_SPARK_MAX_INTAKE_PIVOT_ID = 0;
-    public static final int DUTY_CYCLE_ENCODER = 0;
+    public static final int CAN_SPARK_MAX_ROLLERS_ID = 0;
+    public static final int CAN_SPARK_MAX_WRIST_ID = 0;
+    public static final int DUTY_CYCLE_ENCODER_WRIST = 0;
 
     // Angle PID
     public static final double KP = 0;
@@ -23,12 +23,12 @@ public class IntakeConstants {
     public static final double KA = 0;
 
     // trapezoidProfile
-    public static final double MAX_ACCELERATION_JOINT = 0;
+    public static final double WRIST_MAX_ACCELERATION = 0;
     public static final double MAX_VELOCITY_JOINT = 0;
 
     //SlewRateLimiter 
-    public static final double INTAKE_LIMIT_ACCELERATION_VOLTEG_PER_SECOND = 12;
-    public static final double JOINT_LIMIT_ACCELERATION_VOLTEG_PER_SECOND = 12;
+    public static final double ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND = 12;
+    public static final double WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND = 12;
 
     //Intake Controller
     public static final double INTAKE_CONTROLLER_MULTIPLIER = 12;

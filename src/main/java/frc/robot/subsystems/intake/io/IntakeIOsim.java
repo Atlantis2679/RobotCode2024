@@ -5,15 +5,15 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.logfields.LogFieldsTable;
 
-public class IntakeIOsim extends IntakeIO{
-    private final FlywheelSim intakFlywheelSim;
-    private final FlywheelSim jointFlywheelSim;
+// public class IntakeIOsim extends IntakeIO{
+    // private final FlywheelSim intakFlywheelSim;
+    // private final FlywheelSim jointFlywheelSim;
 
-    public IntakeIOsim(LogFieldsTable logFieldsTable){
-        intakFlywheelSim = new FlywheelSim(DCMotor.getNeo550(CAN_SPARK_MAX_INTAKE_ID),  GEARING_INTAKE,  0);
-        jointFlywheelSim = new FlywheelSim(DCMotor.getNEO(CAN_SPARK_MAX_INTAKE_ID), GEARING_JOINT, 0);
-    }
+    // public IntakeIOsim(LogFieldsTable logFieldsTable){
+    //     intakFlywheelSim = new FlywheelSim(DCMotor.getNeo550(CAN_SPARK_MAX_INTAKE_ID),  GEARING_INTAKE,  0);
+//     //     jointFlywheelSim = new FlywheelSim(DCMotor.getNEO(CAN_SPARK_MAX_INTAKE_ID), GEARING_JOINT, 0);
+//     }
 
 
 
-}
+// }

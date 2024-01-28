@@ -15,9 +15,10 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 public class Intake extends SubsystemBase {
   private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
   private final IntakeIO io = new IntakeIOSparkMax(fieldsTable);
-  private final PIDController pidControllerJoint = new PIDController(KP, KI, KD);
-  SlewRateLimiter intakeSpeedLimiter = new SlewRateLimiter(INTAKE_LIMIT_ACCELERATION_VOLTEG_PER_SECOND);
-  SlewRateLimiter jointSpeedLimiter = new SlewRateLimiter(JOINT_LIMIT_ACCELERATION_VOLTEG_PER_SECOND);
+
+  private final PIDController wristPidController = new PIDController(KP, KI, KD);
+  SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND);
+  SlewRateLimiter wristSpeedLimiter = new SlewRateLimiter(WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND);
 
   private final ArmFeedforward feedForwardIntake = new ArmFeedforward(KS, KG, KV, KA);
 
@@ -30,39 +31,39 @@ public class Intake extends SubsystemBase {
   }
 
   public void setSpeedIntake(double intakeSpeed) {
-    intakeSpeed = intakeSpeedLimiter.calculate(intakeSpeed);
-    io.setIntakeSpeed(MathUtil.clamp(
+    intakeSpeed = rollersSpeedLimiter.calculate(intakeSpeed);
+    io.setRollerSpeed(MathUtil.clamp(
       intakeSpeed,
-      -INTAKE_LIMIT_ACCELERATION_VOLTEG_PER_SECOND,
-       INTAKE_LIMIT_ACCELERATION_VOLTEG_PER_SECOND));
+      -ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND,
+       ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND));
   }
 
   public void setAngleIntake(double jointSpeed) { 
-    jointSpeed = jointSpeedLimiter.calculate(jointSpeed);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-    io.setJointSpeed(MathUtil.clamp(
+    jointSpeed = wristSpeedLimiter.calculate(jointSpeed);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    io.setWristSpeed(MathUtil.clamp(
       jointSpeed,
-      -JOINT_LIMIT_ACCELERATION_VOLTEG_PER_SECOND,
-       JOINT_LIMIT_ACCELERATION_VOLTEG_PER_SECOND));
+      -WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND,
+       WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND));
   }
   
   public double getAbsoluteAngle() {
-    return io.jointAngleDegrees.getAsDouble();
+    return io.wristAngleDegrees.getAsDouble();
   }
 
   public double getIntakeSpeed() {
-    return io.intakeSpeed.getAsDouble();
+    return io.rollersSpeed.getAsDouble();
   }
 
   public double getArmSpeed() {
-    return io.jointSpeed.getAsDouble();
+    return io.wristSpeed.getAsDouble();
   }
 
-  public double calculateFeedforward(double wantedArmAngle, double intakeArmVelocity, boolean usePID) {
+  public double calculateFeedforward(double desiredWristAngleDegree, double wristVelocity, boolean usePID) {
 
-    double voltages = feedForwardIntake.calculate(Math.toRadians(wantedArmAngle), intakeArmVelocity);
+    double voltages = feedForwardIntake.calculate(Math.toRadians(desiredWristAngleDegree), wristVelocity);
 
     if (usePID) {
-      voltages += pidControllerJoint.calculate(getAbsoluteAngle(), wantedArmAngle);
+      voltages += wristPidController.calculate(getAbsoluteAngle(), desiredWristAngleDegree);
     }
     return voltages;
 
