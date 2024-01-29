@@ -22,10 +22,12 @@ public class ElevatorIOSparkMax extends ElevatorIO {
         elevatorMotorRight.follow(elevatorMotorLeft);
     }
 
+    @Override
     protected double getEncoder(){
         return elevatorEncoder.getAbsolutePosition();
     }
 
+    @Override
     public void setSpeed(double speed){
         elevatorMotorLeft.set(speed);
     }

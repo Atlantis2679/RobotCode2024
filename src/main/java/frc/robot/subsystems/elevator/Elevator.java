@@ -13,7 +13,10 @@ public class Elevator extends SubsystemBase{
         io.setSpeed(speed);
     }
 
+    
+
     protected double getEncoder(){
-        return ElevatorIO.getEncoder(encoderValue);
+        return io.encoderValue.getAsDouble();
     }
+
 }
