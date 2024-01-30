@@ -80,7 +80,7 @@ public class NaturalXboxController extends CommandXboxController {
 
     /**
      * Applies a deadband by considering values within the deadband as the new zero.
-     * Values within the deadband are adjusted to be relative to the deadband range.
+     * Values outside the deadband are adjusted to be relative to the new range.
      *
      * @param value    The input value to apply the deadband to.
      * @param deadband The deadband range. Values within this range are considered
