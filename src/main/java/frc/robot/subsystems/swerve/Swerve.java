@@ -1,12 +1,12 @@
 package frc.robot.subsystems.swerve;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
@@ -49,7 +49,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
             ? new GyroIOSim(fieldsTable.getSubTable("Gyro"))
             : new GyroIONavX(fieldsTable.getSubTable("Gyro"));
 
-    private final SwerveDriveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
     // Should be FL, FR, BL, BR
     private final SwerveModule[] modules = {
@@ -93,10 +93,11 @@ public class Swerve extends SubsystemBase implements Tuneable {
         gyroYawHelper = new RotationalSensorHelper(
                 gyroIO.isConnected.getAsBoolean() ? gyroIO.yawDegreesCW.getAsDouble() : 0);
 
-        odometry = new SwerveDriveOdometry(
+        poseEstimator = new SwerveDrivePoseEstimator(
                 swerveKinematics,
                 gyroYawHelper.getRawMeasuredAngleCCW(),
-                getModulesPositions());
+                getModulesPositions(),
+                new Pose2d(3, 3, gyroYawHelper.getAngleCCW()));
 
         TuneablesManager.add("Swerve", (Tuneable) this);
 
@@ -147,9 +148,9 @@ public class Swerve extends SubsystemBase implements Tuneable {
             gyroYawHelper.update(gyroYawHelper.getRawMeasuredAngleDegreesCW() + Math.toDegrees(-twist.dtheta));
         }
 
-        odometry.update(gyroYawHelper.getRawMeasuredAngleCCW(), getModulesPositions());
+        poseEstimator.update(gyroYawHelper.getRawMeasuredAngleCCW(), getModulesPositions());
 
-        fieldsTable.recordOutput("Odometry", odometry.getPoseMeters());
+        fieldsTable.recordOutput("Odometry", poseEstimator.getEstimatedPosition());
         fieldsTable.recordOutput("Module States",
                 modules[0].getModuleState(),
                 modules[1].getModuleState(),
@@ -223,7 +224,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
     }
 
     public void setYawDegreesCW(double newYawDegreesCW) {
-        Pose2d currentPose = odometry.getPoseMeters();
+        Pose2d currentPose = poseEstimator.getEstimatedPosition();
 
         resetPose(new Pose2d(
                 currentPose.getX(),
@@ -236,7 +237,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
     }
 
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
     }
 
     public void requestResetModulesToAbsolute() {
@@ -259,7 +260,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     public void resetPose(Pose2d pose2d) {
         gyroYawHelper.setAngleCCW(pose2d.getRotation());
-        odometry.resetPosition(gyroYawHelper.getRawMeasuredAngleCCW(), getModulesPositions(), pose2d);
+        poseEstimator.resetPosition(gyroYawHelper.getRawMeasuredAngleCCW(), getModulesPositions(), pose2d);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
