@@ -23,7 +23,7 @@ public class IntakeController extends Command {
 
   @Override
   public void execute() {
-      intake.setAngleIntake(angleDemandSupplier.getAsDouble() * INTAKE_CONTROLLER_MULTIPLIER );
+      intake.setWristSpeed(angleDemandSupplier.getAsDouble() * INTAKE_CONTROLLER_MULTIPLIER );
     }
 
 

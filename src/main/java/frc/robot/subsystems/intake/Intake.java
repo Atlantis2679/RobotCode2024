@@ -34,16 +34,16 @@ public class Intake extends SubsystemBase {
     intakeSpeed = rollersSpeedLimiter.calculate(intakeSpeed);
     io.setRollerSpeed(MathUtil.clamp(
       intakeSpeed,
-      -ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND,
-       ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND));
+      -ROLLER_VOLTEG,
+       ROLLER_VOLTEG));
   }
 
-  public void setAngleIntake(double jointSpeed) { 
+  public void setWristSpeed(double jointSpeed) { 
     jointSpeed = wristSpeedLimiter.calculate(jointSpeed);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
     io.setWristSpeed(MathUtil.clamp(
       jointSpeed,
-      -WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND,
-       WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND));
+      -ARM_VOLTEG,
+       ARM_VOLTEG));
   }
   
   public double getAbsoluteAngle() {
@@ -54,10 +54,13 @@ public class Intake extends SubsystemBase {
     return io.rollersSpeed.getAsDouble();
   }
 
-  public double getArmSpeed() {
+  public double getWristPercentageOutput() {
     return io.wristSpeed.getAsDouble();
   }
-
+  public boolean getBeamBreakValue() {
+    return io.beamBreakValue.getAsBoolean();
+  }
+  
   public double calculateFeedforward(double desiredWristAngleDegree, double wristVelocity, boolean usePID) {
 
     double voltages = feedForwardIntake.calculate(Math.toRadians(desiredWristAngleDegree), wristVelocity);

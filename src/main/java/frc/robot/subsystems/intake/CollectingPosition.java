@@ -5,7 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static frc.robot.subsystems.intake.IntakeConstants.COLLECTING_POSITION_DEGREE;
-import static frc.robot.subsystems.intake.IntakeConstants.COLLECTING_POSITION_INTAKE_SPEED;
+import static frc.robot.subsystems.intake.IntakeConstants.COLLECTING_POSITION_ROLLERS_SPEED;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
@@ -16,7 +16,7 @@ public class CollectingPosition extends ParallelCommandGroup {
   
     addCommands(
     new IntakeMoveToAngle(intake, COLLECTING_POSITION_DEGREE),
-    new intakeButton(intake, COLLECTING_POSITION_INTAKE_SPEED)
+    new IntakeButton(intake, COLLECTING_POSITION_ROLLERS_SPEED)
     );
   }
   

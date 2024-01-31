@@ -2,10 +2,11 @@ package frc.robot.subsystems.intake;
 
 
 public class IntakeConstants {
-    // Motor and Encoder ID
+    // Motor and Sensors ID
     public static final int CAN_SPARK_MAX_ROLLERS_ID = 0;
     public static final int CAN_SPARK_MAX_WRIST_ID = 0;
     public static final int DUTY_CYCLE_ENCODER_WRIST = 0;
+    public static final int BEAM_BREAK_ID = 0;
 
     // Angle PID
     public static final double KP = 0;
@@ -15,6 +16,9 @@ public class IntakeConstants {
     // set
     public static final double SCORING_SPEED = 1;
     public static final double INTAKE_SPEED = -1;
+
+    public static final double ROLLER_VOLTEG = 0;
+    public static final double ARM_VOLTEG = 0;
 
     // Feedforward Intake arm
     public static final double KS = 0;
@@ -41,11 +45,15 @@ public class IntakeConstants {
 
     //command combination 
     public static final double COLLECTING_POSITION_DEGREE = 0;
-    public static final double COLLECTING_POSITION_INTAKE_SPEED = 0;
+    public static final double COLLECTING_POSITION_ROLLERS_SPEED = 0;
+
+    public static final double PASSING_NOTE_TO_SHOOTER_WRIST_DEGREE = 0;
+    public static final double PASSING_NOTE_TO_SHOOTER_ROLLERS_SPEED = 0;
+
+    public static final double AIM_TO_AMP_WRIST_DEGREE = 0;
 
     //sim
-    public static final double GEARING_JOINT = 60;
-    public static final double GEARING_INTAKE = 10;
-
+    public static final double JOINT_GEARING = 60;
+    public static final double ROLLERS_GEARING = 10;
 
 }

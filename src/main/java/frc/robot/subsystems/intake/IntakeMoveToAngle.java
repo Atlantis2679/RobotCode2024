@@ -31,13 +31,13 @@ public class IntakeMoveToAngle extends Command {
     intake.calculateFeedforward(desiredJointAngle, MAX_VELOCITY_JOINT, true);
 
     trapezoidProfile.calculate(timer.get(),
-        new TrapezoidProfile.State(intake.getAbsoluteAngle(), intake.getArmSpeed()),
+        new TrapezoidProfile.State(intake.getAbsoluteAngle(), intake.getWristPercentageOutput()),
         new TrapezoidProfile.State(desiredJointAngle, 0));
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.setAngleIntake(STOP_INTAKE_ANGLE_MOTOR);
+    intake.setWristSpeed(STOP_INTAKE_ANGLE_MOTOR);
   }
 
   @Override
