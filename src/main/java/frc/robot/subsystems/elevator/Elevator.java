@@ -9,11 +9,24 @@ public class Elevator extends SubsystemBase{
     private final ElevatorIO io = new ElevatorIOSparkMax(null);
 
     public void setSpeed(double speed){
-        speed = MathUtil.clamp(speed, 0, 0);
+        speed = MathUtil.clamp(speed, 0, 1);
         io.setSpeed(speed);
     }
 
-    protected double getEncoder(){
-        return ElevatorIO.getEncoder(encoderValue);
+    public double getEncoder(){
+        return io.getEncoder();
     }
+
+    public void setP (double p){
+        io.setP(p);
+    }
+
+    public void setI (double i){
+        io.setP(i);
+    }
+
+    public void setD (double d){
+        io.setP(d);
+    }
+
 }
