@@ -97,27 +97,18 @@ public class Swerve extends SubsystemBase implements Tuneable {
     public Swerve() {
         fieldsTable.update();
 
-<<<<<<< HEAD
         visionIO = Robot.isSimulation()
             ? new VisionIOSim(fieldsTable, this::getPose)
             : new VisionIOPhoton(fieldsTable);
 
-        gyroYawHelper = new RotationalSensorHelper(
-                gyroIO.isConnected.getAsBoolean() ? gyroIO.yawDegreesCW.getAsDouble() : 0);
-=======
         gyroYawHelperCCW = new RotationalSensorHelper(
-                Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
->>>>>>> 074cce571e910cb9a62364676eb5c864b36ad851
+            Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
 
         poseEstimator = new SwerveDrivePoseEstimator(
                 swerveKinematics,
                 gyroYawHelperCCW.getMeasuredAngle(),
                 getModulesPositions(),
-<<<<<<< HEAD
                 VisionConstants.robotStartingPose);
-=======
-                new Pose2d(3, 3, gyroYawHelperCCW.getAngle()));
->>>>>>> 074cce571e910cb9a62364676eb5c864b36ad851
 
         TuneablesManager.add("Swerve", (Tuneable) this);
 
