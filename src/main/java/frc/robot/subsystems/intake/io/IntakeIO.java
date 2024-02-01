@@ -9,7 +9,6 @@ import frc.lib.logfields.LogFieldsTable;
 public abstract class IntakeIO extends IOBase {
 
     public final DoubleSupplier wristAngleDegrees = fields.addDouble("jointAngleDegrees", this::getWristAngleDegrees);
-    public final DoubleSupplier rollersSpeed = fields.addDouble("intakeSpeed", this::getRollersSpeed);
     public final DoubleSupplier wristSpeed = fields.addDouble("jointSpeed", this::getWristSpeed);
     public final BooleanSupplier beamBreakValue = fields.addBoolean("beamBreakValue", this::getBeamBreakValue);
     public IntakeIO(LogFieldsTable fieldsTable) {
@@ -17,8 +16,6 @@ public abstract class IntakeIO extends IOBase {
     }
 
     protected abstract double getWristAngleDegrees();
-
-    protected abstract double getRollersSpeed();
 
     protected abstract double getWristSpeed();
 

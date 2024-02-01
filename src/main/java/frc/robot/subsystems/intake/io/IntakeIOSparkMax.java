@@ -14,7 +14,7 @@ public class IntakeIOSparkMax extends IntakeIO {
             MotorType.kBrushless);
     private final CANSparkMax wristCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_WRIST_ID,
             MotorType.kBrushless);
-    private final DutyCycleEncoder WristEncoder = new DutyCycleEncoder(DUTY_CYCLE_ENCODER_WRIST);
+    private final DutyCycleEncoder WristEncoder = new DutyCycleEncoder(DUTY_CYCLE_ENCODER_WRIST_ID);
 
     DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
 
@@ -35,11 +35,6 @@ public class IntakeIOSparkMax extends IntakeIO {
     @Override
     public double getWristAngleDegrees() {
         return WristEncoder.getAbsolutePosition();
-    }
-
-    @Override
-    public double getRollersSpeed() {
-        return rollersCANSparkMax.get();
     }
 
     @Override

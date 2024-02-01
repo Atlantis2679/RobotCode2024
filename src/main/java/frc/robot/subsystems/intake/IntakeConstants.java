@@ -5,7 +5,7 @@ public class IntakeConstants {
     // Motor and Sensors ID
     public static final int CAN_SPARK_MAX_ROLLERS_ID = 0;
     public static final int CAN_SPARK_MAX_WRIST_ID = 0;
-    public static final int DUTY_CYCLE_ENCODER_WRIST = 0;
+    public static final int DUTY_CYCLE_ENCODER_WRIST_ID = 0;
     public static final int BEAM_BREAK_ID = 0;
 
     // Angle PID
@@ -20,7 +20,7 @@ public class IntakeConstants {
     public static final double ROLLER_VOLTEG = 0;
     public static final double ARM_VOLTEG = 0;
 
-    // Feedforward Intake arm
+    // Feedforward wrist
     public static final double KS = 0;
     public static final double KG = 0;
     public static final double KV = 0;
@@ -55,5 +55,9 @@ public class IntakeConstants {
     //sim
     public static final double JOINT_GEARING = 60;
     public static final double ROLLERS_GEARING = 10;
+    public static final double ROLLERS_INERTIA = 0;
+    public static final double WRIST_INERTIA = 0;
+    public static final int ENCODER_SIM_ID = 2;
+    
 
 }

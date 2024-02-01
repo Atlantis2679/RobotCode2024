@@ -50,10 +50,6 @@ public class Intake extends SubsystemBase {
     return io.wristAngleDegrees.getAsDouble();
   }
 
-  public double getIntakeSpeed() {
-    return io.rollersSpeed.getAsDouble();
-  }
-
   public double getWristPercentageOutput() {
     return io.wristSpeed.getAsDouble();
   }
