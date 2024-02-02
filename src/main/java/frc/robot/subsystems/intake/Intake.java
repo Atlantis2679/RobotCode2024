@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
 
   public void setSpeedIntake(double intakeSpeed) {
     intakeSpeed = rollersSpeedLimiter.calculate(intakeSpeed);
-    io.setRollerSpeed(MathUtil.clamp(
+    io.setRollerSpeedPrecentOutput(MathUtil.clamp(
       intakeSpeed,
       -ROLLER_VOLTEG,
        ROLLER_VOLTEG));
@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
 
   public void setWristSpeed(double jointSpeed) { 
     jointSpeed = wristSpeedLimiter.calculate(jointSpeed);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-    io.setWristSpeed(MathUtil.clamp(
+    io.setWristSpeedPrecentOutput(MathUtil.clamp(
       jointSpeed,
       -ARM_VOLTEG,
        ARM_VOLTEG));

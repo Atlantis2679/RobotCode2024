@@ -20,7 +20,7 @@ public class IntakeCommends {
 
     public Command collectingPosition(){
         return new IntakeMoveToAngle(intake, COLLECTING_POSITION_DEGREE).alongWith(
-                new IntakeButton(intake, COLLECTING_POSITION_ROLLERS_SPEED));
+               new IntakeButton(intake, COLLECTING_POSITION_ROLLERS_SPEED));
     }
 
     public Command passToShooter(){
@@ -28,16 +28,13 @@ public class IntakeCommends {
              return new IntakeMoveToAngle(intake, PASSING_NOTE_TO_SHOOTER_WRIST_DEGREE).andThen(
                     new IntakeButton(intake, PASSING_NOTE_TO_SHOOTER_ROLLERS_SPEED));
     }
+
     return new IntakeMoveToAngle(intake, PASSING_NOTE_TO_SHOOTER_WRIST_DEGREE);
     }
-
+    
     public Command ampPosition(){
         return new IntakeMoveToAngle(intake, AIM_TO_AMP_WRIST_DEGREE);
         //incase we need it
     }
     
-    
-
-    
-
 }

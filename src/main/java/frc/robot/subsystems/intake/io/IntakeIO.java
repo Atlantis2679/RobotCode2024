@@ -22,9 +22,9 @@ public abstract class IntakeIO extends IOBase {
     protected abstract boolean getBeamBreakValue();
 
 
-    public abstract void setRollerSpeed(double rollersSpeed);
+    public abstract void setRollerSpeedPrecentOutput(double rollersSpeed);
 
-    public abstract void setWristSpeed(double wristSpeed);
+    public abstract void setWristSpeedPrecentOutput(double wristSpeed);
 
 
 

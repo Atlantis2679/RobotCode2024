@@ -55,8 +55,8 @@ public class IntakeConstants {
     //sim
     public static final double JOINT_GEARING = 60;
     public static final double ROLLERS_GEARING = 10;
-    public static final double ROLLERS_INERTIA = 0;
-    public static final double WRIST_INERTIA = 0;
+    public static final double ROLLERS_JKG_METERS_SQUARED = 0;
+    public static final double WRIST_JKG_METERS_SQUARED = 0;
     public static final int ENCODER_SIM_ID = 2;
     
 

@@ -23,12 +23,12 @@ public class IntakeIOSparkMax extends IntakeIO {
     }
 
     @Override
-    public void setWristSpeed(double wristSpeed) {
+    public void setWristSpeedPrecentOutput(double wristSpeed) {
         wristCANSparkMax.set(wristSpeed);
     }
 
     @Override
-    public void setRollerSpeed(double wristSpeed) {
+    public void setRollerSpeedPrecentOutput(double wristSpeed) {
         rollersCANSparkMax.set(wristSpeed);
     }
 

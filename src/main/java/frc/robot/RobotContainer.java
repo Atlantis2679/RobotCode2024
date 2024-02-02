@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.lib.tuneables.TuneableCommand;
 import frc.lib.tuneables.TuneablesManager;
 import frc.robot.subsystems.swerve.Swerve;
@@ -27,7 +28,6 @@ public class RobotContainer {
 
         swerve.setDefaultCommand(driveCommand);
         TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
-
         driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
 
         TuneablesManager.add("Swerve/modules control mode",
