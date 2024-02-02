@@ -37,7 +37,7 @@ public class PitcherCommands {
         }));
     }
 
-    public Command controller(DoubleSupplier joystick) {
+    public Command manualController(DoubleSupplier joystick) {
         return pitcher.run(() -> {
             double feedforwardResult = pitcher.calculateFeedforward(pitcher.getAngleDegrees(), 0, false);
             pitcher.setVoltage(feedforwardResult + joystick.getAsDouble() * 5);

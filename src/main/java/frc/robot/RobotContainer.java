@@ -14,19 +14,23 @@ import frc.robot.utils.NaturalXboxController;
 public class RobotContainer {
     private final Swerve swerve = new Swerve();
     private final Pitcher pitcher = new Pitcher();
+
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
+    private final NaturalXboxController operatorController = new NaturalXboxController(
+            RobotMap.Controllers.OPERTATOR_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
     private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
 
     public RobotContainer() {
-        configureBindings();
+        configureDriverBindings();
+        configureOperatorBindings();
     }
 
-    private void configureBindings() {
+    private void configureDriverBindings() {
         TuneableCommand driveCommand = swerveCommands.controller(
                 driverController::getLeftY,
                 driverController::getLeftX,
-                driverController::getRightY,
+                driverController::getRightX,
                 driverController.leftBumper().negate()::getAsBoolean);
 
         swerve.setDefaultCommand(driveCommand);
@@ -39,11 +43,13 @@ public class RobotContainer {
                         driverController::getLeftX,
                         driverController::getLeftY,
                         driverController::getRightX).fullTuneable());
+    }
 
-        driverController.a().onTrue(pitcherCommands.adjustToAngle(90));
-        driverController.y().onTrue(pitcherCommands.adjustToAngle(0));
-        driverController.b().whileTrue(pitcherCommands.adjustToAngle(() -> driverController.getLeftY() * 90));
-        pitcher.setDefaultCommand(pitcherCommands.controller(() -> driverController.getLeftY()));
+    private void configureOperatorBindings() {
+        operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
+        operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
+        operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
+        pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
     }
 
     public Command getAutonomousCommand() {

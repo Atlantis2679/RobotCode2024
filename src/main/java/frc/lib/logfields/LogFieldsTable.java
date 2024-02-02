@@ -273,7 +273,7 @@ public class LogFieldsTable implements LoggableInputs {
         Logger.recordOutput(prefix + name, value);
     }
 
-    public <T extends StructSerializable> void recordOutput(String name, Mechanism2d value) {
+    public void recordOutput(String name, Mechanism2d value) {
         Logger.recordOutput(prefix + name, value);
     }
 }

@@ -8,6 +8,7 @@ public class RobotMap {
 
     public class Controllers {
         public static final int DRIVER_PORT = 0;
+        public static final int OPERTATOR_PORT = 1;
     }
 
     public class Module0 {

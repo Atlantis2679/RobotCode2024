@@ -144,12 +144,16 @@ public class Robot extends LoggedRobot {
     @Override
     public void testInit() {
         TuneablesManager.enable();
-        teleopInit();
+        CommandScheduler.getInstance().disable();
     }
 
     @Override
     public void testPeriodic() {
-        teleopPeriodic();
+    }
+
+    @Override
+    public void testExit() {
+        CommandScheduler.getInstance().enable();
     }
 
     @Override
