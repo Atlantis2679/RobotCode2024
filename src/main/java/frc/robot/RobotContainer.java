@@ -22,7 +22,7 @@ public class RobotContainer {
         TuneableCommand driveCommand = swerveCommands.controller(
                 driverController::getLeftY,
                 driverController::getLeftX,
-                driverController::getLeftX,
+                driverController::getRightX,
                 driverController.leftBumper().negate()::getAsBoolean);
 
         swerve.setDefaultCommand(driveCommand);
