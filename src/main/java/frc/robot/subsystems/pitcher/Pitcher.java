@@ -3,7 +3,7 @@ package frc.robot.subsystems.pitcher;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
@@ -36,24 +36,28 @@ public class Pitcher extends SubsystemBase implements Tuneable {
     private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCELERATION_DEG_PER_SEC));
 
+    private final PitcherVisualizer realStateVisualizer = new PitcherVisualizer(fieldsTable, "Real Mechanism",
+            new Color8Bit("#00BEBE"));
+
+    private final PitcherVisualizer desiredStateVisualizer = new PitcherVisualizer(fieldsTable, "Desired Mechanism",
+            new Color8Bit(255, 255, 255));
+
     private double lastAngleDegree;
     private double velocityDegPerSec;
-    private double lastTimestampSec = Timer.getFPGATimestamp();
 
     public Pitcher() {
         fieldsTable.update();
         lastAngleDegree = getAngleDegrees();
 
-        TuneablesManager.add("Pitcher", (Tuneable) this);
+        TuneablesManager.add(getName(), (Tuneable) this);
     }
 
     @Override
     public void periodic() {
-        double currTimestampSec = Timer.getFPGATimestamp();
-        double cycleTimeSec = currTimestampSec - lastTimestampSec;
-        velocityDegPerSec = (getAngleDegrees() - lastAngleDegree) / cycleTimeSec;
+        velocityDegPerSec = (getAngleDegrees() - lastAngleDegree) / 0.02;
         lastAngleDegree = getAngleDegrees();
-        lastTimestampSec = currTimestampSec;
+
+        realStateVisualizer.update(getAngleDegrees());
 
         fieldsTable.recordOutput("Velocity RadPerSec", getVelocityDegPerSec());
         fieldsTable.recordOutput("Angle Degrees", getAngleDegrees());
@@ -101,6 +105,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
         fieldsTable.recordOutput("Desired State Position", state.position);
         fieldsTable.recordOutput("Desired State Velocity", state.velocity);
         fieldsTable.recordOutput("Goal Position", goalState.position);
+        desiredStateVisualizer.update(state.position);
         return state;
     }
 

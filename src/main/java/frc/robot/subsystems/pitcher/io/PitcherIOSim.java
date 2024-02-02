@@ -10,10 +10,10 @@ public class PitcherIOSim extends PitcherIO {
     private SingleJointedArmSim motor = new SingleJointedArmSim(
             DCMotor.getNEO(1),
             GEAR_RATIO,
-            0.01,
+            0.1,
             3,
-            -Math.PI,
-            Math.PI,
+            -Math.PI / 2,
+            Math.PI / 2,
             true,
             0);
 

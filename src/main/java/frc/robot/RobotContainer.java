@@ -24,9 +24,9 @@ public class RobotContainer {
 
     private void configureBindings() {
         TuneableCommand driveCommand = swerveCommands.controller(
-                driverController::getSquaredLeftY,
-                driverController::getSquaredLeftX,
-                driverController::getSquaredRightX,
+                driverController::getLeftY,
+                driverController::getLeftX,
+                new NaturalXboxController(1)::getLeftX,
                 driverController.leftBumper().negate()::getAsBoolean);
 
         swerve.setDefaultCommand(driveCommand);

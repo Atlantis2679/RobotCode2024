@@ -10,8 +10,12 @@ public class PitcherConstants {
     public static final double KD = 0;
 
     public static final double KS = 0;
-    public static final double KG = 0.002261;
+    public static final double KG = 0;
     public static final double KV = 0.004300;
     public static final double MAX_VELOCITY_DEG_PER_SEC = 20;
     public static final double MAX_ACCELERATION_DEG_PER_SEC = 20;
+
+    public class AdjustToAngle {
+        public static final boolean USE_OPEN_LOOP = false;
+    }
 }
