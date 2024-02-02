@@ -27,8 +27,8 @@ public class PitcherCommands {
         }).andThen(Commands.run(() -> {
             refrenceState.set(pitcher.calculateTrapezoidProfile(
                     0.02,
-                    AdjustToAngle.USE_OPEN_LOOP
-                            ? new TrapezoidProfile.State(pitcher.getAngleDegrees(), pitcher.getVelocityDegPerSec())
+                    AdjustToAngle.USE_CLOSED_LOOP_PROFILE
+                            ? new TrapezoidProfile.State(pitcher.getAngleDegrees(), refrenceState.get().velocity)
                             : refrenceState.get(),
                     new TrapezoidProfile.State(goalAngleDegrees.getAsDouble(), 0)));
 
