@@ -10,6 +10,11 @@ public class ElevatorConstants {
     public final static double KI = 0;
     public final static double KD = 0;
 
+    public final static double KS = 0;
+    public final static double KG = 0;
+    public final static double KV = 0;
+    public final static double KA = 0;
+
     public final static double SPEED_LIMIT = 0;
     
 }
