@@ -3,14 +3,21 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.lib.tuneables.TuneableCommand;
 import frc.lib.tuneables.TuneablesManager;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeCommends;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.utils.NaturalXboxController;
 
 public class RobotContainer {
+
+    private final Intake intake = new Intake();
+    private final NaturalXboxController operatorController = new NaturalXboxController(IntakeConstants.OPERATOR_CONTROLLER_ID); 
+    private final IntakeCommends intakeCommends = new IntakeCommends(intake, null); 
+
     private final Swerve swerve = new Swerve();
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
@@ -36,6 +43,7 @@ public class RobotContainer {
                         driverController::getLeftY,
                         driverController::getRightX).fullTuneable());
     }
+    // TuneableCommand collectingCommand = intakeCommends.collectingPosition() 
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");

@@ -16,7 +16,7 @@ public class CollectingPosition extends ParallelCommandGroup {
   
     addCommands(
     new IntakeMoveToAngle(intake, COLLECTING_POSITION_DEGREE),
-    new IntakeButton(intake, COLLECTING_POSITION_ROLLERS_SPEED)
+    new ActivateRollers(intake, COLLECTING_POSITION_ROLLERS_SPEED)
     );
   }
   

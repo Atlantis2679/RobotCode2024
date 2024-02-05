@@ -5,10 +5,10 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class IntakeButton extends Command {
+public class ActivateRollers extends Command {
   private final Intake intake;
   private final double intakeSpeed; 
-  public IntakeButton(Intake intake, double intakeSpeed) {
+  public ActivateRollers(Intake intake, double intakeSpeed) {
     this.intakeSpeed = intakeSpeed;
     this.intake = intake;
     addRequirements(intake);

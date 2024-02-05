@@ -58,6 +58,7 @@ public class IntakeConstants {
     public static final double ROLLERS_JKG_METERS_SQUARED = 0;
     public static final double WRIST_JKG_METERS_SQUARED = 0;
     public static final int ENCODER_SIM_ID = 2;
-    
 
+    //controller
+    public static final int OPERATOR_CONTROLLER_ID = 0;
 }
