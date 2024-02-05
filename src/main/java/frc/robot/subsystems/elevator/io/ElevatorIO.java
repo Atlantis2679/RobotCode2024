@@ -1,7 +1,5 @@
 package frc.robot.subsystems.elevator.io;
 
-import java.util.function.DoubleSupplier;
-
 import frc.lib.logfields.IOBase;
 import frc.lib.logfields.LogFieldsTable;
 

@@ -9,5 +9,7 @@ public class ElevatorConstants {
     public final static double KP = 0;
     public final static double KI = 0;
     public final static double KD = 0;
+
+    public final static double SPEED_LIMIT = 0;
     
 }
