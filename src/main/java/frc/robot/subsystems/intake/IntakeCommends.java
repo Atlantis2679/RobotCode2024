@@ -5,16 +5,19 @@
 package frc.robot.subsystems.intake;
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** Add your docs here. */
 public class IntakeCommends {
-
+    // private final Boolean beamBreakValue;
     private final Intake intake;
 
-    public IntakeCommends(Intake intake){
+    public IntakeCommends(Intake intake, Boolean beamBreakValue){
     this.intake = intake;
+    beamBreakValue = intake.getBeamBreakValue();
+
     }
 
 
