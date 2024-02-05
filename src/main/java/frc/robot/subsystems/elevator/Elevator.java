@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
+import frc.lib.logfields.LogFieldsTable;
 import frc.robot.subsystems.elevator.io.ElevatorIO;
 import frc.robot.subsystems.elevator.io.ElevatorIOSparkMax;
 

@@ -15,8 +15,7 @@ public class ElevatorIOSparkMax extends ElevatorIO {
     private final CANSparkMax elevatorMotorRight = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_RIGHT_ID, MotorType.kBrushless);
     private final CANSparkMax elevatorMotorLeft = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_LETF_ID, MotorType.kBrushless);
     private final DutyCycleEncoder elevatorEncoder = new DutyCycleEncoder(0);
-    public final DoubleSupplier hight = fields.addDouble("hight", this::getEncoder);
-   
+    private final PIDController elevatorPID = new PIDController((ElevatorConstants.KP), (ElevatorConstants.KI), (ElevatorConstants.KD));
     
 
     public ElevatorIOSparkMax(LogFieldsTable fieldsTable){
