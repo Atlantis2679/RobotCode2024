@@ -4,17 +4,17 @@ import frc.lib.logfields.LogFieldsTable;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.RobotMap.Intake.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class IntakeIOSparkMax extends IntakeIO {
-    private final CANSparkMax rollersCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_ROLLERS_ID,
+    private final CANSparkMax rollersMotor = new CANSparkMax(ROLLERS_MOTOR_ID,
             MotorType.kBrushless);
-    private final CANSparkMax wristCANSparkMax = new CANSparkMax(CAN_SPARK_MAX_WRIST_ID,
+    private final CANSparkMax wristMotor = new CANSparkMax(WRIST_MOTOR_ID,
             MotorType.kBrushless);
-    private final DutyCycleEncoder WristEncoder = new DutyCycleEncoder(DUTY_CYCLE_ENCODER_WRIST_ID);
+    private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WRIST_ENCODE_ID);
 
     DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
 
@@ -23,28 +23,21 @@ public class IntakeIOSparkMax extends IntakeIO {
     }
 
     @Override
-    public void setWristSpeedPrecentOutput(double wristSpeed) {
-        wristCANSparkMax.set(wristSpeed);
+    public void setWristVoltage(double voltage) {
+        wristMotor.setVoltage(voltage);
     }
 
     @Override
-    public void setRollerSpeedPrecentOutput(double wristSpeed) {
-        rollersCANSparkMax.set(wristSpeed);
+    public void setRollerSpeedPrecentOutput(double speed) {
+        rollersMotor.set(speed);
     }
 
     @Override
     public double getWristAngleDegrees() {
-        return WristEncoder.getAbsolutePosition();
+        return wristEncoder.getAbsolutePosition();
     }
 
-    @Override
-    public double getWristSpeed() {
-        return wristCANSparkMax.get();
-    }
-
-
-    public boolean getBeamBreakValue(){
+    public boolean getNoteDetectorValue(){
         return beamBreak.get();
     }
-
 }

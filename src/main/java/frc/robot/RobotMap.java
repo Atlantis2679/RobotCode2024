@@ -8,6 +8,7 @@ public class RobotMap {
 
     public class Controllers {
         public static final int DRIVER_PORT = 0;
+        public static final int OPERATOR_PORT = 0;
     }
 
     public class Module0 {
@@ -32,5 +33,12 @@ public class RobotMap {
         public final static int DRIVE_MOTOR_ID = 26;
         public final static int ANGLE_MOTOR_ID = 27;
         public final static int ENCODER_ID = 53;
+    }
+
+    public class Intake {
+        public static final int ROLLERS_MOTOR_ID = 0;
+        public static final int WRIST_MOTOR_ID = 0;
+        public static final int WRIST_ENCODE_ID = 0;
+        public static final int BEAM_BREAK_ID = 0;    
     }
 }
