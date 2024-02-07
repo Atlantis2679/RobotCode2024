@@ -23,6 +23,12 @@ public class IntakeIOSim extends IntakeIO {
             true,
             1);
 
+    @Override
+    protected void periodicBeforeFields() {
+        rollersMotor.update(0.02);
+        wristMotor.update(0.02);
+    }
+
     public IntakeIOSim(LogFieldsTable logFieldsTable) {
         super(logFieldsTable);
     }
@@ -39,7 +45,7 @@ public class IntakeIOSim extends IntakeIO {
 
     @Override
     protected double getWristAngleDegrees() {
-        return Math.toDegrees(wristMotor.getAngleRads());
+        return Math.toDegrees(wristMotor.getAngleRads() + 2);
     }
 
     @Override

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeCommands;
 import frc.robot.subsystems.pitcher.Pitcher;
 import frc.robot.subsystems.pitcher.PitcherCommands;
 import frc.robot.subsystems.swerve.Swerve;
@@ -22,7 +23,7 @@ public class RobotContainer {
             RobotMap.Controllers.OPERTATOR_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
     private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
-
+    private final IntakeCommands intakeCommands = new IntakeCommands(intake);
     public RobotContainer() {
         configureDriverBindings();
         configureOperatorBindings();
@@ -47,6 +48,9 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
+        intake.setDefaultCommand(intakeCommands.close());
+        operatorController.leftBumper().onTrue(intakeCommands.open());
+        operatorController.rightBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY));
 
         operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
         operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
