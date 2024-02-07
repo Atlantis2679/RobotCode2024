@@ -6,7 +6,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.lib.tuneables.TuneableCommand;
+import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.lib.valueholders.BooleanHolder;
 import frc.robot.subsystems.swerve.commands.SwerveController;
 
@@ -41,7 +41,7 @@ public class SwerveCommands {
                                             ? Math.atan2(steerY, steerX) + Math.toRadians(90)
                                             : 0));
                 }
-                swerve.setModulesState(moduleStates, false, optimizeState.get());
+                swerve.setModulesState(moduleStates, false, optimizeState.get(), false);
             }, swerve);
         });
     }

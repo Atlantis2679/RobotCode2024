@@ -8,7 +8,7 @@ public class RobotMap {
 
     public class Controllers {
         public static final int DRIVER_PORT = 0;
-        public static final int OPERATOR_PORT = 0;
+        public static final int OPERTATOR_PORT = 1;
     }
 
     public class Module0 {
@@ -39,6 +39,24 @@ public class RobotMap {
         public static final int ROLLERS_MOTOR_ID = 0;
         public static final int WRIST_MOTOR_ID = 0;
         public static final int WRIST_ENCODE_ID = 0;
-        public static final int BEAM_BREAK_ID = 0;    
+        public static final int BEAM_BREAK_ID = 0;
+    }
+  
+    public class Flywheel {
+        public final static int UPPER_ROLLER_MOTOR_ID = 0;
+        public final static int LOWER_ROLLER_MOTOR_ID = 0;
+        public final static int UPPER_ROLLER_ENCODER_CHANNEL_A = 0;
+        public final static int UPPER_ROLLER_ENCODER_CHANNEL_B = 0;
+        public final static int LOWER_ROLLER_ENCODER_CHANNEL_A = 0;
+        public final static int LOWER_ROLLER_ENCODER_CHANNEL_B = 0;
+    }
+
+    public class Pitcher {
+        public final static int MOTOR_ID = 0;
+        public final static int ENCODER_ID = 0;
+    }
+
+    public class Loader {
+        public final static int MOTOR_ID = 0;
     }
 }

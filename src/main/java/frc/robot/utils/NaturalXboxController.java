@@ -3,10 +3,10 @@ package frc.robot.utils;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
- * Class that extends the regular CommandXboxController to provide:
- * - automatic deadband.
- * - Y axis that is up-positive.
- * - Squared axis values getters, for finer control.
+ * Extension of the standard CommandXboxController with the following features:
+ * - Lossless automatic deadband handling, preserving values below the deadband.
+ * - Inverted Y axis for a more intuitive up-positive orientation.
+ * - Squared axis values getters, providing finer control sensitivity.
  */
 public class NaturalXboxController extends CommandXboxController {
     private double deadband;
@@ -78,8 +78,19 @@ public class NaturalXboxController extends CommandXboxController {
         return square(getRightTriggerAxis());
     }
 
+    /**
+     * Applies a deadband by considering values within the deadband as the new zero.
+     * Values outside the deadband are adjusted to be relative to the new range.
+     *
+     * @param value    The input value to apply the deadband to.
+     * @param deadband The deadband range. Values within this range are considered
+     *                 the new zero.
+     * @return The adjusted value after applying the deadband.
+     */
     public double applyDeadband(double value) {
-        return Math.abs(value) < deadband ? 0 : value;
+        return Math.abs(value) < deadband
+                ? 0
+                : (value - (Math.signum(value) * deadband)) / (1 - deadband);
     }
 
     public double square(double value) {
