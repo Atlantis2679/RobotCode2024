@@ -35,7 +35,6 @@ public class RobotContainer {
 
         swerve.setDefaultCommand(driveCommand);
         TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
-
         driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
 
         TuneablesManager.add("Swerve/modules control mode",
@@ -44,6 +43,7 @@ public class RobotContainer {
                         driverController::getLeftY,
                         driverController::getRightX).fullTuneable());
     }
+    // TuneableCommand collectingCommand = intakeCommends.collectingPosition() 
 
     private void configureOperatorBindings() {
         operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));

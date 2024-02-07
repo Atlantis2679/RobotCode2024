@@ -1,18 +1,49 @@
-// package frc.robot.subsystems.intake.io;
-// import static frc.robot.subsystems.intake.IntakeConstants.*;
+package frc.robot.subsystems.intake.io;
 
-// import edu.wpi.first.math.system.plant.DCMotor;
-// import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-// import frc.lib.logfields.LogFieldsTable;
+import static frc.robot.subsystems.intake.IntakeConstants.*;
 
-// public class IntakeIOsim extends IntakeIO{
-//     // private final FlywheelSim intakFlywheelSim;
-//     // private final FlywheelSim jointFlywheelSim;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.lib.logfields.LogFieldsTable;
 
-//     // public IntakeIOsim(LogFieldsTable logFieldsTable){
-//     //     intakFlywheelSim = new FlywheelSim(DCMotor.getNeo550(CAN_SPARK_MAX_ROLLERS_ID),  ROLLERS_GEARING,  0);
-//     //     jointFlywheelSim = new FlywheelSim(DCMotor.getNEO(CAN_SPARK_MAX_WRIST_ID), JOINT_GEARING, 0);
-//     // }
+public class IntakeIOSim extends IntakeIO {
+    private final FlywheelSim rollersMotor = new FlywheelSim(
+            DCMotor.getNeo550(1),
+            ROLLERS_GEAR_RATIO,
+            ROLLERS_JKG_METERS_SQUARED);
 
+    private final SingleJointedArmSim wristMotor = new SingleJointedArmSim(
+            DCMotor.getNEO(1),
+            JOINT_GEAR_RATIO,
+            WRIST_JKG_METERS_SQUARED,
+            0.35,
+            -Math.PI,
+            Math.PI,
+            true,
+            1);
 
-// }
+    public IntakeIOSim(LogFieldsTable logFieldsTable) {
+        super(logFieldsTable);
+    }
+
+    @Override
+    public void setRollerSpeedPrecentOutput(double rollersSpeed) {
+        rollersMotor.setInputVoltage(rollersSpeed * 12);
+    }
+
+    @Override
+    public void setWristVoltage(double voltage) {
+        wristMotor.setInputVoltage(voltage);
+    }
+
+    @Override
+    protected double getWristAngleDegrees() {
+        return Math.toDegrees(wristMotor.getAngleRads());
+    }
+
+    @Override
+    protected boolean getNoteDetectorValue() {
+        return false;
+    }
+}

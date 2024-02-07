@@ -5,71 +5,77 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
+import frc.robot.Robot;
 import frc.robot.subsystems.intake.io.IntakeIO;
+import frc.robot.subsystems.intake.io.IntakeIOSim;
 import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
-  private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
-  private final IntakeIO io = new IntakeIOSparkMax(fieldsTable);
+    private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
+    private final IntakeIO io = Robot.isSimulation()
+            ? new IntakeIOSim(fieldsTable)
+            : new IntakeIOSparkMax(fieldsTable);
 
-  private final PIDController wristPidController = new PIDController(KP, KI, KD);
-  SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(ROLLERS_LIMIT_ACCELERATION_VOLTEG_PER_SECOND);
-  SlewRateLimiter wristSpeedLimiter = new SlewRateLimiter(WRIST_LIMIT_ACCELERATION_VOLTEG_PER_SECOND);
+    private final TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(WRIST_MAX_VELOCITY_DEG_PER_SEC, WRIST_MAX_ACCELERATION_DEG_PER_SEC));
 
-  private final ArmFeedforward feedForwardIntake = new ArmFeedforward(KS, KG, KV, KA);
+    private final ArmFeedforward feedForwardWrist = new ArmFeedforward(KS, KG, KV, KA);
+    private final PIDController wristPidController = new PIDController(KP, KI, KD);
 
-  public Intake() {
-    fieldsTable.update();
-  }
+    SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
+    SlewRateLimiter wristSpeedLimiter = new SlewRateLimiter(WRIST_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
 
-  @Override
-  public void periodic() {
-  }
-
-  public void setSpeedIntake(double intakeSpeed) {
-    intakeSpeed = rollersSpeedLimiter.calculate(intakeSpeed);
-    io.setRollerSpeed(MathUtil.clamp(
-      intakeSpeed,
-      -ROLLER_VOLTEG,
-       ROLLER_VOLTEG));
-  }
-
-  public void setWristSpeed(double jointSpeed) { 
-    jointSpeed = wristSpeedLimiter.calculate(jointSpeed);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-    io.setWristSpeed(MathUtil.clamp(
-      jointSpeed,
-      -ARM_VOLTEG,
-       ARM_VOLTEG));
-  }
-  
-  public double getAbsoluteAngle() {
-    return io.wristAngleDegrees.getAsDouble();
-  }
-
-  public double getIntakeSpeed() {
-    return io.rollersSpeed.getAsDouble();
-  }
-
-  public double getWristPercentageOutput() {
-    return io.wristSpeed.getAsDouble();
-  }
-  public boolean getBeamBreakValue() {
-    return io.beamBreakValue.getAsBoolean();
-  }
-  
-  public double calculateFeedforward(double desiredWristAngleDegree, double wristVelocity, boolean usePID) {
-
-    double voltages = feedForwardIntake.calculate(Math.toRadians(desiredWristAngleDegree), wristVelocity);
-
-    if (usePID) {
-      voltages += wristPidController.calculate(getAbsoluteAngle(), desiredWristAngleDegree);
+    public Intake() {
+        fieldsTable.update();
     }
-    return voltages;
 
-  }
+    @Override
+    public void periodic() {
+    }
+
+    public void setSpeedRollers(double speedPrecentageOutput) {
+        speedPrecentageOutput = rollersSpeedLimiter.calculate(speedPrecentageOutput);
+        io.setRollerSpeedPrecentOutput(MathUtil.clamp(
+                speedPrecentageOutput,
+                -ROLLERS_SPEED_LIMIT_PRECENTAGE,
+                ROLLERS_SPEED_LIMIT_PRECENTAGE));
+    }
+
+    public void setWristVoltage(double voltage) {
+        voltage = wristSpeedLimiter.calculate(voltage);
+        io.setWristVoltage(MathUtil.clamp(
+                voltage,
+                -WRIST_VOLTAGE_LIMIT,
+                WRIST_VOLTAGE_LIMIT));
+    }
+
+    public double getAbsoluteAngleDegrees() {
+        return io.wristAngleDegrees.getAsDouble();
+    }
+
+    public boolean getIsNoteInside() {
+        return io.noteDetectorValue.getAsBoolean();
+    }
+
+    public double calculateFeedforward(double desiredWristAngleDegrees, double desiredWristVelocity, boolean usePID) {
+        double voltages = feedForwardWrist.calculate(Math.toRadians(desiredWristAngleDegrees), desiredWristVelocity);
+
+        if (usePID) {
+            voltages += wristPidController.calculate(getAbsoluteAngleDegrees(), desiredWristAngleDegrees);
+        }
+        return voltages;
+    }
+
+    public TrapezoidProfile.State calculateTrapezoidProfile(
+            double time,
+            TrapezoidProfile.State initialState,
+            TrapezoidProfile.State goalState) {
+        return trapezoidProfile.calculate(time, initialState, goalState);
+    }
 
 }
