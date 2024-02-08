@@ -2,12 +2,13 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
+import frc.lib.tuneables.extensions.TuneableArmFeedforward;
+import frc.lib.tuneables.extensions.TuneableTrapezoidProfile;
 import frc.robot.Robot;
 import frc.robot.subsystems.intake.io.IntakeIO;
 import frc.robot.subsystems.intake.io.IntakeIOSim;
@@ -21,14 +22,13 @@ public class Intake extends SubsystemBase {
             ? new IntakeIOSim(fieldsTable)
             : new IntakeIOSparkMax(fieldsTable);
 
-    private final TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
+    private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(WRIST_MAX_VELOCITY_DEG_PER_SEC, WRIST_MAX_ACCELERATION_DEG_PER_SEC));
 
-    private final ArmFeedforward feedForwardWrist = new ArmFeedforward(KS, KG, KV, KA);
+    private final TuneableArmFeedforward feedForwardWrist = new TuneableArmFeedforward(KS, KG, KV, KA);
     private final PIDController wristPidController = new PIDController(KP, KI, KD);
 
     SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
-    SlewRateLimiter wristSpeedLimiter = new SlewRateLimiter(WRIST_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
 
     public Intake() {
         fieldsTable.update();
@@ -47,11 +47,10 @@ public class Intake extends SubsystemBase {
     }
 
     public void setWristVoltage(double voltage) {
-        voltage = wristSpeedLimiter.calculate(voltage);
-        io.setWristVoltage(MathUtil.clamp(
-                voltage,
-                -WRIST_VOLTAGE_LIMIT,
-                WRIST_VOLTAGE_LIMIT));
+        fieldsTable.recordOutput("Demand Voltage", voltage);
+        voltage = MathUtil.clamp(voltage, -WRIST_VOLTAGE_LIMIT, WRIST_VOLTAGE_LIMIT);
+        fieldsTable.recordOutput("Actual Voltage", voltage);
+        io.setWristVoltage(voltage);
     }
 
     public double getAbsoluteAngleDegrees() {
@@ -68,6 +67,8 @@ public class Intake extends SubsystemBase {
         if (usePID) {
             voltages += wristPidController.calculate(getAbsoluteAngleDegrees(), desiredWristAngleDegrees);
         }
+
+        fieldsTable.recordOutput("feedforward result", voltages);
         return voltages;
     }
 
@@ -77,5 +78,4 @@ public class Intake extends SubsystemBase {
             TrapezoidProfile.State goalState) {
         return trapezoidProfile.calculate(time, initialState, goalState);
     }
-
 }
