@@ -19,9 +19,9 @@ import frc.robot.subsystems.swerve.SwerveContants.PathPlanner;
 import frc.robot.subsystems.swerve.io.GyroIO;
 import frc.robot.subsystems.swerve.io.GyroIONavX;
 import frc.robot.subsystems.swerve.io.GyroIOSim;
-import frc.robot.subsystems.swerve.io.VisionIO;
-import frc.robot.subsystems.swerve.io.VisionIOPhoton;
-import frc.robot.subsystems.swerve.io.VisionIOSim;
+import frc.robot.subsystems.swerve.poseEstimator.VisionIO;
+import frc.robot.subsystems.swerve.poseEstimator.VisionIOPhoton;
+import frc.robot.subsystems.swerve.poseEstimator.VisionIOSim;
 import frc.robot.utils.LocalADStarAK;
 import frc.robot.utils.RotationalSensorHelper;
 import frc.lib.logfields.LogFieldsTable;
@@ -53,10 +53,6 @@ public class Swerve extends SubsystemBase implements Tuneable {
     private final GyroIO gyroIO = Robot.isSimulation()
             ? new GyroIOSim(fieldsTable.getSubTable("Gyro"))
             : new GyroIONavX(fieldsTable.getSubTable("Gyro"));
-
-    private final VisionIO visionIO;
-
-    private final SwerveDrivePoseEstimator poseEstimator;
 
     // Should be FL, FR, BL, BR
     private final SwerveModule[] modules = {
@@ -97,18 +93,8 @@ public class Swerve extends SubsystemBase implements Tuneable {
     public Swerve() {
         fieldsTable.update();
 
-        visionIO = Robot.isSimulation()
-            ? new VisionIOSim(fieldsTable, this::getPose)
-            : new VisionIOPhoton(fieldsTable);
-
         gyroYawHelperCCW = new RotationalSensorHelper(
             Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
-
-        poseEstimator = new SwerveDrivePoseEstimator(
-                swerveKinematics,
-                gyroYawHelperCCW.getMeasuredAngle(),
-                getModulesPositions(),
-                VisionConstants.robotStartingPose);
 
         TuneablesManager.add("Swerve", (Tuneable) this);
 
