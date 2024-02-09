@@ -5,6 +5,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
 import frc.lib.tuneables.extensions.TuneableArmFeedforward;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.intake.io.IntakeIOSim;
 import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
+// import static frc.robot.RobotMap.*;
 
 public class Intake extends SubsystemBase {
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
@@ -28,6 +30,16 @@ public class Intake extends SubsystemBase {
     private final TuneableArmFeedforward feedForwardWrist = new TuneableArmFeedforward(KS, KG, KV, KA);
     private final PIDController wristPidController = new PIDController(KP, KI, KD);
 
+    private final IntakeVisualizer realStateVisualizer = new IntakeVisualizer(
+            fieldsTable,
+            new Color8Bit("#00BEBE"),
+            " Real Mechanism");
+
+    private final IntakeVisualizer desiredStateVisualizer = new IntakeVisualizer(
+            fieldsTable,
+            new Color8Bit("#FFFF00"),
+            "Desired Mechanism");
+
     SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
 
     public Intake() {
@@ -36,6 +48,8 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
+        System.out.println("periodic: " + getAbsoluteAngleDegrees());
+        realStateVisualizer.update(getAbsoluteAngleDegrees());
     }
 
     public void setSpeedRollers(double speedPrecentageOutput) {
@@ -72,10 +86,20 @@ public class Intake extends SubsystemBase {
         return voltages;
     }
 
+    public void resetPID() {
+        wristPidController.reset();
+    }
+
     public TrapezoidProfile.State calculateTrapezoidProfile(
             double time,
             TrapezoidProfile.State initialState,
             TrapezoidProfile.State goalState) {
-        return trapezoidProfile.calculate(time, initialState, goalState);
+
+        TrapezoidProfile.State state = trapezoidProfile.calculate(time, initialState, goalState);
+        System.out.println("wposition: " + state.position);
+        desiredStateVisualizer.update(state.position);
+
+        return state;
     }
+
 }

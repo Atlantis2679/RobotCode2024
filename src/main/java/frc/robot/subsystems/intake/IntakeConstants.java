@@ -45,6 +45,9 @@ public class IntakeConstants {
     public static final double ROLLERS_JKG_METERS_SQUARED = 0.05;
     public static final double WRIST_JKG_METERS_SQUARED = 0.05;
     public static final int ENCODER_SIM_ID = 2;
+
+    public static final double WRIST_TURNING_MAX_DEGREES = 0;
+    public static final double WRIST_TURNING_MIN_DEGREES = 350;
     
     
     public class ManualController {
@@ -60,7 +63,7 @@ public class IntakeConstants {
     }
     
     public class Close {
-        public static final double CLOSED_WRIST_ANGLE_DEGREE = -50;
+        public static final double CLOSED_WRIST_ANGLE_DEGREE = 70;
     }
     
 }

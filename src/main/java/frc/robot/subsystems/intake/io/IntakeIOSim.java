@@ -18,8 +18,8 @@ public class IntakeIOSim extends IntakeIO {
             JOINT_GEAR_RATIO,
             WRIST_JKG_METERS_SQUARED,
             0.35,
-            -Math.PI,
-            Math.PI,
+            Math.toRadians(WRIST_TURNING_MIN_DEGREES),
+            Math.toRadians(WRIST_TURNING_MAX_DEGREES),
             true,
             1);
 
@@ -45,7 +45,7 @@ public class IntakeIOSim extends IntakeIO {
 
     @Override
     protected double getWristAngleDegrees() {
-        return Math.toDegrees(wristMotor.getAngleRads() + 2);
+        return Math.toDegrees(wristMotor.getAngleRads());
     }
 
     @Override

@@ -24,6 +24,7 @@ public class IntakeCommands {
         ValueHolder<TrapezoidProfile.State> refrenceState = new ValueHolder<TrapezoidProfile.State>(null);
 
         return intake.runOnce(() -> {
+            intake.resetPID();
             refrenceState.set(new TrapezoidProfile.State(intake.getAbsoluteAngleDegrees(), 0));
         }).andThen(Commands.run(() -> {
             refrenceState.set(intake.calculateTrapezoidProfile(
@@ -47,11 +48,15 @@ public class IntakeCommands {
         return moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
     }
 
-    public Command manualController(DoubleSupplier speed){
+    public Command manualController(DoubleSupplier speed) {
         return intake.run(() -> {
-            double feedforwardResult = intake.calculateFeedforward(intake.getAbsoluteAngleDegrees(), 0, false);
+            double feedforwardResult = intake.calculateFeedforward(
+                    intake.getAbsoluteAngleDegrees(),
+                    0,
+                    false);
+
             intake.setWristVoltage(feedforwardResult + speed.getAsDouble() * ManualController.SPEED_MULTIPLIER);
         });
     }
-
+    
 }
