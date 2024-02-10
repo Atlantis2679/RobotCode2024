@@ -61,15 +61,15 @@ public class PoseEstimator {
         return PhotonUtils.getDistanceToPose(visionIO.photonPoseEstimate.get().toPose2d(), poseEstimator.getEstimatedPosition());
     }
 
-    public Pose2d getEstimatedPosition() {
-        return poseEstimator.getEstimatedPosition();
-    }
-
     public void resetPosition(Rotation2d currentAngle, SwerveModulePosition[] positions, Pose2d currentPosition) {
         poseEstimator.resetPosition(currentAngle, positions, currentPosition);
     }
 
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
+    }
+
+    public Pose2d getPhotonPoseEstimator() {
+        return visionIO.photonPoseEstimate.get().toPose2d();
     }
 }

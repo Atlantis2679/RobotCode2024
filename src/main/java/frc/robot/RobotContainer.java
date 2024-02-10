@@ -22,17 +22,14 @@ public class RobotContainer {
         TuneableCommand driveCommand = swerveCommands.controller(
                 driverController::getLeftY,
                 driverController::getLeftX,
-<<<<<<< HEAD
                 driverController::getRightX,
-=======
-                driverController::getLeftX,
->>>>>>> 074cce571e910cb9a62364676eb5c864b36ad851
                 driverController.leftBumper().negate()::getAsBoolean);
 
         swerve.setDefaultCommand(driveCommand);
         TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
 
         driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
+        driverController.y().onTrue(swerveCommands.xWheelLock());
 
         TuneablesManager.add("Swerve/modules control mode",
                 swerveCommands.controlModules(
