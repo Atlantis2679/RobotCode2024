@@ -3,7 +3,6 @@ package frc.robot.subsystems.flywheel;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.flywheel.commands.RotateFlywheel;
 
 public class FlywheelCommands {
     private final Flywheel flywheel;
@@ -12,7 +11,16 @@ public class FlywheelCommands {
         this.flywheel = flywheel;
     }
 
-    public Command rotate(DoubleSupplier upperRollerSpeedSupplier, DoubleSupplier lowerRollerSpeedSupplier) {
-        return new RotateFlywheel(flywheel, upperRollerSpeedSupplier, lowerRollerSpeedSupplier);
+    public Command rotate(DoubleSupplier upperRollerSpeedSupplierRPS, DoubleSupplier lowerRollerSpeedSupplierRPS) {
+        return flywheel
+                .runOnce(() -> flywheel.resetPIDs())
+                .andThen(flywheel.run(() -> {
+                    double upperRollerVoltage = flywheel
+                            .calculateUpperRollerVoltageForSpeed(upperRollerSpeedSupplierRPS.getAsDouble());
+                    double lowerRollerVoltage = flywheel
+                            .calculateLowerRollerVoltageForSpeed(lowerRollerSpeedSupplierRPS.getAsDouble());
+                    flywheel.setSpeed(upperRollerVoltage, lowerRollerVoltage);
+                }))
+                .finallyDo(() -> flywheel.setSpeed(0, 0));
     }
 }
