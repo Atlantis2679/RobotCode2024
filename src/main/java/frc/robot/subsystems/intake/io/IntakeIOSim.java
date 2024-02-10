@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake.io;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -40,6 +42,7 @@ public class IntakeIOSim extends IntakeIO {
 
     @Override
     public void setWristVoltage(double voltage) {
+        Logger.recordOutput("set voltage", voltage);
         wristMotor.setInputVoltage(voltage);
     }
 

@@ -8,6 +8,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
+import frc.lib.tuneables.SendableType;
+import frc.lib.tuneables.Tuneable;
+import edu.wpi.first.util.sendable.Sendable;
+import frc.lib.tuneables.TuneableBuilder;
+import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableArmFeedforward;
 import frc.lib.tuneables.extensions.TuneableTrapezoidProfile;
 import frc.robot.Robot;
@@ -18,7 +23,7 @@ import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 // import static frc.robot.RobotMap.*;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase implements Tuneable {
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
     private final IntakeIO io = Robot.isSimulation()
             ? new IntakeIOSim(fieldsTable)
@@ -44,11 +49,12 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         fieldsTable.update();
+        TuneablesManager.add("Intake", (Tuneable) this);
     }
 
     @Override
     public void periodic() {
-        System.out.println("periodic: " + getAbsoluteAngleDegrees());
+        fieldsTable.recordOutput("periodic", getAbsoluteAngleDegrees());
         realStateVisualizer.update(getAbsoluteAngleDegrees());
     }
 
@@ -76,6 +82,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double calculateFeedforward(double desiredWristAngleDegrees, double desiredWristVelocity, boolean usePID) {
+        fieldsTable.recordOutput("desiredWristAngleDegrees", desiredWristAngleDegrees);;
         double voltages = feedForwardWrist.calculate(Math.toRadians(desiredWristAngleDegrees), desiredWristVelocity);
 
         if (usePID) {
@@ -96,10 +103,19 @@ public class Intake extends SubsystemBase {
             TrapezoidProfile.State goalState) {
 
         TrapezoidProfile.State state = trapezoidProfile.calculate(time, initialState, goalState);
-        System.out.println("wposition: " + state.position);
+        fieldsTable.recordOutput("desiredState", state.position);
         desiredStateVisualizer.update(state.position);
 
         return state;
+    }
+
+    @Override
+    public void initTuneable(TuneableBuilder builder) {
+        builder.addChild("Intake Subsystem", (Sendable) this);
+
+        builder.addChild("Wrist PID", wristPidController); 
+     
+        builder.addChild("Wrist feedforward", feedForwardWrist);
     }
 
 }

@@ -48,9 +48,10 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        // intake.setDefaultCommand(intakeCommands.close());
-        intake.setDefaultCommand(intakeCommands.manualController(operatorController::getRightY));
-        operatorController.leftBumper().onTrue(intakeCommands.open());
+        
+        intake.setDefaultCommand(intakeCommands.manualController(() -> operatorController.getRightY()));
+        // operatorController.leftBumper().onTrue(intakeCommands.open());
+        // intake.setDefaultCommand(intakeCommands.manualController(operatorController::getRightY));
         // operatorController.rightBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY));
 
         operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
