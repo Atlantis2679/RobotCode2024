@@ -9,18 +9,24 @@ import frc.lib.logfields.LogFieldsTable;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class ElevatorIOSparkMax extends ElevatorIO {
-    private final CANSparkMax elevatorMotorRight = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_RIGHT_ID, MotorType.kBrushless);
-    private final CANSparkMax elevatorMotorLeft = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_LETF_ID, MotorType.kBrushless);
+    private final CANSparkMax motorRight = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_RIGHT_ID, MotorType.kBrushless);
+    private final CANSparkMax motorLeft = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_LETF_ID, MotorType.kBrushless);
     
 
     public ElevatorIOSparkMax(LogFieldsTable fieldsTable){
         super(fieldsTable);
-        elevatorMotorRight.follow(elevatorMotorLeft);
+        motorRight.restoreFactoryDefaults();
+        motorLeft.restoreFactoryDefaults();
     }
 
     @Override
     public void setSpeedRight(double speed){
-        elevatorMotorLeft.set(speed);
+        motorRight.set(speed);
+    }
+
+    @Override
+    public void setSpeedLeft(double speed) {
+        motorLeft.set(speed);
     }
 
 }
