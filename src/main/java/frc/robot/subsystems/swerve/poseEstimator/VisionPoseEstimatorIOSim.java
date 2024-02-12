@@ -16,16 +16,17 @@ import org.photonvision.simulation.VisionSystemSim;
 
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 import frc.lib.logfields.LogFieldsTable;
 
-import frc.robot.subsystems.swerve.VisionConstants;
+import frc.robot.subsystems.swerve.VisionPoseEstimatorConstants;
 
 /** Add your docs here. */
-public class VisionIOSim extends VisionIO {
+public class VisionPoseEstimatorIOSim extends VisionPoseEstimatorIO {
     private final PhotonCameraSim cameraSim;
     private final VisionSystemSim visionSim;
     private final Supplier<Pose2d> estimatedPositionSupplier;
@@ -35,27 +36,27 @@ public class VisionIOSim extends VisionIO {
 
     PhotonCamera camera = new PhotonCamera("camera");
     private double cameraLatestTimestamp;
-    public VisionIOSim(LogFieldsTable fieldsTable, Supplier<Pose2d> estimatedPositionSupplier){
+
+    public VisionPoseEstimatorIOSim(LogFieldsTable fieldsTable, Supplier<Pose2d> estimatedPositionSupplier, AprilTagFieldLayout kTagLayout){
         super(fieldsTable);
         this.fieldsTable = fieldsTable;
         this.estimatedPositionSupplier = estimatedPositionSupplier;
         // Create the vision system simulation which handles cameras and targets on the field.
         visionSim = new VisionSystemSim("vision simulation");
         // Add all the AprilTags inside the tag layout as visible targets to this simulated field.
-        visionSim.addAprilTags(VisionConstants.kTagLayout);
+        visionSim.addAprilTags(kTagLayout);
         // Create simulated camera properties. These can be set to mimic your actual camera.
         var cameraProp = new SimCameraProperties();
-        cameraProp.setCalibration(VisionConstants.simCameraResWidth, VisionConstants.simCameraResHeight, Rotation2d.fromDegrees(VisionConstants.simCameraFovDeg));
-        cameraProp.setCalibError(VisionConstants.simCameraAvgErrorPx, VisionConstants.simCameraErrorStdDevPx);
-        cameraProp.setFPS(VisionConstants.simCameraFps);
-        cameraProp.setAvgLatencyMs(VisionConstants.simCameraAvgLatencyMs);
-        cameraProp.setLatencyStdDevMs(VisionConstants.simCameraLatencyStdDevMs);
+        cameraProp.setCalibration(VisionPoseEstimatorConstants.SIM_CAMERA_RES_WIDTH, VisionPoseEstimatorConstants.SIM_CAMERA_RES_HEIGHT, Rotation2d.fromDegrees(VisionPoseEstimatorConstants.SIM_CAMERA_FOV_DEG));
+        cameraProp.setCalibError(VisionPoseEstimatorConstants.SIM_CAMERA_AVG_ERROR_PX, VisionPoseEstimatorConstants.SIM_CAMERA_ERROR_STD_DEV_PX);
+        cameraProp.setFPS(VisionPoseEstimatorConstants.SIM_CAMERA_FPS);
+        cameraProp.setAvgLatencyMs(VisionPoseEstimatorConstants.SIM_CAMERA_AVG_LATENCY_MS);
+        cameraProp.setLatencyStdDevMs(VisionPoseEstimatorConstants.SIM_CAMERA_LATENCY_STD_DEV_MS);
         // Create a PhotonCameraSim which will update the linked PhotonCamera's values with visible
         // targets.
         cameraSim = new PhotonCameraSim(camera, cameraProp);
         // Add the simulated camera to view the targets on this simulated field.
-        visionSim.addCamera(cameraSim, VisionConstants.robotToCameraTransform3d);
-        visionSim.addAprilTags(VisionConstants.kTagLayout);
+        visionSim.addCamera(cameraSim, VisionPoseEstimatorConstants.ROBOT_TO_CAMERA_TRANSFORM);
     }
 
     @Override
@@ -78,6 +79,11 @@ public class VisionIOSim extends VisionIO {
     @Override
     protected Pose3d getPoseEstimate(){
         return simPoseEstimate;
+    }
+
+    @Override
+    protected boolean cameraHasTarget(){
+        return false; //-----not-using-simulation------
     }
 
 }

@@ -12,16 +12,18 @@ import edu.wpi.first.math.geometry.Pose3d;
 import frc.lib.logfields.IOBase;
 import frc.lib.logfields.LogFieldsTable;
 
-public abstract class VisionIO extends IOBase {
+public abstract class VisionPoseEstimatorIO extends IOBase {
 
     public final Supplier<Pose3d> photonPoseEstimate = fields.addObject("poseEstimate", this::getPoseEstimate);
     public final DoubleSupplier cameraTimestampSeconds = fields.addDouble("cameraTimestamp", this::getCameraTimestampSeconds);
-    protected VisionIO(LogFieldsTable fieldsTable){
+    protected VisionPoseEstimatorIO(LogFieldsTable fieldsTable){
         super(fieldsTable);
     }
 
     protected abstract double getCameraTimestampSeconds();
 
     protected abstract Pose3d getPoseEstimate();
+
+    protected abstract boolean cameraHasTarget();
 
 }

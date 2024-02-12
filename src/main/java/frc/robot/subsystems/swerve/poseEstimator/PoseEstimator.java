@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve.poseEstimator;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,12 +11,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import frc.lib.logfields.LogFieldsTable;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.SwerveContants;
-import frc.robot.subsystems.swerve.VisionConstants;
+import frc.robot.subsystems.swerve.VisionPoseEstimatorConstants;
+
+import java.io.IOException;
 
 import org.photonvision.PhotonUtils;
 
 public class PoseEstimator {
-    private final VisionIO visionIO;
+    private final VisionPoseEstimatorIO visionIO;
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
@@ -31,22 +35,30 @@ public class PoseEstimator {
             -SwerveContants.TRACK_WIDTH_M / 2,
             -SwerveContants.TRACK_LENGTH_M / 2);
 
-    private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-                FRONT_LEFT_LOCATION,
-                FRONT_RIGHT_LOCATION,
-                BACK_LEFT_LOCATION,
-                BACK_RIGHT_LOCATION);
+    // The layout of the AprilTags on the field
+    public static final AprilTagFieldLayout kTagLayout;
 
-    public PoseEstimator(LogFieldsTable fieldsTable, Rotation2d currentAngle, SwerveModulePosition[] positions) {
+    static{
+        try {
+            kTagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("AprilTagFieldLayout blew up");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public PoseEstimator(LogFieldsTable fieldsTable, Rotation2d currentAngle, SwerveModulePosition[] positions, SwerveDriveKinematics swerveKinematics) {
         visionIO = Robot.isSimulation()
-                ? new VisionIOSim(fieldsTable, this::getPose)
-                : new VisionIOPhoton(fieldsTable);
+                ? new VisionPoseEstimatorIOSim(fieldsTable, this::getPose, kTagLayout)
+                : new VisionPoseEstimatorIOPhoton(fieldsTable, kTagLayout);
 
         poseEstimator = new SwerveDrivePoseEstimator(
                 swerveKinematics,
                 currentAngle,
                 positions,
-                VisionConstants.robotStartingPose);
+                new Pose2d());
     }
     
     public void updatePoseEstimator(Rotation2d currentAngleDegrees, SwerveModulePosition[] positions) {
@@ -54,7 +66,12 @@ public class PoseEstimator {
     }
 
     public void addVisionMeasurements() {
-        poseEstimator.addVisionMeasurement(visionIO.photonPoseEstimate.get().toPose2d(), visionIO.cameraTimestampSeconds.getAsDouble());
+
+        double poseEstimateDiff = this.getDistanceToPose();
+            if(poseEstimateDiff < VisionPoseEstimatorConstants.VISION_THRESHOLD_DISTANCE && visionIO.cameraHasTarget()){
+                
+                poseEstimator.addVisionMeasurement(visionIO.photonPoseEstimate.get().toPose2d(), visionIO.cameraTimestampSeconds.getAsDouble());
+            }
     }
 
     public double getDistanceToPose() {
