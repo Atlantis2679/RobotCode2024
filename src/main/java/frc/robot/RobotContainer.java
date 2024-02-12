@@ -24,6 +24,7 @@ public class RobotContainer {
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
     private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
     private final IntakeCommands intakeCommands = new IntakeCommands(intake);
+
     public RobotContainer() {
         configureDriverBindings();
         configureOperatorBindings();
@@ -48,11 +49,11 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        
-        intake.setDefaultCommand(intakeCommands.manualController(() -> operatorController.getRightY()));
-        // operatorController.leftBumper().onTrue(intakeCommands.open());
-        // intake.setDefaultCommand(intakeCommands.manualController(operatorController::getRightY));
-        // operatorController.rightBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY));
+
+        intake.setDefaultCommand(intakeCommands.manualController(operatorController::getRightY));
+        operatorController.leftBumper().onTrue(intakeCommands.open());
+        operatorController.rightBumper().onTrue(intakeCommands.close());
+        operatorController.x().whileTrue(intakeCommands.aimToAmp());
 
         operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
         operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));

@@ -8,7 +8,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
-import frc.lib.tuneables.SendableType;
 import frc.lib.tuneables.Tuneable;
 import edu.wpi.first.util.sendable.Sendable;
 import frc.lib.tuneables.TuneableBuilder;
@@ -104,6 +103,7 @@ public class Intake extends SubsystemBase implements Tuneable {
 
         TrapezoidProfile.State state = trapezoidProfile.calculate(time, initialState, goalState);
         fieldsTable.recordOutput("desiredState", state.position);
+        fieldsTable.recordOutput("desired velocity", state.velocity);
         desiredStateVisualizer.update(state.position);
 
         return state;
@@ -116,6 +116,8 @@ public class Intake extends SubsystemBase implements Tuneable {
         builder.addChild("Wrist PID", wristPidController); 
      
         builder.addChild("Wrist feedforward", feedForwardWrist);
+
+        builder.addChild("Trapezoid profile", trapezoidProfile);
     }
 
 }

@@ -4,13 +4,13 @@ public class IntakeConstants {
     // Motor and Sensors ID
 
     // Angle PID
-            public static final double KP = 0;
+        public static final double KP = 0.1;
         public static final double KI = 0;
         public static final double KD = 0;
 
     // Feedforward wrist
         public static final double KS = 0;
-        public static final double KG = 1.145000;
+        public static final double KG = 0.161519;
         public static final double KV = 0;
         public static final double KA = 0;
 
@@ -22,8 +22,8 @@ public class IntakeConstants {
         public static final double WRIST_VOLTAGE_LIMIT = 12;
 
     // trapezoidProfile
-        public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 0;
-        public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 0;
+        public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 90;
+        public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 90;
 
     // SlewRateLimiter
         public static final double ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND = 12;
@@ -56,13 +56,18 @@ public class IntakeConstants {
     public class MoveToAngle {
         public static final boolean USE_CLOSED_LOOP_PROFILE = true;
     }
-
+    
     public class Open {
         public static final double COLLECTING_WRIST_ANGLE_DEGREE = 210;
     }
-
+    
     public class Close {
         public static final double CLOSED_WRIST_ANGLE_DEGREE = -10;
+    }
+
+    public class aimToAmp {
+        public static final double AIM_TO_AMP_WRIST_DEGREE = 100;
+        
     }
 
 }

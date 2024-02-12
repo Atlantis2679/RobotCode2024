@@ -12,6 +12,7 @@ import frc.robot.subsystems.intake.IntakeConstants.Close;
 import frc.robot.subsystems.intake.IntakeConstants.ManualController;
 import frc.robot.subsystems.intake.IntakeConstants.MoveToAngle;
 import frc.robot.subsystems.intake.IntakeConstants.Open;
+import frc.robot.subsystems.intake.IntakeConstants.aimToAmp;
 
 public class IntakeCommands {
     private final Intake intake;
@@ -46,6 +47,10 @@ public class IntakeCommands {
 
     public Command close() {
         return moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
+    }
+
+    public Command aimToAmp(){
+        return moveToAngle(aimToAmp.AIM_TO_AMP_WRIST_DEGREE);
     }
 
     public Command manualController(DoubleSupplier speed) {
