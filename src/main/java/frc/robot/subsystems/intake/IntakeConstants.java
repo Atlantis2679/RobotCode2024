@@ -67,7 +67,11 @@ public class IntakeConstants {
 
     public class aimToAmp {
         public static final double AIM_TO_AMP_WRIST_DEGREE = 100;
-        
+    }
+    
+    public class collectFromSource {
+        public static final double COLLECT_FROM_SOURCE_WRIST_DEGREE = 100;
+        public static final double COLLECT_FROM_SOURCE_ROLLER_SPEED = -1;
     }
 
 }

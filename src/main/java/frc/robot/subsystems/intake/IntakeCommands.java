@@ -13,6 +13,7 @@ import frc.robot.subsystems.intake.IntakeConstants.ManualController;
 import frc.robot.subsystems.intake.IntakeConstants.MoveToAngle;
 import frc.robot.subsystems.intake.IntakeConstants.Open;
 import frc.robot.subsystems.intake.IntakeConstants.aimToAmp;
+import frc.robot.subsystems.intake.IntakeConstants.collectFromSource;
 
 public class IntakeCommands {
     private final Intake intake;
@@ -49,8 +50,13 @@ public class IntakeCommands {
         return moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
     }
 
-    public Command aimToAmp(){
+    public Command aimToAmp() {
         return moveToAngle(aimToAmp.AIM_TO_AMP_WRIST_DEGREE);
+    }
+
+    public Command collectFromSource() {
+        return moveToAngle(collectFromSource.COLLECT_FROM_SOURCE_WRIST_DEGREE)
+                .andThen(() -> intake.setSpeedRollers(collectFromSource.COLLECT_FROM_SOURCE_ROLLER_SPEED));
     }
 
     public Command manualController(DoubleSupplier speed) {
@@ -63,5 +69,5 @@ public class IntakeCommands {
             intake.setWristVoltage(feedforwardResult + speed.getAsDouble() * ManualController.SPEED_MULTIPLIER);
         });
     }
-    
+
 }
