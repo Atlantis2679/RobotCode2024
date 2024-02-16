@@ -10,7 +10,7 @@ public class IntakeConstants {
 
     // Feedforward wrist
         public static final double KS = 0;
-        public static final double KG = 0.161519;
+        public static final double KG = 0.556000;
         public static final double KV = 0;
         public static final double KA = 0;
 
@@ -43,7 +43,7 @@ public class IntakeConstants {
         public static final double JOINT_GEAR_RATIO = 60;
         public static final double ROLLERS_GEAR_RATIO = 10;
         public static final double ROLLERS_JKG_METERS_SQUARED = 0.05;
-        public static final double WRIST_JKG_METERS_SQUARED = 0.05;
+        public static final double WRIST_JKG_METERS_SQUARED = 0.172515;
         public static final int ENCODER_SIM_ID = 2;
 
         public static final double WRIST_TURNING_MAX_DEGREES = 210;
