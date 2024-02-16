@@ -33,6 +33,6 @@ public class ElevatorCommands {
     }
 
     public Command mCommand(){
-        return manualControl(null, null, null, null).run(() ->);;
+        return manualControl(null, null, null, null).run;;
     }
 }
