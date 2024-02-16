@@ -1,6 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,6 +18,7 @@ import frc.robot.subsystems.swerve.SwerveContants.PathPlanner;
 import frc.robot.subsystems.swerve.io.GyroIO;
 import frc.robot.subsystems.swerve.io.GyroIONavX;
 import frc.robot.subsystems.swerve.io.GyroIOSim;
+import frc.robot.subsystems.swerve.poseEstimator.PoseEstimatorWithVision;
 import frc.robot.utils.LocalADStarAK;
 import frc.robot.utils.RotationalSensorHelper;
 import frc.lib.logfields.LogFieldsTable;
@@ -48,8 +48,6 @@ public class Swerve extends SubsystemBase implements Tuneable {
     private final GyroIO gyroIO = Robot.isSimulation()
             ? new GyroIOSim(fieldsTable.getSubTable("Gyro"))
             : new GyroIONavX(fieldsTable.getSubTable("Gyro"));
-
-    private final SwerveDrivePoseEstimator poseEstimator;
 
     // Should be FL, FR, BL, BR
     private final SwerveModule[] modules = {
@@ -87,17 +85,15 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     private RotationalSensorHelper gyroYawHelperCCW;
 
+    private final PoseEstimatorWithVision poseEstimator;
+
     public Swerve() {
         fieldsTable.update();
 
         gyroYawHelperCCW = new RotationalSensorHelper(
-                Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
+            Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
 
-        poseEstimator = new SwerveDrivePoseEstimator(
-                swerveKinematics,
-                gyroYawHelperCCW.getMeasuredAngle(),
-                getModulesPositions(),
-                new Pose2d(3, 3, gyroYawHelperCCW.getAngle()));
+        poseEstimator = new PoseEstimatorWithVision(fieldsTable, getYawCCW(), getModulesPositions(), swerveKinematics);
 
         TuneablesManager.add("Swerve", (Tuneable) this);
 
@@ -118,6 +114,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 pathFollowerConfigs,
                 this::isRedAlliance,
                 this);
+                
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
@@ -150,7 +147,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
         poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
 
-        fieldsTable.recordOutput("Odometry", poseEstimator.getEstimatedPosition());
+        fieldsTable.recordOutput("Estimated Robot Pose", poseEstimator.getPose());
         fieldsTable.recordOutput("Module States",
                 modules[0].getModuleState(),
                 modules[1].getModuleState(),
@@ -220,7 +217,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
     }
 
     public void setYawDegreesCW(double newYawDegreesCW) {
-        Pose2d currentPose = poseEstimator.getEstimatedPosition();
+        Pose2d currentPose = getPose();
 
         resetPose(new Pose2d(
                 currentPose.getX(),
@@ -233,7 +230,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
     }
 
     public Pose2d getPose() {
-        return poseEstimator.getEstimatedPosition();
+        return poseEstimator.getPose();
     }
 
     public void requestResetModulesToAbsolute() {
