@@ -18,7 +18,7 @@ import frc.robot.subsystems.swerve.SwerveContants.PathPlanner;
 import frc.robot.subsystems.swerve.io.GyroIO;
 import frc.robot.subsystems.swerve.io.GyroIONavX;
 import frc.robot.subsystems.swerve.io.GyroIOSim;
-import frc.robot.subsystems.swerve.poseEstimator.PoseEstimator;
+import frc.robot.subsystems.swerve.poseEstimator.PoseEstimatorWithVision;
 import frc.robot.utils.LocalADStarAK;
 import frc.robot.utils.RotationalSensorHelper;
 import frc.lib.logfields.LogFieldsTable;
@@ -85,7 +85,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     private RotationalSensorHelper gyroYawHelperCCW;
 
-    private final PoseEstimator poseEstimator;
+    private final PoseEstimatorWithVision poseEstimator;
 
     public Swerve() {
         fieldsTable.update();
@@ -93,7 +93,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
         gyroYawHelperCCW = new RotationalSensorHelper(
             Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
 
-        poseEstimator = new PoseEstimator(fieldsTable, getYawCCW(), getModulesPositions(), swerveKinematics);
+        poseEstimator = new PoseEstimatorWithVision(fieldsTable, getYawCCW(), getModulesPositions(), swerveKinematics);
 
         TuneablesManager.add("Swerve", (Tuneable) this);
 
@@ -145,9 +145,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
             gyroYawHelperCCW.update(gyroYawHelperCCW.getMeasuredAngle().plus(Rotation2d.fromRadians(twist.dtheta)));
         }
 
-        poseEstimator.updatePoseEstimator(getYawCCW(), getModulesPositions());
-
-        poseEstimator.addVisionMeasurements();
+        poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
 
         fieldsTable.recordOutput("Estimated Robot Pose", poseEstimator.getPose());
         fieldsTable.recordOutput("Module States",
@@ -219,7 +217,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
     }
 
     public void setYawDegreesCW(double newYawDegreesCW) {
-        Pose2d currentPose = poseEstimator.getPose();
+        Pose2d currentPose = getPose();
 
         resetPose(new Pose2d(
                 currentPose.getX(),
