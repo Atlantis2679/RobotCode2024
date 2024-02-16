@@ -3,6 +3,8 @@ package frc.robot.subsystems.swerve;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -31,14 +33,16 @@ public class SwerveCommands {
                 double steerY = steerYSupplier.getAsDouble();
                 double steerX = steerXSupplier.getAsDouble();
                 double speed = speedSupplier.getAsDouble();
-
+                Logger.recordOutput("angle", steerX != 0 || steerY != 0
+                                            ? Math.atan2(steerY, steerX) - Math.toRadians(90)
+                                            : 0);
                 SwerveModuleState[] moduleStates = new SwerveModuleState[4];
                 for (int i = 0; i < moduleStates.length; i++) {
                     moduleStates[i] = new SwerveModuleState(
                             speed * SwerveContants.MAX_SPEED_MPS,
                             new Rotation2d(
                                     steerX != 0 || steerY != 0
-                                            ? Math.atan2(steerY, steerX) + Math.toRadians(90)
+                                            ? Math.atan2(steerY, steerX) - Math.toRadians(90)
                                             : 0));
                 }
                 swerve.setModulesState(moduleStates, false, optimizeState.get(), false);

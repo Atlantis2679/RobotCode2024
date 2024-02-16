@@ -28,10 +28,10 @@ import frc.lib.tuneables.TuneableBuilder;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.valueholders.DoubleHolder;
 import frc.robot.Robot;
-import frc.robot.RobotMap.Module0;
-import frc.robot.RobotMap.Module1;
-import frc.robot.RobotMap.Module2;
-import frc.robot.RobotMap.Module3;
+import frc.robot.RobotMap.ModuleFR;
+import frc.robot.RobotMap.ModuleBR;
+import frc.robot.RobotMap.ModuleBL;
+import frc.robot.RobotMap.ModuleFL;
 
 import static frc.robot.subsystems.swerve.SwerveContants.*;
 
@@ -53,14 +53,14 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     // Should be FL, FR, BL, BR
     private final SwerveModule[] modules = {
-            new SwerveModule(0, Module3.DRIVE_MOTOR_ID, Module3.ANGLE_MOTOR_ID, Module3.ENCODER_ID,
-                    MODULE_3_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
-            new SwerveModule(1, Module0.DRIVE_MOTOR_ID, Module0.ANGLE_MOTOR_ID, Module0.ENCODER_ID,
-                    MODULE_0_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
-            new SwerveModule(2, Module2.DRIVE_MOTOR_ID, Module2.ANGLE_MOTOR_ID, Module2.ENCODER_ID,
-                    MODULE_2_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
-            new SwerveModule(3, Module1.DRIVE_MOTOR_ID, Module1.ANGLE_MOTOR_ID, Module1.ENCODER_ID,
-                    MODULE_1_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable)
+            new SwerveModule(0, ModuleFL.DRIVE_MOTOR_ID, ModuleFL.ANGLE_MOTOR_ID, ModuleFL.ENCODER_ID,
+                    MODULE_FL_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
+            new SwerveModule(1, ModuleFR.DRIVE_MOTOR_ID, ModuleFR.ANGLE_MOTOR_ID, ModuleFR.ENCODER_ID,
+                    MODULE_FR_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
+            new SwerveModule(2, ModuleBL.DRIVE_MOTOR_ID, ModuleBL.ANGLE_MOTOR_ID, ModuleBL.ENCODER_ID,
+                    MODULE_BL_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
+            new SwerveModule(3, ModuleBR.DRIVE_MOTOR_ID, ModuleBR.ANGLE_MOTOR_ID, ModuleBR.ENCODER_ID,
+                    MODULE_BR_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable)
     };
 
     // The x and y might seem a bit weird, but this is how they are defined in
@@ -107,7 +107,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 new PIDConstants(PathPlanner.TRANSLATION_KP, PathPlanner.TRANSLATION_KI, PathPlanner.TRANSLATION_KD),
                 new PIDConstants(PathPlanner.ROTATION_KP, PathPlanner.ROTATION_KI, PathPlanner.ROTATION_KD),
                 MAX_MODULE_SPEED,
-                TRACK_RADIUS,
+                TRACK_RADIUS_M,
                 new ReplanningConfig());
 
         AutoBuilder.configureHolonomic(
@@ -308,7 +308,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 for (SwerveModule swerveModule : modules) {
                     swerveModule.setAbsoluteEncoderAngleDegrees(angleToResetDegrees.get());
                 }
-            }));
+            }).ignoringDisable(false));
         });
 
         builder.addChild("coast mode", new RunCommand(() -> {

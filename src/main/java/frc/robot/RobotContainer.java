@@ -15,15 +15,15 @@ import frc.robot.utils.NaturalXboxController;
 
 public class RobotContainer {
     private final Swerve swerve = new Swerve();
-    private final Pitcher pitcher = new Pitcher();
-    private final Intake intake = new Intake();
+    // private final Pitcher pitcher = new Pitcher();
+    // private final Intake intake = new Intake();
 
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
-    private final NaturalXboxController operatorController = new NaturalXboxController(
-            RobotMap.Controllers.OPERTATOR_PORT);
+    // private final NaturalXboxController operatorController = new NaturalXboxController(
+    //         RobotMap.Controllers.OPERTATOR_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-    private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
-    private final IntakeCommands intakeCommands = new IntakeCommands(intake);
+    // private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
+    // private final IntakeCommands intakeCommands = new IntakeCommands(intake);
     public RobotContainer() {
         configureDriverBindings();
         configureOperatorBindings();
@@ -44,18 +44,18 @@ public class RobotContainer {
                 swerveCommands.controlModules(
                         driverController::getLeftX,
                         driverController::getLeftY,
-                        driverController::getRightX).fullTuneable());
+                        driverController::getRightY).fullTuneable());
     }
 
     private void configureOperatorBindings() {
-        intake.setDefaultCommand(intakeCommands.close());
-        operatorController.leftBumper().onTrue(intakeCommands.open());
-        operatorController.rightBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY));
+        // intake.setDefaultCommand(intakeCommands.close());
+        // operatorController.leftBumper().onTrue(intakeCommands.open());
+        // operatorController.rightBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY));
 
-        operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
-        operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
-        operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
-        pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
+        // operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
+        // operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
+        // operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
+        // pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
     }
 
     public Command getAutonomousCommand() {
