@@ -24,7 +24,6 @@ import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
 import frc.robot.utils.RotationalSensorHelper;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
-// import static frc.robot.RobotMap.*;
 
 public class Intake extends SubsystemBase implements Tuneable {
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
@@ -53,7 +52,11 @@ public class Intake extends SubsystemBase implements Tuneable {
 
     public Intake() {
         fieldsTable.update();
-        wristAngleHelper = new RotationalSensorHelper(Rotation2d.fromDegrees(io.wristAngleDegrees.getAsDouble()));
+        wristAngleHelper = new RotationalSensorHelper(
+                Rotation2d.fromDegrees(io.wristAngleDegrees.getAsDouble()),
+                Rotation2d.fromDegrees(WIRST_ANGLE_OFFSET_DEGREES));
+
+        wristAngleHelper.enableContinousWrap(Rotation2d.fromDegrees(WIRST_ANGLE_UPPER_BOUND_DEGREES));
         TuneablesManager.add("Intake", (Tuneable) this);
     }
 
