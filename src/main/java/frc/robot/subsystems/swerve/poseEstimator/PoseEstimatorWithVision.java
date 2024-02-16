@@ -47,7 +47,7 @@ public class PoseEstimatorWithVision {
         double visionToEstimateDifferenceMeters = getVisionToEstimateDifferenceMeters();
         fieldsTable.recordOutput("Vision To Estimate Difference", visionToEstimateDifferenceMeters);
         if (visionToEstimateDifferenceMeters < VisionAprilTagsConstants.VISION_THRESHOLD_DISTANCE_M
-                && visionIO.getHasNewRobotPose()) {
+                && visionIO.hasNewRobotPose.getAsBoolean()) {
 
             poseEstimator.addVisionMeasurement(visionIO.photonPoseEstimate.get().toPose2d(),
                     visionIO.cameraTimestampSeconds.getAsDouble());

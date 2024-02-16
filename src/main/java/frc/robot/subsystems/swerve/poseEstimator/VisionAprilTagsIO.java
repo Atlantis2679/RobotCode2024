@@ -17,6 +17,7 @@ public abstract class VisionAprilTagsIO extends IOBase {
     public final Supplier<Pose3d> photonPoseEstimate = fields.addObject("poseEstimate", this::getRobotPose);
     public final DoubleSupplier cameraTimestampSeconds = fields.addDouble("cameraTimestamp", this::getRobotPoseTimestampSeconds);
     public final BooleanSupplier hasNewRobotPose = fields.addBoolean("hasNewRobotPose", this::getHasNewRobotPose);
+    
     protected VisionAprilTagsIO(LogFieldsTable fieldsTable){
         super(fieldsTable);
     }
