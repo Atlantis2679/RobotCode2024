@@ -14,15 +14,15 @@ import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.utils.NaturalXboxController;
 
 public class RobotContainer {
-    private final Swerve swerve = new Swerve();
-    private final Pitcher pitcher = new Pitcher();
+    // private final Swerve swerve = new Swerve();
+    // private final Pitcher pitcher = new Pitcher();
     private final Intake intake = new Intake();
 
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
     private final NaturalXboxController operatorController = new NaturalXboxController(
             RobotMap.Controllers.OPERTATOR_PORT);
-    private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-    private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
+    // private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
+    // private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
     private final IntakeCommands intakeCommands = new IntakeCommands(intake);
 
     public RobotContainer() {
@@ -31,21 +31,21 @@ public class RobotContainer {
     }
 
     private void configureDriverBindings() {
-        TuneableCommand driveCommand = swerveCommands.controller(
-                driverController::getLeftY,
-                driverController::getLeftX,
-                driverController::getRightX,
-                driverController.leftBumper().negate()::getAsBoolean);
+        // TuneableCommand driveCommand = swerveCommands.controller(
+        //         driverController::getLeftY,
+        //         driverController::getLeftX,
+        //         driverController::getRightX,
+        //         driverController.leftBumper().negate()::getAsBoolean);
 
-        swerve.setDefaultCommand(driveCommand);
-        TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
-        driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
+        // swerve.setDefaultCommand(driveCommand);
+        // TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
+        // driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
 
-        TuneablesManager.add("Swerve/modules control mode",
-                swerveCommands.controlModules(
-                        driverController::getLeftX,
-                        driverController::getLeftY,
-                        driverController::getRightX).fullTuneable());
+        // TuneablesManager.add("Swerve/modules control mode",
+        //         swerveCommands.controlModules(
+        //                 driverController::getLeftX,
+        //                 driverController::getLeftY,
+        //                 driverController::getRightX).fullTuneable());
     }
 
     private void configureOperatorBindings() {
@@ -53,12 +53,13 @@ public class RobotContainer {
         // intake.setDefaultCommand(intakeCommands.close());
         // operatorController.leftBumper().whileTrue(intakeCommands.open());
         // operatorController.x().whileTrue(intakeCommands.aimToAmp());
-        intake.setDefaultCommand(intakeCommands.manualController( operatorController::getRightY));
-
-        operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
-        operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
-        operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
-        pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
+        intake.setDefaultCommand(intakeCommands.manualController(operatorController::getRightY));
+        // intake.setDefaultCommand(intake.run(() -> intake.setSpeedRollers(operatorController.getRightY())));
+        
+        // operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
+        // operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
+        // operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
+        // pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
     }
 
     public Command getAutonomousCommand() {

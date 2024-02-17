@@ -2,13 +2,13 @@ package frc.robot.subsystems.intake;
 
 public class IntakeConstants {
     // Angle PID
-    public static final double KP = 0.1;
+    public static final double KP = 0; //0.1
     public static final double KI = 0;
     public static final double KD = 0;
 
     // Feedforward wrist
     public static final double KS = 0;
-    public static final double KG = 0.556000;
+    public static final double KG = 0; //0.556000
     public static final double KV = 0;
     public static final double KA = 0;
 
@@ -17,7 +17,7 @@ public class IntakeConstants {
     public static final double INTAKE_SPEED = -1;
 
     public static final double ROLLERS_SPEED_LIMIT_PRECENTAGE = 1;
-    public static final double WRIST_VOLTAGE_LIMIT = 12;
+    public static final double WRIST_VOLTAGE_LIMIT = 4;
 
     // trapezoidProfile
     public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 90;
@@ -50,7 +50,7 @@ public class IntakeConstants {
     public static final double WRIST_TURNING_MIN_DEGREES = -10;
 
     public class ManualController {
-        public static final double SPEED_MULTIPLIER = 11;
+        public static final double SPEED_MULTIPLIER = 4;
     }
 
     public class MoveToAngle {
