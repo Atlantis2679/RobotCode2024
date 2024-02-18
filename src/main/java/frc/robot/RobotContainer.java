@@ -20,8 +20,8 @@ public class RobotContainer {
     private final Intake intake = new Intake();
 
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
-    // private final NaturalXboxController operatorController = new NaturalXboxController(
-    //         RobotMap.Controllers.OPERTATOR_PORT);
+    private final NaturalXboxController operatorController = new NaturalXboxController(
+            RobotMap.Controllers.OPERTATOR_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
     // private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
     private final IntakeCommands intakeCommands = new IntakeCommands(intake);
