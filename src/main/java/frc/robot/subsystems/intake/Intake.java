@@ -4,7 +4,6 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,7 +20,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.intake.io.IntakeIO;
 import frc.robot.subsystems.intake.io.IntakeIOSim;
 import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
-import frc.robot.utils.RotationalSensorHelper;
+import frc.robot.utils.PrimitiveRotationalSensorHelper;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
@@ -31,7 +30,7 @@ public class Intake extends SubsystemBase implements Tuneable {
             ? new IntakeIOSim(fieldsTable)
             : new IntakeIOSparkMax(fieldsTable);
 
-    private final RotationalSensorHelper wristAngleHelper;
+    private final PrimitiveRotationalSensorHelper wristAngleHelperDegrees;
     private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(WRIST_MAX_VELOCITY_DEG_PER_SEC, WRIST_MAX_ACCELERATION_DEG_PER_SEC));
 
@@ -52,17 +51,17 @@ public class Intake extends SubsystemBase implements Tuneable {
 
     public Intake() {
         fieldsTable.update();
-        wristAngleHelper = new RotationalSensorHelper(
-                Rotation2d.fromDegrees(io.wristAngleDegrees.getAsDouble()),
-                Rotation2d.fromDegrees(WIRST_ANGLE_OFFSET_DEGREES));
+        wristAngleHelperDegrees = new PrimitiveRotationalSensorHelper(
+                io.wristAngleDegrees.getAsDouble(),
+                WIRST_ANGLE_OFFSET_DEGREES);
 
-        wristAngleHelper.enableContinousWrap(Rotation2d.fromDegrees(WIRST_ANGLE_UPPER_BOUND_DEGREES));
+        wristAngleHelperDegrees.enableContinousWrap(WIRST_ANGLE_UPPER_BOUND_DEGREES, 360);
         TuneablesManager.add("Intake", (Tuneable) this);
     }
 
     @Override
     public void periodic() {
-        wristAngleHelper.update(Rotation2d.fromDegrees(io.wristAngleDegrees.getAsDouble()));
+        wristAngleHelperDegrees.update(io.wristAngleDegrees.getAsDouble());
         realStateVisualizer.update(getAbsoluteAngleDegrees());
         fieldsTable.recordOutput("Wrist Angle Degrees", getAbsoluteAngleDegrees());
     }
@@ -83,7 +82,7 @@ public class Intake extends SubsystemBase implements Tuneable {
     }
 
     public double getAbsoluteAngleDegrees() {
-        return wristAngleHelper.getAngle().getDegrees();
+        return wristAngleHelperDegrees.getAngle();
     }
 
     public boolean getIsNoteInside() {
@@ -133,18 +132,18 @@ public class Intake extends SubsystemBase implements Tuneable {
         builder.addChild("wrist angle degrees", (Tuneable) (wristAngleBuilder) -> {
             DoubleHolder angleToResetDegrees = new DoubleHolder(0);
             wristAngleBuilder.addDoubleProperty("raw angle measurment",
-                    () -> wristAngleHelper.getMeasuredAngle().getDegrees(), null);
+                    () -> wristAngleHelperDegrees.getMeasuredAngle(), null);
 
             wristAngleBuilder.addDoubleProperty("calculated angle", this::getAbsoluteAngleDegrees, null);
-            wristAngleBuilder.addDoubleProperty("offset", () -> wristAngleHelper.getOffset().getDegrees(), null);
+            wristAngleBuilder.addDoubleProperty("offset", wristAngleHelperDegrees::getOffset,
+                    wristAngleHelperDegrees::setOffset);
 
             wristAngleBuilder.addDoubleProperty("angle to reset", angleToResetDegrees::get,
                     angleToResetDegrees::set);
 
             wristAngleBuilder.addChild("reset!", new InstantCommand(() -> {
-                wristAngleHelper.resetAngle(Rotation2d.fromDegrees(angleToResetDegrees.get()));
+                wristAngleHelperDegrees.resetAngle(angleToResetDegrees.get());
             }));
         });
     }
-
 }

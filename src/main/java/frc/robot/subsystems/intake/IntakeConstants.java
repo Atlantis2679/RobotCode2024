@@ -8,20 +8,19 @@ public class IntakeConstants {
 
     // Feedforward wrist
     public static final double KS = 0;
-    public static final double KG = 0; //0.556000
-    public static final double KV = 0;
+    public static final double KG = 0.3; //0.556000
+    public static final double KV = 0.023;
     public static final double KA = 0;
 
     // set
-    public static final double SCORING_SPEED = 1;
-    public static final double INTAKE_SPEED = -1;
+    public static final double ROLLERS_INTAKE_SPEED = 0.5;
 
     public static final double ROLLERS_SPEED_LIMIT_PRECENTAGE = 1;
     public static final double WRIST_VOLTAGE_LIMIT = 4;
 
     // trapezoidProfile
-    public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 90;
-    public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 90;
+    public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 100;
+    public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 120;
 
     // SlewRateLimiter
     public static final double ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND = 12;
@@ -34,10 +33,10 @@ public class IntakeConstants {
 
     // wrist angles
     public static final double WIRST_ANGLE_UPPER_BOUND_DEGREES = 250;
-    public static final double WIRST_ANGLE_OFFSET_DEGREES = 250;
+    public static final double WIRST_ANGLE_OFFSET_DEGREES = 12.7;
 
     // rollers speeds
-    public static final double COLLECTING_ROLLERS_SPEED = 1;
+    public static final double COLLECTING_ROLLERS_SPEED = 0.5;
 
     // sim
     public static final double JOINT_GEAR_RATIO = 60;
@@ -58,11 +57,13 @@ public class IntakeConstants {
     }
 
     public class Open {
-        public static final double COLLECTING_WRIST_ANGLE_DEGREE = 210;
+        public static final double COLLECTING_WRIST_ANGLE_DEGREE = -27;
+        public static final double START_ROLLERS_WRIST_ANGLE_DEGREE = 0;
     }
 
     public class Close {
-        public static final double CLOSED_WRIST_ANGLE_DEGREE = -10;
+        public static final double CLOSED_WRIST_ANGLE_DEGREE = 160;
+        public static final double STOP_ROLLERS_WRIST_ANGLE_DEGREE = 160;
     }
 
     public class aimToAmp {

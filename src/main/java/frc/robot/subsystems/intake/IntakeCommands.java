@@ -43,11 +43,14 @@ public class IntakeCommands {
 
     public Command open() {
         return moveToAngle(Open.COLLECTING_WRIST_ANGLE_DEGREE)
-                .andThen(() -> intake.setSpeedRollers(COLLECTING_ROLLERS_SPEED));
+                .alongWith(Commands
+                        .waitUntil(() -> intake.getAbsoluteAngleDegrees() < Open.START_ROLLERS_WRIST_ANGLE_DEGREE)
+                        .andThen(() -> intake.setSpeedRollers(COLLECTING_ROLLERS_SPEED)))
+                .until(intake::getIsNoteInside);
     }
 
     public Command close() {
-        return moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
+        return intake.runOnce(() -> intake.setSpeedRollers(0)).andThen(moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE));
     }
 
     public Command aimToAmp() {
@@ -59,14 +62,15 @@ public class IntakeCommands {
                 .andThen(() -> intake.setSpeedRollers(collectFromSource.COLLECT_FROM_SOURCE_ROLLER_SPEED));
     }
 
-    public Command manualController(DoubleSupplier speed) {
+    public Command manualController(DoubleSupplier wristSpeed, DoubleSupplier rollersSpeed) {
         return intake.run(() -> {
             double feedforwardResult = intake.calculateFeedforward(
                     intake.getAbsoluteAngleDegrees(),
                     0,
                     false);
 
-            intake.setWristVoltage(feedforwardResult + speed.getAsDouble() * ManualController.SPEED_MULTIPLIER);
+            intake.setSpeedRollers(rollersSpeed.getAsDouble());
+            intake.setWristVoltage(feedforwardResult + wristSpeed.getAsDouble() * ManualController.SPEED_MULTIPLIER);
         });
     }
 
