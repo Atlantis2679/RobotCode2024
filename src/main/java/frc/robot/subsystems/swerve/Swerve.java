@@ -35,6 +35,10 @@ import frc.robot.RobotMap.ModuleFL;
 
 import static frc.robot.subsystems.swerve.SwerveContants.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -85,6 +89,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     private RotationalSensorHelper gyroYawHelperCCW;
 
+    private final List<BiConsumer<Pose2d, Boolean>> callbacksOnPoseUpdate = new ArrayList<>();  
     private final PoseEstimatorWithVision poseEstimator;
 
     public Swerve() {
@@ -112,7 +117,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 this::getRobotRelativeSpeeds,
                 this::driveVoltageChassisSpeed,
                 pathFollowerConfigs,
-                this::isRedAlliance,
+                this::getIsRedAlliance,
                 this);
                 
         Pathfinding.setPathfinder(new LocalADStarAK());
@@ -146,6 +151,9 @@ public class Swerve extends SubsystemBase implements Tuneable {
         }
 
         poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
+        callbacksOnPoseUpdate.forEach(callback -> {
+            callback.accept(getPose(), getIsRedAlliance());
+        });
 
         fieldsTable.recordOutput("Estimated Robot Pose", poseEstimator.getPose());
         fieldsTable.recordOutput("Module States",
@@ -239,6 +247,11 @@ public class Swerve extends SubsystemBase implements Tuneable {
         }
     }
 
+    public void registerCallbackOnPoseUpdate(BiConsumer<Pose2d, Boolean> callback) {
+        callbacksOnPoseUpdate.add(callback);
+        callback.accept(getPose(), getIsRedAlliance());
+    }
+
     public SwerveModulePosition[] getModulesPositions() {
         SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
 
@@ -263,7 +276,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 modules[3].getModuleState());
     }
 
-    public boolean isRedAlliance() {
+    public boolean getIsRedAlliance() {
         return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
     }
 
