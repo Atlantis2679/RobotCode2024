@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems.swerve.poseEstimator;
 
+import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -18,33 +20,38 @@ public class VisionAprilTagsIOPhoton extends VisionAprilTagsIO {
     PhotonPoseEstimator photonPoseEstimator;
     private PhotonCamera camera;
     private PhotonPipelineResult photonPipelineResult;
+    Optional<EstimatedRobotPose> photonEstimatorResult;
 
-    public VisionAprilTagsIOPhoton(LogFieldsTable fieldsTable, AprilTagFieldLayout tagLayout){
+    public VisionAprilTagsIOPhoton(LogFieldsTable fieldsTable, AprilTagFieldLayout tagLayout) {
         super(fieldsTable);
 
         camera = new PhotonCamera("camera");
-        photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, PoseEstimatorConstants.ROBOT_TO_CAMERA_TRANSFORM);
+        photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera,
+                PoseEstimatorConstants.ROBOT_TO_CAMERA_TRANSFORM);
 
     }
 
     @Override
-    public void periodicBeforeFields(){
+    public void periodicBeforeFields() {
         photonPipelineResult = camera.getLatestResult();
+        photonEstimatorResult = photonPoseEstimator.update(photonPipelineResult);
     }
 
     @Override
-    protected double getRobotPoseTimestampSeconds(){
+    protected double getRobotPoseTimestampSeconds() {
         return photonPipelineResult.getTimestampSeconds();
+
     }
 
     @Override
-    protected Pose3d getRobotPose(){
-        return photonPoseEstimator.update(photonPipelineResult).get().estimatedPose;
+    protected Pose3d getRobotPose() {
+        EstimatedRobotPose estimate = photonEstimatorResult.orElse(null);
+        return estimate != null ? estimate.estimatedPose : new Pose3d();
     }
 
     @Override
-    protected boolean getHasNewRobotPose(){
-        return photonPipelineResult.hasTargets();
+    protected boolean getHasNewRobotPose() {
+        return photonPipelineResult.hasTargets() && photonEstimatorResult.isPresent();
     }
 
 }
