@@ -23,7 +23,7 @@ public class VisionAprilTagsIOPhoton extends VisionAprilTagsIO {
         super(fieldsTable);
 
         camera = new PhotonCamera("camera");
-        photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, VisionAprilTagsConstants.ROBOT_TO_CAMERA_TRANSFORM);
+        photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, PoseEstimatorConstants.ROBOT_TO_CAMERA_TRANSFORM);
 
     }
 
