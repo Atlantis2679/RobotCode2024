@@ -46,7 +46,7 @@ public class PoseEstimatorWithVision {
         poseEstimator.update(gyroMeasurmentCCW, modulesPositions);
         double visionToEstimateDifferenceMeters = getVisionToEstimateDifferenceMeters();
         fieldsTable.recordOutput("Vision To Estimate Difference", visionToEstimateDifferenceMeters);
-        if (visionToEstimateDifferenceMeters < VisionAprilTagsConstants.VISION_THRESHOLD_DISTANCE_M
+        if (visionToEstimateDifferenceMeters < PoseEstimatorConstants.VISION_THRESHOLD_DISTANCE_M
                 && visionIO.hasNewRobotPose.getAsBoolean()) {
 
             poseEstimator.addVisionMeasurement(visionIO.photonPoseEstimate.get().toPose2d(),

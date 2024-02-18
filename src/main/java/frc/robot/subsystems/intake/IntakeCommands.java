@@ -50,7 +50,8 @@ public class IntakeCommands {
     }
 
     public Command close() {
-        return intake.runOnce(() -> intake.setSpeedRollers(0)).andThen(moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE));
+        return intake.runOnce(() -> intake.setSpeedRollers(0)).andThen(moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE))
+                .finallyDo(() -> intake.setWristVoltage(0));
     }
 
     public Command aimToAmp() {
