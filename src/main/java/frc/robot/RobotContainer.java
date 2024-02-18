@@ -20,8 +20,8 @@ public class RobotContainer {
     private final Intake intake = new Intake();
 
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
-    private final NaturalXboxController operatorController = new NaturalXboxController(
-            RobotMap.Controllers.OPERTATOR_PORT);
+    // private final NaturalXboxController operatorController = new NaturalXboxController(
+    //         RobotMap.Controllers.OPERTATOR_PORT);
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
     // private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
     private final IntakeCommands intakeCommands = new IntakeCommands(intake);
@@ -41,23 +41,23 @@ public class RobotContainer {
         swerve.setDefaultCommand(driveCommand);
         TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
         driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
+        driverController.y().onTrue(swerveCommands.xWheelLock());
 
         TuneablesManager.add("Swerve/modules control mode",
                 swerveCommands.controlModules(
                         driverController::getLeftX,
                         driverController::getLeftY,
-                        driverController::getRightX).fullTuneable());
+                        driverController::getRightY).fullTuneable());
     }
 
     private void configureOperatorBindings() {
-
         // intake.setDefaultCommand(intakeCommands.close());
         operatorController.a().whileTrue(intakeCommands.open());
         operatorController.leftBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY, operatorController::getLeftY));
         operatorController.x().whileTrue(intakeCommands.aimToAmp());
         intake.setDefaultCommand(intakeCommands.close());
         // intake.setDefaultCommand(intake.run(() -> intake.setSpeedRollers(operatorController.getRightY())));
-        
+
         // operatorController.a().onTrue(pitcherCommands.adjustToAngle(90));
         // operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
         // operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
