@@ -44,4 +44,9 @@ public class Flywheel extends SubsystemBase {
     public double getLowerRollerSpeedRPS() {
         return io.lowerRollerSpeedRPS.getAsDouble();
     }
+
+    public boolean atSpeed(double upperRollerRPS, double lowerRollerRPS) {
+        return Math.abs(getUpperRollerSpeedRPS() - upperRollerRPS) < SPEED_TOLERANCE_RPS
+                && Math.abs(getLowerRollerSpeedRPS() - lowerRollerRPS) < SPEED_TOLERANCE_RPS;
+    }
 }
