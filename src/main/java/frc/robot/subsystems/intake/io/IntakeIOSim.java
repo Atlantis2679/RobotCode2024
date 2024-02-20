@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake.io;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -18,8 +20,8 @@ public class IntakeIOSim extends IntakeIO {
             JOINT_GEAR_RATIO,
             WRIST_JKG_METERS_SQUARED,
             0.35,
-            -Math.PI,
-            Math.PI,
+            Math.toRadians(WRIST_TURNING_MIN_DEGREES),
+            Math.toRadians(WRIST_TURNING_MAX_DEGREES),
             true,
             1);
 
@@ -40,12 +42,13 @@ public class IntakeIOSim extends IntakeIO {
 
     @Override
     public void setWristVoltage(double voltage) {
+        Logger.recordOutput("set voltage", voltage);
         wristMotor.setInputVoltage(voltage);
     }
 
     @Override
     protected double getWristAngleDegrees() {
-        return Math.toDegrees(wristMotor.getAngleRads() + 2);
+        return Math.toDegrees(wristMotor.getAngleRads());
     }
 
     @Override
