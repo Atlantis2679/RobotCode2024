@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
 import frc.lib.tuneables.Tuneable;
@@ -15,7 +14,6 @@ import frc.lib.tuneables.TuneableBuilder;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableArmFeedforward;
 import frc.lib.tuneables.extensions.TuneableTrapezoidProfile;
-import frc.lib.valueholders.DoubleHolder;
 import frc.robot.Robot;
 import frc.robot.subsystems.intake.io.IntakeIO;
 import frc.robot.subsystems.intake.io.IntakeIOSim;
@@ -129,21 +127,6 @@ public class Intake extends SubsystemBase implements Tuneable {
 
         builder.addChild("Trapezoid profile", trapezoidProfile);
 
-        builder.addChild("wrist angle degrees", (Tuneable) (wristAngleBuilder) -> {
-            DoubleHolder angleToResetDegrees = new DoubleHolder(0);
-            wristAngleBuilder.addDoubleProperty("raw angle measurment",
-                    () -> wristAngleHelperDegrees.getMeasuredAngle(), null);
-
-            wristAngleBuilder.addDoubleProperty("calculated angle", this::getAbsoluteAngleDegrees, null);
-            wristAngleBuilder.addDoubleProperty("offset", wristAngleHelperDegrees::getOffset,
-                    wristAngleHelperDegrees::setOffset);
-
-            wristAngleBuilder.addDoubleProperty("angle to reset", angleToResetDegrees::get,
-                    angleToResetDegrees::set);
-
-            wristAngleBuilder.addChild("reset!", new InstantCommand(() -> {
-                wristAngleHelperDegrees.resetAngle(angleToResetDegrees.get());
-            }));
-        });
+        builder.addChild("wrist angle degrees", wristAngleHelperDegrees);
     }
 }

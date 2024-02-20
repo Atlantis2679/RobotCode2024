@@ -34,13 +34,13 @@ public class PitcherCommands {
 
             pitcher.setVoltage(
                     pitcher.calculateFeedforward(refrenceState.get().position, refrenceState.get().velocity, true));
-        }));
+        })).finallyDo(() -> pitcher.setVoltage(0));
     }
 
     public Command manualController(DoubleSupplier joystick) {
         return pitcher.run(() -> {
             double feedforwardResult = pitcher.calculateFeedforward(pitcher.getAngleDegrees(), 0, false);
-            pitcher.setVoltage(feedforwardResult + joystick.getAsDouble() * 5);
+            pitcher.setVoltage(feedforwardResult + joystick.getAsDouble() * 4);
         });
     }
 }

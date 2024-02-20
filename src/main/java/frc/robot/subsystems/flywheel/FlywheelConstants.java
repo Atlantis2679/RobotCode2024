@@ -9,7 +9,7 @@ public class FlywheelConstants {
     public static final double SPEED_TOLERANCE_RPS = 2;
 
     public final class RotateFlywheel {
-        public static final double KP = 1;
+        public static final double KP = 0;
         public static final double KI = 0;
         public static final double KD = 0;
 

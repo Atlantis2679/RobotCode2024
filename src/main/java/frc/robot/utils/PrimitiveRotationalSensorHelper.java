@@ -1,6 +1,11 @@
 package frc.robot.utils;
 
-public class PrimitiveRotationalSensorHelper {
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.lib.tuneables.Tuneable;
+import frc.lib.tuneables.TuneableBuilder;
+import frc.lib.valueholders.DoubleHolder;
+
+public class PrimitiveRotationalSensorHelper implements Tuneable {
     private double measuredAngle;
     private double offset;
 
@@ -57,4 +62,22 @@ public class PrimitiveRotationalSensorHelper {
     public double getOffset() {
         return offset;
     }
+
+    @Override
+    public void initTuneable(TuneableBuilder builder) {
+            DoubleHolder angleToResetDegrees = new DoubleHolder(0);
+            builder.addDoubleProperty("raw angle measurment",
+                    this::getMeasuredAngle, null);
+
+            builder.addDoubleProperty("calculated angle", this::getAngle, null);
+            builder.addDoubleProperty("offset", this::getOffset,
+                    this::setOffset);
+
+            builder.addDoubleProperty("angle to reset", angleToResetDegrees::get,
+                    angleToResetDegrees::set);
+
+            builder.addChild("reset!", new InstantCommand(() -> {
+                resetAngle(angleToResetDegrees.get());
+            }).ignoringDisable(true));
+        }   
 }

@@ -62,7 +62,7 @@ public class IntakeConstants {
     }
 
     public class Close {
-        public static final double CLOSED_WRIST_ANGLE_DEGREE = 160;
+        public static final double CLOSED_WRIST_ANGLE_DEGREE = 180;
         public static final double STOP_ROLLERS_WRIST_ANGLE_DEGREE = 160;
     }
 
