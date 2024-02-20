@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
+import frc.robot.subsystems.flywheel.Flywheel;
+import frc.robot.subsystems.flywheel.FlywheelCommands;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeCommands;
 import frc.robot.subsystems.pitcher.Pitcher;
@@ -16,14 +18,16 @@ import frc.robot.utils.NaturalXboxController;
 
 public class RobotContainer {
     private final Swerve swerve = new Swerve();
-    // private final Pitcher pitcher = new Pitcher();
+    private final Pitcher pitcher = new Pitcher();
     private final Intake intake = new Intake();
+    private final Flywheel flywheel = new Flywheel();
 
     private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
     private final NaturalXboxController operatorController = new NaturalXboxController(
             RobotMap.Controllers.OPERTATOR_PORT);
+
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-    // private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
+    private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
     private final IntakeCommands intakeCommands = new IntakeCommands(intake);
 
     public RobotContainer() {
@@ -32,11 +36,12 @@ public class RobotContainer {
     }
 
     private void configureDriverBindings() {
-        TuneableCommand driveCommand = swerveCommands.controller(
-                driverController::getLeftY,
-                driverController::getLeftX,
-                driverController::getRightX,
-                driverController.leftBumper().negate()::getAsBoolean);
+        // TuneableCommand driveCommand = swerveCommands.controller(
+        //         driverController::getLeftY,
+        //         driverController::getLeftX,
+        //         driverController::getRightX,
+        //         driverController.leftBumper().negate()::getAsBoolean);
+
 
         swerve.setDefaultCommand(driveCommand);
         TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
@@ -51,7 +56,7 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        // intake.setDefaultCommand(intakeCommands.close());
+
         operatorController.a().whileTrue(intakeCommands.open());
         operatorController.leftBumper().whileTrue(intakeCommands.manualController(operatorController::getRightY, operatorController::getLeftY));
         operatorController.x().whileTrue(intakeCommands.aimToAmp());
@@ -62,6 +67,8 @@ public class RobotContainer {
         // operatorController.y().onTrue(pitcherCommands.adjustToAngle(0));
         // operatorController.b().whileTrue(pitcherCommands.adjustToAngle(() -> operatorController.getLeftY() * 90));
         // pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
+
+        flywheel.setDefaultCommand(new FlywheelCommands(flywheel).rotate(operatorController::getLeftTriggerAxis, operatorController::getRightTriggerAxis));
     }
 
     public Command getAutonomousCommand() {
