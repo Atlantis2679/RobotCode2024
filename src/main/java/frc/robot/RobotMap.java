@@ -36,26 +36,23 @@ public class RobotMap {
     }
 
     public class Intake {
-        public static final int ROLLERS_MOTOR_ID = 13;
-        public static final int WRIST_MOTOR_ID = 8;
+        public static final int ROLLERS_MOTOR_ID = 11;
+        public static final int WRIST_MOTOR_ID = 10;
+        public static final int WRIST_ENCODE_ID = 9;
         public static final int BEAM_BREAK_ID = 0;
     }
   
     public class Flywheel {
-        public final static int UPPER_ROLLER_MOTOR_ID = 0;
-        public final static int LOWER_ROLLER_MOTOR_ID = 0;
-        public final static int UPPER_ROLLER_ENCODER_CHANNEL_A = 0;
-        public final static int UPPER_ROLLER_ENCODER_CHANNEL_B = 0;
-        public final static int LOWER_ROLLER_ENCODER_CHANNEL_A = 0;
-        public final static int LOWER_ROLLER_ENCODER_CHANNEL_B = 0;
+        public final static int UPPER_ROLLER_MOTOR_ID = 14;
+        public final static int LOWER_ROLLER_MOTOR_ID = 13;
     }
 
     public class Pitcher {
-        public final static int MOTOR_ID = 0;
-        public final static int ENCODER_ID = 0;
+        public final static int MOTOR_ID = 12;
+        public final static int ENCODER_ID = 8;
     }
 
     public class Loader {
-        public final static int MOTOR_ID = 0;
+        public final static int MOTOR_ID = 6;
     }
 }
