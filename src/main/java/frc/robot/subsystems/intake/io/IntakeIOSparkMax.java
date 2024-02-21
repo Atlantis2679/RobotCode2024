@@ -18,7 +18,7 @@ public class IntakeIOSparkMax extends IntakeIO {
             MotorType.kBrushless);
     private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WRIST_ENCODER_ID);
 
-    DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
+    private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
 
     public IntakeIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
