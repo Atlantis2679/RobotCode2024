@@ -11,7 +11,7 @@ public class LoaderCommands {
     }
 
     public Command release() {
-        return loader.runOnce(() -> loader.setSpeed(0))
+        return loader.runOnce(() -> loader.setSpeed(0.6))
                 .andThen(Commands.waitSeconds(0.6))
                 .finallyDo(() -> loader.setSpeed(0));
     }

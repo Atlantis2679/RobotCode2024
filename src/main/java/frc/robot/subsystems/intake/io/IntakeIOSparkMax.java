@@ -16,7 +16,7 @@ public class IntakeIOSparkMax extends IntakeIO {
             MotorType.kBrushless);
     private final CANSparkMax wristMotor = new CANSparkMax(WRIST_MOTOR_ID,
             MotorType.kBrushless);
-    private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(1);
+    private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WRIST_ENCODER_ID);
 
     DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
 

@@ -15,15 +15,16 @@ public class PitcherIOSparkMax extends PitcherIO {
     public PitcherIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
         encoder.setDistancePerRotation(360);
+        motor.setInverted(false);
     }
 
     @Override
     protected double getAngleDegrees() {
-        return encoder.getDistance();
+        return -encoder.getDistance();
     }
 
     @Override
     public void setVoltage(double demandVoltage) {
-        motor.set(demandVoltage);
+        motor.setVoltage(demandVoltage);
     }
 }

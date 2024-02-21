@@ -38,12 +38,12 @@ public class FlywheelIOSparkMax extends FlywheelIO {
     
     @Override
     protected double getUpperRollerSpeedRPS() {
-        return upperRollerEncoder.getVelocity();
+        return -upperRollerEncoder.getVelocity() / 60;
     }
 
     @Override
     protected double getLowerRollerSpeedRPS() {
-        return lowerRollerEncoder.getVelocity();
+        return lowerRollerEncoder.getVelocity() / 60;
     }
 
     @Override

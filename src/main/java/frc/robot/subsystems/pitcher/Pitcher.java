@@ -3,8 +3,8 @@ package frc.robot.subsystems.pitcher;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
 import frc.lib.tuneables.SendableType;
@@ -14,11 +14,11 @@ import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.TuneablesTable;
 import frc.lib.tuneables.extensions.TuneableArmFeedforward;
 import frc.lib.tuneables.extensions.TuneableTrapezoidProfile;
-import frc.lib.valueholders.DoubleHolder;
 import frc.robot.Robot;
 import frc.robot.subsystems.pitcher.io.PitcherIO;
 import frc.robot.subsystems.pitcher.io.PitcherIOSim;
 import frc.robot.subsystems.pitcher.io.PitcherIOSparkMax;
+import frc.robot.utils.PrimitiveRotationalSensorHelper;
 
 import static frc.robot.subsystems.pitcher.PitcherConstants.*;
 
@@ -28,8 +28,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
             ? new PitcherIOSim(fieldsTable)
             : new PitcherIOSparkMax(fieldsTable);
     private final TuneablesTable tuneablesTable = new TuneablesTable(SendableType.LIST);
-    private final DoubleHolder angleOffsetDegrees = tuneablesTable.addNumber("Angle Offset Degrees",
-            ANGLE_OFFSET_DEGREES);
+    private final PrimitiveRotationalSensorHelper angleHelperDegrees;
 
     private final PIDController pidController = new PIDController(KP, KI, KD);
     private final TuneableArmFeedforward feedforward = new TuneableArmFeedforward(KS, KG, KV);
@@ -47,6 +46,9 @@ public class Pitcher extends SubsystemBase implements Tuneable {
 
     public Pitcher() {
         fieldsTable.update();
+        angleHelperDegrees = new PrimitiveRotationalSensorHelper(
+                io.angleDegrees.getAsDouble(),
+                ANGLE_OFFSET_DEGREES);
         lastAngleDegree = getAngleDegrees();
 
         TuneablesManager.add(getName(), (Tuneable) this);
@@ -54,9 +56,9 @@ public class Pitcher extends SubsystemBase implements Tuneable {
 
     @Override
     public void periodic() {
+        angleHelperDegrees.update(io.angleDegrees.getAsDouble());
         velocityDegPerSec = (getAngleDegrees() - lastAngleDegree) / 0.02;
         lastAngleDegree = getAngleDegrees();
-
         realStateVisualizer.update(getAngleDegrees());
 
         fieldsTable.recordOutput("Velocity RadPerSec", getVelocityDegPerSec());
@@ -75,7 +77,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
     }
 
     public double getAngleDegrees() {
-        return io.angleDegrees.getAsDouble() - angleOffsetDegrees.get();
+        return angleHelperDegrees.getAngle();
     }
 
     public double getVelocityDegPerSec() {
@@ -112,11 +114,10 @@ public class Pitcher extends SubsystemBase implements Tuneable {
     @Override
     public void initTuneable(TuneableBuilder builder) {
         tuneablesTable.initTuneable(builder);
-        builder.addChild("Reset Angle", new InstantCommand(() -> {
-            angleOffsetDegrees.set(io.angleDegrees.getAsDouble());
-        }));
+        builder.addChild("subsystem", (Sendable) this);
+        builder.addChild("Angle helper", angleHelperDegrees);
         builder.addChild("PID", pidController);
-        feedforward.initTuneable(builder);
-        trapezoidProfile.initTuneable(builder);
+        builder.addChild("feedforward", feedforward);
+        builder.addChild("trapezoid profile", trapezoidProfile);
     }
 }
