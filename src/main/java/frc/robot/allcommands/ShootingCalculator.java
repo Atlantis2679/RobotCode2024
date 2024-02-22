@@ -22,6 +22,7 @@ public class ShootingCalculator {
         List<LinearInterpolation.Point> pitcherAngleDegreesPoints = new ArrayList<>();
         List<LinearInterpolation.Point> upperRollerSpeedRPSPoints = new ArrayList<>();
         List<LinearInterpolation.Point> lowerRollerSpeedRPSPoints = new ArrayList<>();
+
         for (ShootingState shootingState : ALL_MEASURMENTS) {
             pitcherAngleDegreesPoints.add(
                     new LinearInterpolation.Point(shootingState.distanceFromTarget, shootingState.pitcherAngleDegrees));
@@ -30,6 +31,7 @@ public class ShootingCalculator {
             lowerRollerSpeedRPSPoints.add(
                     new LinearInterpolation.Point(shootingState.distanceFromTarget, shootingState.lowerRollerRPS));
         }
+        
         pitcherAngleDegreesLinearInterpolation = new LinearInterpolation(pitcherAngleDegreesPoints);
         upperRollerSpeedRPSLinearInterpolation = new LinearInterpolation(upperRollerSpeedRPSPoints);
         lowerRollerSpeedRPSLinearInterpolation = new LinearInterpolation(pitcherAngleDegreesPoints);

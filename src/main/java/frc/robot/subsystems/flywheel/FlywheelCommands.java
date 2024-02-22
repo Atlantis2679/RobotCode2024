@@ -11,7 +11,7 @@ public class FlywheelCommands {
         this.flywheel = flywheel;
     }
 
-    public Command rotate(DoubleSupplier upperRollerSpeedSupplierRPS, DoubleSupplier lowerRollerSpeedSupplierRPS) {
+    public Command spin(DoubleSupplier upperRollerSpeedSupplierRPS, DoubleSupplier lowerRollerSpeedSupplierRPS) {
         return flywheel
                 .runOnce(() -> flywheel.resetPIDs())
                 .andThen(flywheel.run(() -> {
@@ -22,5 +22,11 @@ public class FlywheelCommands {
                     flywheel.setSpeed(upperRollerVoltage, lowerRollerVoltage);
                 }))
                 .finallyDo(() -> flywheel.setSpeed(0, 0));
+    }
+
+    public Command manualController(DoubleSupplier upperRollerSpeedJoystick, DoubleSupplier lowerRollerSpeedJoystick) {
+        return flywheel.run(() -> 
+            flywheel.setSpeed(upperRollerSpeedJoystick.getAsDouble(), lowerRollerSpeedJoystick.getAsDouble())
+        );
     }
 }
