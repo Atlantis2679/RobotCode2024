@@ -15,6 +15,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.lib.logfields.LogFieldsTable;
+import frc.robot.RobotMap;
 
 public class VisionAprilTagsIOPhoton extends VisionAprilTagsIO {
     PhotonPoseEstimator photonPoseEstimator;
@@ -25,7 +26,7 @@ public class VisionAprilTagsIOPhoton extends VisionAprilTagsIO {
     public VisionAprilTagsIOPhoton(LogFieldsTable fieldsTable, AprilTagFieldLayout tagLayout) {
         super(fieldsTable);
 
-        camera = new PhotonCamera("camera");
+        camera = new PhotonCamera(RobotMap.FRONT_CAMERA_NAME);
         photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera,
                 PoseEstimatorConstants.ROBOT_TO_CAMERA_TRANSFORM);
 

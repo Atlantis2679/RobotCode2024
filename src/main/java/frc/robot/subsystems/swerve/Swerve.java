@@ -155,7 +155,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
             callback.accept(getPose(), getIsRedAlliance());
         });
 
-        fieldsTable.recordOutput("Estimated Robot Pose", poseEstimator.getPose());
+        fieldsTable.recordOutput("Estimated Robot Pose", getPose());
         fieldsTable.recordOutput("Module States",
                 modules[0].getModuleState(),
                 modules[1].getModuleState(),

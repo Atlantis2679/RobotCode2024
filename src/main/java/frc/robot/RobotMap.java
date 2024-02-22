@@ -3,8 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.SPI;
 
 public class RobotMap {
-
     public final static SPI.Port NAVX_PORT = SPI.Port.kMXP;
+    public static final String FRONT_CAMERA_NAME = "FrontCam";
 
     public class Controllers {
         public static final int DRIVER_PORT = 0;
