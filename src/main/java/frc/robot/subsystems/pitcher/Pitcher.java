@@ -27,11 +27,18 @@ public class Pitcher extends SubsystemBase implements Tuneable {
     private final PitcherIO io = Robot.isSimulation()
             ? new PitcherIOSim(fieldsTable)
             : new PitcherIOSparkMax(fieldsTable);
+
     private final TuneablesTable tuneablesTable = new TuneablesTable(SendableType.LIST);
     private final PrimitiveRotationalSensorHelper angleHelperDegrees;
 
-    private final PIDController pidController = new PIDController(KP, KI, KD);
-    private final TuneableArmFeedforward feedforward = new TuneableArmFeedforward(KS, KG, KV);
+    private final PIDController pidController = Robot.isSimulation() ?
+            new PIDController(PitcherConstantsSim.KP, PitcherConstantsSim.KI, PitcherConstantsSim.KD)
+            : new PIDController(KP, KI, KD);
+
+    private final TuneableArmFeedforward feedforward = Robot.isSimulation() ? 
+            new TuneableArmFeedforward(PitcherConstantsSim.KS, PitcherConstantsSim.KG, PitcherConstantsSim.KV)
+            : new TuneableArmFeedforward(KI, KD, KV);
+
     private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCELERATION_DEG_PER_SEC));
 
@@ -103,10 +110,13 @@ public class Pitcher extends SubsystemBase implements Tuneable {
             double time,
             TrapezoidProfile.State initalState,
             TrapezoidProfile.State goalState) {
+
         TrapezoidProfile.State state = trapezoidProfile.calculate(time, initalState, goalState);
+
         fieldsTable.recordOutput("Desired State Position", state.position);
         fieldsTable.recordOutput("Desired State Velocity", state.velocity);
         fieldsTable.recordOutput("Goal Position", goalState.position);
+        
         desiredStateVisualizer.update(state.position);
         return state;
     }

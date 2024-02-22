@@ -10,4 +10,10 @@ public class LoaderIOSim extends LoaderIO {
     @Override
     public void setSpeed(double demandPrecentage) {
     }
+
+    @Override
+    protected boolean getNoteDetectorValue() {
+        return false;
+    }
+
 }

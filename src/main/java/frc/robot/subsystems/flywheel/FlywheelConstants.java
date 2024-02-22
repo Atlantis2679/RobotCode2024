@@ -7,6 +7,7 @@ public class FlywheelConstants {
     public static final double MAX_VOLTAGE = 11;
     public static final double MAX_ACCELERATION_VOLTS_PER_SECOND = 12;
     public static final double SPEED_TOLERANCE_RPS = 2;
+    public static final double MAX_SPEED = 8;
 
     public final class RotateFlywheel {
         public static final double KP = 0;

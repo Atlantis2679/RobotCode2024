@@ -1,7 +1,12 @@
 package frc.robot.allcommands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.allcommands.AllCommandsConstants.CollectFromSource;
+import frc.robot.allcommands.AllCommandsConstants.ScoreAmp;
+import frc.robot.allcommands.AllCommandsConstants.ShootToSpeaker;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelCommands;
 import frc.robot.subsystems.intake.Intake;
@@ -40,14 +45,46 @@ public class AllCommands {
         swerve.registerCallbackOnPoseUpdate(shootingCalculator::update);
     }
 
-    public Command shoot() {
+    public Command shootToSpeaker() {
         return flywheelCMDs
-                .rotate(() -> shootingCalculator.getUpperRollerSpeedRPS(),
+                .spin(() -> shootingCalculator.getUpperRollerSpeedRPS(),
                         () -> shootingCalculator.getLowerRollerSpeedRPS())
                 .alongWith(Commands
                         .waitUntil(() -> flywheel.atSpeed(
                                 shootingCalculator.getUpperRollerSpeedRPS(),
                                 shootingCalculator.getLowerRollerSpeedRPS()))
-                        .andThen(loaderCMDs.release()));
+                        .andThen(loaderCMDs.release(ShootToSpeaker.SPEED_RELEASE)
+                        .alongWith(Commands.waitSeconds(0.6)
+                        .finallyDo(() -> flywheel.setSpeed(0, 0)))));
     }
+
+    public Command scoreAmp() {
+        return flywheelCMDs.spin(() -> ScoreAmp.UPPER_ROLLS_SPEED_RPS, () -> ScoreAmp.LOWER_ROLLS_SPEES_RPS)
+            .alongWith(Commands
+                .waitUntil(() -> flywheel.atSpeed(ScoreAmp.UPPER_ROLLS_SPEED_RPS, ScoreAmp.LOWER_ROLLS_SPEES_RPS))
+                .andThen(loaderCMDs.release(ShootToSpeaker.SPEED_RELEASE).alongWith(Commands.waitSeconds(0.6)
+                .finallyDo(() -> {
+                    loader.setSpeed(0);
+                    flywheel.setSpeed(0, 0);
+                }))));
+    }
+
+    public Command collectFromSource() {
+        return pitcherCMDs.adjustToAngle(CollectFromSource.DEGREES_SOURCE).andThen(flywheelCMDs.spin(() -> CollectFromSource.UPPER_ROLLS_SPEED_RPS, () -> CollectFromSource.LOWER_ROLLS_SPEES_RPS)
+        .alongWith(Commands
+                .waitUntil(() -> loader.getIsNoteInside())
+                .andThen(loaderCMDs.release(CollectFromSource.BRING_BACK_NOTE_TO_SHOOTER))
+                    .alongWith(Commands
+                        .waitUntil(() -> loader.getIsNoteInside())
+                        .finallyDo(() -> loader.setSpeed(0)))));
+    }
+
+    public Command manualShooter(DoubleSupplier pitcherSupplier, DoubleSupplier loaderSupplier,
+        DoubleSupplier upperRollSupplier, DoubleSupplier lowerRollSupplier) {
+
+        return pitcherCMDs.manualController(pitcherSupplier)
+            .alongWith(loaderCMDs.manualController(loaderSupplier))
+            .alongWith(flywheelCMDs.manualController(upperRollSupplier, lowerRollSupplier));
+    }
+
 }

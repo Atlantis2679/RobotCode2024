@@ -29,11 +29,7 @@ public class Loader extends SubsystemBase {
         fieldsTable.recordOutput("Demand Speed", demandPrecentage);
     }
 
-    public void setIsNoteInside(boolean isNoteInside) {
-        this.isNoteInside = isNoteInside;
-    }
-
-    public boolean getIsNotInside() {
-        return isNoteInside;
+    public boolean getIsNoteInside() {
+        return io.noteDetectorvalue.getAsBoolean();
     }
 }
