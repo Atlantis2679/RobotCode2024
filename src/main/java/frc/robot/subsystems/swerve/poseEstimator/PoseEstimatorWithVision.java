@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve.poseEstimator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -39,23 +40,28 @@ public class PoseEstimatorWithVision {
                 swerveKinematics,
                 currentAngle,
                 positions,
-                new Pose2d());
+                new Pose2d(),
+                VecBuilder.fill(0.1, 0.1, 0.1),
+                VecBuilder.fill(0.9, 0.9, 0.9));
     }
 
     public void update(Rotation2d gyroMeasurmentCCW, SwerveModulePosition[] modulesPositions) {
         poseEstimator.update(gyroMeasurmentCCW, modulesPositions);
         double visionToEstimateDifferenceMeters = getVisionToEstimateDifferenceMeters();
         fieldsTable.recordOutput("Vision To Estimate Difference", visionToEstimateDifferenceMeters);
-        if (visionToEstimateDifferenceMeters < PoseEstimatorConstants.VISION_THRESHOLD_DISTANCE_M
-                && visionIO.hasNewRobotPose.getAsBoolean()) {
+        if (visionIO.hasNewRobotPose.getAsBoolean()) {
+            fieldsTable.recordOutput("Vision Pose3d", visionIO.poseEstimate.get());
+            fieldsTable.recordOutput("Vision Pose2d", visionIO.poseEstimate.get().toPose2d());
 
-            poseEstimator.addVisionMeasurement(visionIO.photonPoseEstimate.get().toPose2d(),
-                    visionIO.cameraTimestampSeconds.getAsDouble());
+            if (visionToEstimateDifferenceMeters < PoseEstimatorConstants.VISION_THRESHOLD_DISTANCE_M) {
+                poseEstimator.addVisionMeasurement(visionIO.poseEstimate.get().toPose2d(),
+                        visionIO.cameraTimestampSeconds.getAsDouble());
+            }
         }
     }
 
     private double getVisionToEstimateDifferenceMeters() {
-        return PhotonUtils.getDistanceToPose(visionIO.photonPoseEstimate.get().toPose2d(),
+        return PhotonUtils.getDistanceToPose(visionIO.poseEstimate.get().toPose2d(),
                 poseEstimator.getEstimatedPosition());
     }
 
