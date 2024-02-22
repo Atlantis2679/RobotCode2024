@@ -1,6 +1,5 @@
 package frc.robot.subsystems.wrist;
 
-import static frc.robot.subsystems.wrist.WristConstants.*;
 
 import java.util.function.DoubleSupplier;
 

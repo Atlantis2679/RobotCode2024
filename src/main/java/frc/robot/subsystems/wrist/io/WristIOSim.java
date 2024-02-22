@@ -5,7 +5,6 @@ import static frc.robot.subsystems.wrist.WristConstants.*;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.logfields.LogFieldsTable;
 
