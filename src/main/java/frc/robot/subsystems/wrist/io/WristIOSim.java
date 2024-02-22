@@ -1,6 +1,6 @@
-package frc.robot.subsystems.intake.io;
+package frc.robot.subsystems.wrist.io;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
+import static frc.robot.subsystems.wrist.WristConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.logfields.LogFieldsTable;
 
-public class IntakeIOSim extends IntakeIO {
-    private final FlywheelSim rollersMotor = new FlywheelSim(
-            DCMotor.getNeo550(1),
-            ROLLERS_GEAR_RATIO,
-            ROLLERS_JKG_METERS_SQUARED);
+public class WristIOSim extends WristIO {
+    // private final FlywheelSim rollersMotor = new FlywheelSim(
+    //         DCMotor.getNeo550(1),
+    //         ROLLERS_GEAR_RATIO,
+    //         ROLLERS_JKG_METERS_SQUARED);
 
     private final SingleJointedArmSim wristMotor = new SingleJointedArmSim(
             DCMotor.getNEO(1),
@@ -27,17 +27,12 @@ public class IntakeIOSim extends IntakeIO {
 
     @Override
     protected void periodicBeforeFields() {
-        rollersMotor.update(0.02);
+        // rollersMotor.update(0.02);
         wristMotor.update(0.02);
     }
 
-    public IntakeIOSim(LogFieldsTable logFieldsTable) {
+    public WristIOSim(LogFieldsTable logFieldsTable) {
         super(logFieldsTable);
-    }
-
-    @Override
-    public void setRollerSpeedPrecentOutput(double rollersSpeed) {
-        rollersMotor.setInputVoltage(rollersSpeed * 12);
     }
 
     @Override
@@ -51,8 +46,4 @@ public class IntakeIOSim extends IntakeIO {
         return Math.toDegrees(wristMotor.getAngleRads());
     }
 
-    @Override
-    protected boolean getNoteDetectorValue() {
-        return false;
-    }
 }

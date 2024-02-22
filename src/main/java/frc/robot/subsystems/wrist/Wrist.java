@@ -1,9 +1,11 @@
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.wrist;
+
+import static frc.robot.subsystems.wrist.WristConstants.*;
+
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,46 +17,46 @@ import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableArmFeedforward;
 import frc.lib.tuneables.extensions.TuneableTrapezoidProfile;
 import frc.robot.Robot;
-import frc.robot.subsystems.intake.io.IntakeIO;
-import frc.robot.subsystems.intake.io.IntakeIOSim;
-import frc.robot.subsystems.intake.io.IntakeIOSparkMax;
+import frc.robot.subsystems.wrist.WristConstants.Sim;
+import frc.robot.subsystems.wrist.io.WristIO;
+import frc.robot.subsystems.wrist.io.WristIOSim;
+import frc.robot.subsystems.wrist.io.WristIOSparkMax;
 import frc.robot.utils.PrimitiveRotationalSensorHelper;
 
-import static frc.robot.subsystems.intake.IntakeConstants.*;
-
-public class Intake extends SubsystemBase implements Tuneable {
+public class Wrist extends SubsystemBase implements Tuneable {
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
-    private final IntakeIO io = Robot.isSimulation()
-            ? new IntakeIOSim(fieldsTable)
-            : new IntakeIOSparkMax(fieldsTable);
+    private final WristIO io = Robot.isSimulation()
+            ? new WristIOSim(fieldsTable)
+            : new WristIOSparkMax(fieldsTable);
 
     private final PrimitiveRotationalSensorHelper wristAngleHelperDegrees;
     private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(WRIST_MAX_VELOCITY_DEG_PER_SEC, WRIST_MAX_ACCELERATION_DEG_PER_SEC));
 
-    private final TuneableArmFeedforward feedForwardWrist = new TuneableArmFeedforward(KS, KG, KV, KA);
+    private final TuneableArmFeedforward feedForwardWrist =Robot.isSimulation()
+            ? new TuneableArmFeedforward(KS, KG, KV, KA)
+            : new TuneableArmFeedforward(Sim.KS, Sim.KG, Sim.KV, Sim.KA);
     private final PIDController wristPidController = new PIDController(KP, KI, KD);
 
-    private final IntakeVisualizer realStateVisualizer = new IntakeVisualizer(
+    private final WristVisualizer realStateVisualizer = new WristVisualizer(
             fieldsTable,
             new Color8Bit("#00BEBE"),
             "Real Mechanism");
 
-    private final IntakeVisualizer desiredStateVisualizer = new IntakeVisualizer(
+    private final WristVisualizer desiredStateVisualizer = new WristVisualizer(
             fieldsTable,
             new Color8Bit("#FFFF00"),
             "Desired Mechanism");
 
-    SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
 
-    public Intake() {
+    public Wrist() {
         fieldsTable.update();
         wristAngleHelperDegrees = new PrimitiveRotationalSensorHelper(
                 io.wristAngleDegrees.getAsDouble(),
                 WIRST_ANGLE_OFFSET_DEGREES);
 
         wristAngleHelperDegrees.enableContinousWrap(WIRST_ANGLE_UPPER_BOUND_DEGREES, 360);
-        TuneablesManager.add("Intake", (Tuneable) this);
+        TuneablesManager.add("Wrist", (Tuneable) this);
     }
 
     @Override
@@ -64,13 +66,7 @@ public class Intake extends SubsystemBase implements Tuneable {
         fieldsTable.recordOutput("Wrist Angle Degrees", getAbsoluteAngleDegrees());
     }
 
-    public void setSpeedRollers(double speedPrecentageOutput) {
-        speedPrecentageOutput = rollersSpeedLimiter.calculate(speedPrecentageOutput);
-        io.setRollerSpeedPrecentOutput(MathUtil.clamp(
-                speedPrecentageOutput,
-                -ROLLERS_SPEED_LIMIT_PRECENTAGE,
-                ROLLERS_SPEED_LIMIT_PRECENTAGE));
-    }
+   
 
     public void setWristVoltage(double voltage) {
         fieldsTable.recordOutput("Demand Voltage", voltage);
@@ -83,9 +79,7 @@ public class Intake extends SubsystemBase implements Tuneable {
         return wristAngleHelperDegrees.getAngle();
     }
 
-    public boolean getIsNoteInside() {
-        return io.noteDetectorValue.getAsBoolean();
-    }
+    
 
     public double calculateFeedforward(double desiredWristAngleDegrees, double desiredWristVelocity, boolean usePID) {
         fieldsTable.recordOutput("desiredWristAngleDegrees", desiredWristAngleDegrees);

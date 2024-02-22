@@ -20,7 +20,7 @@ public class VisionAprilTagsIOSim extends VisionAprilTagsIO {
 
     @Override
     protected Pose3d getRobotPose(){
-        return null;
+        return new Pose3d();
     }
 
     @Override
