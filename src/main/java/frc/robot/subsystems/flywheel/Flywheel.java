@@ -29,10 +29,16 @@ public class Flywheel extends SubsystemBase implements Tuneable {
     private final SlewRateLimiter lowerRollerSpeedAccelerationLimiter = new SlewRateLimiter(
             MAX_ACCELERATION_VOLTS_PER_SECOND);
 
-    private final PIDController upperRollerSpeedPID = new PIDController(KP, KI, KD);
-    private final PIDController lowerRollerSpeedPID = new PIDController(KP, KI, KD);
+    private final PIDController upperRollerSpeedPID = Robot.isSimulation() ?
+            new PIDController(FlywheelConstantsSim.KP, FlywheelConstantsSim.KI, FlywheelConstantsSim.KD) 
+            : new PIDController(KP, KI, KD);
+    private final PIDController lowerRollerSpeedPID = Robot.isSimulation() ?
+            new PIDController(FlywheelConstantsSim.KP, FlywheelConstantsSim.KI, FlywheelConstantsSim.KD) 
+            : new PIDController(KP, KI, KD);
 
-    private final TuneableSimpleMotorFeedforward feedforward = new TuneableSimpleMotorFeedforward(KS, KV, KA);
+    private final TuneableSimpleMotorFeedforward feedforward = Robot.isSimulation() ?
+            new TuneableSimpleMotorFeedforward(FlywheelConstantsSim.KS, FlywheelConstantsSim.KV, FlywheelConstantsSim.KA)
+            : new TuneableSimpleMotorFeedforward(KS, KV, KA);
 
     public Flywheel() {
         fieldsTable.update();

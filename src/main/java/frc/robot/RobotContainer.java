@@ -74,7 +74,7 @@ public class RobotContainer {
         pitcher.setDefaultCommand(pitcherCommands.manualController(() -> operatorController.getLeftY()));
         operatorController.y().whileTrue(pitcherCommands.adjustToAngle(-30));
 
-        flywheel.setDefaultCommand(new FlywheelCommands(flywheel).rotate(operatorController::getLeftTriggerAxis,
+        flywheel.setDefaultCommand(new FlywheelCommands(flywheel).spin(operatorController::getLeftTriggerAxis,
                 operatorController::getRightTriggerAxis));
         operatorController.b()
                 .whileTrue(Commands.startEnd(() -> {
