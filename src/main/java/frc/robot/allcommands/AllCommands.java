@@ -1,21 +1,26 @@
 package frc.robot.allcommands;
 
+import static frc.robot.allcommands.AllCommandsConstants.*;
+
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import frc.robot.allcommands.AllCommandsConstants.CollectFromSource;
 import frc.robot.allcommands.AllCommandsConstants.ScoreAmp;
 import frc.robot.allcommands.AllCommandsConstants.ShootToSpeaker;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelCommands;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeCommands;
+import frc.robot.subsystems.gripper.Gripper;
+import frc.robot.subsystems.gripper.GripperCMD;
 import frc.robot.subsystems.loader.Loader;
 import frc.robot.subsystems.loader.LoaderCommands;
 import frc.robot.subsystems.pitcher.Pitcher;
 import frc.robot.subsystems.pitcher.PitcherCommands;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristCommands;
 
 public class AllCommands {
     private final Swerve swerve;
@@ -86,5 +91,18 @@ public class AllCommands {
             .alongWith(loaderCMDs.manualController(loaderSupplier))
             .alongWith(flywheelCMDs.manualController(upperRollSupplier, lowerRollSupplier));
     }
+  
+   public Command openIntake() {
+                return wristCMDs.moveToAngle(Open.COLLECTING_WRIST_ANGLE_DEGREE)
+                .andThen(Commands.waitUntil(() -> wrist.getAbsoluteAngleDegrees() < Open.START_GRIPPER_WRIST_ANGLE_DEGREE))
+                .andThen(gripperCMD.spin(Open.START_GRIPPER_WRIST_ANGLE_DEGREE));
+    }
 
+    public Command closeIntake() {
+            return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
+    }
+
+    public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
+            return wristCMDs.manualController(wristSpeed).alongWith(gripperCMD.manualController(gripperSpeed));
+    }
 }

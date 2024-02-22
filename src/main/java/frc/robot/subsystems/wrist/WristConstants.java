@@ -1,21 +1,31 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.wrist;
 
-public class IntakeConstants {
+public class WristConstants {
+
+    public class MoveToAngle {
+        public static final boolean USE_CLOSED_LOOP_PROFILE = true;
+    }
+
     // Angle PID
-    public static final double KP = 0; //0.1
+    public static final double KP = 0; // 0.1
     public static final double KI = 0;
     public static final double KD = 0;
 
     // Feedforward wrist
     public static final double KS = 0;
-    public static final double KG = 0.3; //0.556000
+    public static final double KG = 0.3; // 0.556000
     public static final double KV = 0.023;
     public static final double KA = 0;
 
-    // set
-    public static final double ROLLERS_INTAKE_SPEED = 0.5;
+    public class Sim {
+        public static final double KS = 0;
+        public static final double KG = 0.3; // 0.556000
+        public static final double KV = 0.023;
+        public static final double KA = 0;
 
-    public static final double ROLLERS_SPEED_LIMIT_PRECENTAGE = 1;
+    }
+    // set
+
     public static final double WRIST_VOLTAGE_LIMIT = 4;
 
     // trapezoidProfile
@@ -23,7 +33,6 @@ public class IntakeConstants {
     public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 120;
 
     // SlewRateLimiter
-    public static final double ROLLERS_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND = 12;
 
     // Intake button
     public static final double STOP_INTAKE_MOTOR = 0;
@@ -36,7 +45,6 @@ public class IntakeConstants {
     public static final double WIRST_ANGLE_OFFSET_DEGREES = 12.7;
 
     // rollers speeds
-    public static final double COLLECTING_ROLLERS_SPEED = 0.5;
 
     // sim
     public static final double JOINT_GEAR_RATIO = 60;
@@ -50,29 +58,6 @@ public class IntakeConstants {
 
     public class ManualController {
         public static final double SPEED_MULTIPLIER = 4;
-    }
-
-    public class MoveToAngle {
-        public static final boolean USE_CLOSED_LOOP_PROFILE = true;
-    }
-
-    public class Open {
-        public static final double COLLECTING_WRIST_ANGLE_DEGREE = -27;
-        public static final double START_ROLLERS_WRIST_ANGLE_DEGREE = 0;
-    }
-
-    public class Close {
-        public static final double CLOSED_WRIST_ANGLE_DEGREE = 180;
-        public static final double STOP_ROLLERS_WRIST_ANGLE_DEGREE = 160;
-    }
-
-    public class aimToAmp {
-        public static final double AIM_TO_AMP_WRIST_DEGREE = 100;
-    }
-
-    public class collectFromSource {
-        public static final double COLLECT_FROM_SOURCE_WRIST_DEGREE = 100;
-        public static final double COLLECT_FROM_SOURCE_ROLLER_SPEED = -1;
     }
 
 }
