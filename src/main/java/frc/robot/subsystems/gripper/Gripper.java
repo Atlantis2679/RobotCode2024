@@ -6,7 +6,6 @@ package frc.robot.subsystems.gripper;
 
 import static frc.robot.subsystems.gripper.GripperConstants.*;
 
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,31 +14,33 @@ import frc.robot.subsystems.gripper.io.GripperIO;
 import frc.robot.subsystems.gripper.io.GripperIOSparkMax;
 
 public class Gripper extends SubsystemBase {
-  private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
+    private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
 
-  private final GripperIO io = new GripperIOSparkMax(fieldsTable);
+    private final GripperIO io = new GripperIOSparkMax(fieldsTable);
 
-  SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(GRIPPER_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
+    SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(GRIPPER_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
 
-  /** Creates a new gripper. */
-  public Gripper() {
-    fieldsTable.update();
-  }
+    public Gripper() {
+        fieldsTable.update();
+    }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+    @Override
+    public void periodic() {
+    }
 
-  public void setGripperSpeed(double speedPrecentageOutput) {
-    speedPrecentageOutput = rollersSpeedLimiter.calculate(speedPrecentageOutput);
-    io.setGripperSpeedPrecentOutput(MathUtil.clamp(
-        speedPrecentageOutput,
-        -GRIPPER_SPEED_LIMIT_PRECENTAGE,
-        GRIPPER_SPEED_LIMIT_PRECENTAGE));
-  }
+    public void setSpeed(double speedPrecentageOutput) {
+        speedPrecentageOutput = rollersSpeedLimiter.calculate(speedPrecentageOutput);
+        io.setGripperSpeedPrecentOutput(MathUtil.clamp(
+                speedPrecentageOutput,
+                -GRIPPER_SPEED_LIMIT_PRECENTAGE,
+                GRIPPER_SPEED_LIMIT_PRECENTAGE));
+    }
 
-  public boolean getIsNoteInside() {
+    public void stop() {
+        setSpeed(0);
+    }
+
+    public boolean getIsNoteInside() {
         return io.noteDetectorValue.getAsBoolean();
     }
 

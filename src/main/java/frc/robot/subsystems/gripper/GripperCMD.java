@@ -16,12 +16,11 @@ public class GripperCMD {
         this.gripper = gripper;
     }
 
-    public Command setGripperSpeed(double gripperSpeed) {
-        return gripper.runOnce(() -> gripper.setGripperSpeed(gripperSpeed));
+    public Command spin(double speed) {
+        return gripper.startEnd(() -> gripper.setSpeed(speed), gripper::stop);
     }
 
     public Command manualController(DoubleSupplier speed){
-        return gripper.run(()-> gripper.setGripperSpeed(speed.getAsDouble()));
+        return gripper.run(()-> gripper.setSpeed(speed.getAsDouble())).finallyDo(gripper::stop);
     }
-
 }

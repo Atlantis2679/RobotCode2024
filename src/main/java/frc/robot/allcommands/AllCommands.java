@@ -52,20 +52,17 @@ public class AllCommands {
                 swerve.registerCallbackOnPoseUpdate(shootingCalculator::update);
         }
 
-        public Command open() {
+        public Command openIntake() {
                 return wristCMDs.moveToAngle(Open.COLLECTING_WRIST_ANGLE_DEGREE)
-                                .andThen(gripperCMD.setGripperSpeed(Open.GRIPPER_SPEED));
+                .andThen(Commands.waitUntil(() -> wrist.getAbsoluteAngleDegrees() > Open.START_GRIPPER_WRIST_ANGLE_DEGREE))
+                .andThen(gripperCMD.spin(Open.START_GRIPPER_WRIST_ANGLE_DEGREE));
         }
 
-        public Command close() {
-                return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE)
-                                .alongWith(gripperCMD.setGripperSpeed(0))
-                                .finallyDo(() -> wrist.setWristVoltage(0));
+        public Command closeIntake() {
+                return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
         }
 
         public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
-                return wristCMDs.manualController(wristSpeed).
-                alongWith(gripperCMD.manualController(gripperSpeed));
+                return wristCMDs.manualController(wristSpeed).alongWith(gripperCMD.manualController(gripperSpeed));
         }
-
 }
