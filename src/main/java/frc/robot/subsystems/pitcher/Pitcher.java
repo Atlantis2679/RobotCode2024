@@ -83,6 +83,10 @@ public class Pitcher extends SubsystemBase implements Tuneable {
         io.setVoltage(voltageDemand);
     }
 
+    public void stop() {
+        setVoltage(0);
+    }
+
     public double getAngleDegrees() {
         return angleHelperDegrees.getAngle();
     }

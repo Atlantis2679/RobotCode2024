@@ -60,6 +60,10 @@ public class Flywheel extends SubsystemBase implements Tuneable {
         io.setLowerRollerVoltage(MathUtil.clamp(lowerRollerDemandVoltage, -MAX_VOLTAGE, MAX_VOLTAGE));
     }
 
+    public void stop() {
+        setSpeed(0, 0);
+    }
+
     public void resetPIDs() {
         lowerRollerSpeedPID.reset();
         upperRollerSpeedPID.reset();

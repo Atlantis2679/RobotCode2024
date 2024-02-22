@@ -21,7 +21,7 @@ public class FlywheelCommands {
                             .calculateLowerRollerVoltageForSpeed(lowerRollerSpeedSupplierRPS.getAsDouble());
                     flywheel.setSpeed(upperRollerVoltage, lowerRollerVoltage);
                 }))
-                .finallyDo(() -> flywheel.setSpeed(0, 0));
+                .finallyDo(flywheel::stop);
     }
 
     public Command manualController(DoubleSupplier upperRollerSpeedJoystick, DoubleSupplier lowerRollerSpeedJoystick) {

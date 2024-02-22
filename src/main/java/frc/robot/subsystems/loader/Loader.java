@@ -29,6 +29,10 @@ public class Loader extends SubsystemBase {
         fieldsTable.recordOutput("Demand Speed", demandPrecentage);
     }
 
+    public void stop() {
+        setSpeed(0);
+    }
+
     public boolean getIsNoteInside() {
         return io.noteDetectorvalue.getAsBoolean();
     }

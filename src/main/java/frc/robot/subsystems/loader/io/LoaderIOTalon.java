@@ -33,6 +33,6 @@ public class LoaderIOTalon extends LoaderIO {
 
     @Override
     public boolean getNoteDetectorValue() {
-        return beamBreak.get();
+        return !beamBreak.get();
     }
 }
