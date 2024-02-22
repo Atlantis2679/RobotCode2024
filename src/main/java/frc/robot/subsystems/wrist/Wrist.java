@@ -111,6 +111,10 @@ public class Wrist extends SubsystemBase implements Tuneable {
         return state;
     }
 
+    public void stop() {
+        setWristVoltage(0);
+    }
+
     @Override
     public void initTuneable(TuneableBuilder builder) {
         builder.addChild("Intake Subsystem", (Sendable) this);
