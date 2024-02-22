@@ -10,7 +10,7 @@ public class GripperConstants {
 
     public static final double GRIPPER_SPEED_LIMIT_PRECENTAGE = 1;
 
-    public static final double GRIPPER_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND = 12;
+    public static final double GRIPPER_ACCELERATION_LIMIT_PRECENTAGE_PER_SECOND = 1;
 
     public static final double GRIPPER_COLLECTING_SPEED = 0.5;
 

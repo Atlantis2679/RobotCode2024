@@ -54,7 +54,7 @@ public class AllCommands {
 
         public Command openIntake() {
                 return wristCMDs.moveToAngle(Open.COLLECTING_WRIST_ANGLE_DEGREE)
-                .andThen(Commands.waitUntil(() -> wrist.getAbsoluteAngleDegrees() > Open.START_GRIPPER_WRIST_ANGLE_DEGREE))
+                .andThen(Commands.waitUntil(() -> wrist.getAbsoluteAngleDegrees() < Open.START_GRIPPER_WRIST_ANGLE_DEGREE))
                 .andThen(gripperCMD.spin(Open.START_GRIPPER_WRIST_ANGLE_DEGREE));
         }
 

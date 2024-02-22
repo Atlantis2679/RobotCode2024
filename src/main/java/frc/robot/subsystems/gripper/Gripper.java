@@ -18,7 +18,7 @@ public class Gripper extends SubsystemBase {
 
     private final GripperIO io = new GripperIOSparkMax(fieldsTable);
 
-    SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(GRIPPER_ACCELERATION_LIMIT_VOLTAGE_PER_SECOND);
+    SlewRateLimiter rollersSpeedLimiter = new SlewRateLimiter(GRIPPER_ACCELERATION_LIMIT_PRECENTAGE_PER_SECOND);
 
     public Gripper() {
         fieldsTable.update();
