@@ -42,7 +42,7 @@ public class Flywheel extends SubsystemBase implements Tuneable {
             : new TuneableSimpleMotorFeedforward(KS, KV, KA);
 
     private double lastLowerDesiredSpeed = 0;
-    private double lastUpperDesiredSpeed = 0;
+    private double lastUpperDesiredSpeedRPS = 0;
 
     public Flywheel() {
         fieldsTable.update();
@@ -67,8 +67,8 @@ public class Flywheel extends SubsystemBase implements Tuneable {
     }
 
     public void setSpeed(double upperRollerDemandVoltage, double lowerRollerDemandVoltage) {
-        fieldsTable.recordOutput("demand upper voltage", upperRollerDemandVoltage);
-        fieldsTable.recordOutput("demand lower voltage", lowerRollerDemandVoltage);
+        fieldsTable.recordOutput("desired upper voltage", upperRollerDemandVoltage);
+        fieldsTable.recordOutput("desired lower voltage", lowerRollerDemandVoltage);
         upperRollerDemandVoltage = upperRollerSpeedAccelerationLimiter.calculate(-upperRollerDemandVoltage);
         lowerRollerDemandVoltage = lowerRollerSpeedAccelerationLimiter.calculate(lowerRollerDemandVoltage);
 
@@ -87,14 +87,16 @@ public class Flywheel extends SubsystemBase implements Tuneable {
     }
 
     public double calculateUpperRollerVoltageForSpeed(double velocityRPS) {
-        fieldsTable.recordOutput("desired upper velocity velocity", velocityRPS);
+        lastUpperDesiredSpeedRPS = velocityRPS;
+        fieldsTable.recordOutput("desired upper velocity", velocityRPS);
         double result = feedforward.calculate(velocityRPS)
                 + upperRollerSpeedPID.calculate(getUpperRollerSpeedRPS(), velocityRPS);
         return result;
     }
 
     public double calculateLowerRollerVoltageForSpeed(double velocityRPS) {
-        fieldsTable.recordOutput("desired lower velocity velocity", velocityRPS);
+        lastLowerDesiredSpeed = velocityRPS;
+        fieldsTable.recordOutput("desired lower velocity", velocityRPS);
         double result = feedforward.calculate(velocityRPS)
                 + lowerRollerSpeedPID.calculate(getLowerRollerSpeedRPS(), velocityRPS);
         return result;
@@ -108,9 +110,12 @@ public class Flywheel extends SubsystemBase implements Tuneable {
         return io.lowerRollerSpeedRPS.getAsDouble();
     }
 
-    public boolean atSpeed(double upperRollerRPS, double lowerRollerRPS) {
-        return Math.abs(getUpperRollerSpeedRPS() - upperRollerRPS) < SPEED_TOLERANCE_RPS
-                && Math.abs(getLowerRollerSpeedRPS() - lowerRollerRPS) < SPEED_TOLERANCE_RPS;
+    public boolean atSpeed() {
+        if (lastLowerDesiredSpeed == 0 || lastUpperDesiredSpeedRPS == 0) {
+            return false;
+        }
+        return Math.abs(getUpperRollerSpeedRPS() - lastUpperDesiredSpeedRPS) < SPEED_TOLERANCE_RPS
+                && Math.abs(getLowerRollerSpeedRPS() - lastLowerDesiredSpeed) < SPEED_TOLERANCE_RPS;
     }
 
     @Override
