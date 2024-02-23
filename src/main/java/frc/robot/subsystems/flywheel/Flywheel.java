@@ -29,16 +29,20 @@ public class Flywheel extends SubsystemBase implements Tuneable {
     private final SlewRateLimiter lowerRollerSpeedAccelerationLimiter = new SlewRateLimiter(
             MAX_ACCELERATION_VOLTS_PER_SECOND);
 
-    private final PIDController upperRollerSpeedPID = Robot.isSimulation() ?
-            new PIDController(FlywheelConstantsSim.KP, FlywheelConstantsSim.KI, FlywheelConstantsSim.KD) 
+    private final PIDController upperRollerSpeedPID = Robot.isSimulation()
+            ? new PIDController(FlywheelConstantsSim.KP, FlywheelConstantsSim.KI, FlywheelConstantsSim.KD)
             : new PIDController(KP, KI, KD);
-    private final PIDController lowerRollerSpeedPID = Robot.isSimulation() ?
-            new PIDController(FlywheelConstantsSim.KP, FlywheelConstantsSim.KI, FlywheelConstantsSim.KD) 
+    private final PIDController lowerRollerSpeedPID = Robot.isSimulation()
+            ? new PIDController(FlywheelConstantsSim.KP, FlywheelConstantsSim.KI, FlywheelConstantsSim.KD)
             : new PIDController(KP, KI, KD);
 
-    private final TuneableSimpleMotorFeedforward feedforward = Robot.isSimulation() ?
-            new TuneableSimpleMotorFeedforward(FlywheelConstantsSim.KS, FlywheelConstantsSim.KV, FlywheelConstantsSim.KA)
+    private final TuneableSimpleMotorFeedforward feedforward = Robot.isSimulation()
+            ? new TuneableSimpleMotorFeedforward(FlywheelConstantsSim.KS, FlywheelConstantsSim.KV,
+                    FlywheelConstantsSim.KA)
             : new TuneableSimpleMotorFeedforward(KS, KV, KA);
+
+    private double lastLowerDesiredSpeed = 0;
+    private double lastUpperDesiredSpeed = 0;
 
     public Flywheel() {
         fieldsTable.update();
@@ -48,16 +52,33 @@ public class Flywheel extends SubsystemBase implements Tuneable {
 
     @Override
     public void periodic() {
+        fieldsTable.recordOutput("upper velocity RPS", getUpperRollerSpeedRPS());
+        fieldsTable.recordOutput("lower velocity RPS", getLowerRollerSpeedRPS());
+        fieldsTable.recordOutput("current command",
+                getCurrentCommand() != null ? getCurrentCommand().getName() : "none");
     }
 
-    public void setSpeed(double upperRollerDemandVoltage, double lowerRollerDemandVoltage) {
-        upperRollerDemandVoltage = upperRollerSpeedAccelerationLimiter.calculate(-upperRollerDemandVoltage);
-        lowerRollerDemandVoltage = lowerRollerSpeedAccelerationLimiter.calculate(lowerRollerDemandVoltage);
+    private void setSpeedDirectly(double upperRollerDemandVoltage, double lowerRollerDemandVoltage) {
         fieldsTable.recordOutput("upper voltage", upperRollerDemandVoltage);
         fieldsTable.recordOutput("lower voltage", lowerRollerDemandVoltage);
 
-        io.setUpperRollerVoltage(MathUtil.clamp(upperRollerDemandVoltage, -MAX_VOLTAGE, MAX_VOLTAGE));
-        io.setLowerRollerVoltage(MathUtil.clamp(lowerRollerDemandVoltage, -MAX_VOLTAGE, MAX_VOLTAGE));
+        io.setUpperRollerVoltage(upperRollerDemandVoltage);
+        io.setLowerRollerVoltage(lowerRollerDemandVoltage);
+    }
+
+    public void setSpeed(double upperRollerDemandVoltage, double lowerRollerDemandVoltage) {
+        fieldsTable.recordOutput("demand upper voltage", upperRollerDemandVoltage);
+        fieldsTable.recordOutput("demand lower voltage", lowerRollerDemandVoltage);
+        upperRollerDemandVoltage = upperRollerSpeedAccelerationLimiter.calculate(-upperRollerDemandVoltage);
+        lowerRollerDemandVoltage = lowerRollerSpeedAccelerationLimiter.calculate(lowerRollerDemandVoltage);
+
+        setSpeedDirectly(
+                MathUtil.clamp(upperRollerDemandVoltage, -MAX_VOLTAGE, MAX_VOLTAGE),
+                MathUtil.clamp(lowerRollerDemandVoltage, -MAX_VOLTAGE, MAX_VOLTAGE));
+    }
+
+    public void stop() {
+        setSpeedDirectly(0, 0);
     }
 
     public void resetPIDs() {
@@ -86,7 +107,7 @@ public class Flywheel extends SubsystemBase implements Tuneable {
     public double getLowerRollerSpeedRPS() {
         return io.lowerRollerSpeedRPS.getAsDouble();
     }
-  
+
     public boolean atSpeed(double upperRollerRPS, double lowerRollerRPS) {
         return Math.abs(getUpperRollerSpeedRPS() - upperRollerRPS) < SPEED_TOLERANCE_RPS
                 && Math.abs(getLowerRollerSpeedRPS() - lowerRollerRPS) < SPEED_TOLERANCE_RPS;

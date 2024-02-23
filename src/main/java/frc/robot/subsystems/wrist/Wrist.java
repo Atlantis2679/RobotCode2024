@@ -3,7 +3,6 @@ package frc.robot.subsystems.wrist;
 
 import static frc.robot.subsystems.wrist.WristConstants.*;
 
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -17,6 +16,7 @@ import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableArmFeedforward;
 import frc.lib.tuneables.extensions.TuneableTrapezoidProfile;
 import frc.robot.Robot;
+import frc.robot.subsystems.wrist.WristConstants.IsAtAngle;
 import frc.robot.subsystems.wrist.WristConstants.Sim;
 import frc.robot.subsystems.wrist.io.WristIO;
 import frc.robot.subsystems.wrist.io.WristIOSim;
@@ -33,7 +33,7 @@ public class Wrist extends SubsystemBase implements Tuneable {
     private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(WRIST_MAX_VELOCITY_DEG_PER_SEC, WRIST_MAX_ACCELERATION_DEG_PER_SEC));
 
-    private final TuneableArmFeedforward feedForwardWrist =Robot.isSimulation()
+    private final TuneableArmFeedforward feedForwardWrist = Robot.isSimulation()
             ? new TuneableArmFeedforward(KS, KG, KV, KA)
             : new TuneableArmFeedforward(Sim.KS, Sim.KG, Sim.KV, Sim.KA);
     private final PIDController wristPidController = new PIDController(KP, KI, KD);
@@ -47,7 +47,6 @@ public class Wrist extends SubsystemBase implements Tuneable {
             fieldsTable,
             new Color8Bit("#FFFF00"),
             "Desired Mechanism");
-
 
     public Wrist() {
         fieldsTable.update();
@@ -66,8 +65,6 @@ public class Wrist extends SubsystemBase implements Tuneable {
         fieldsTable.recordOutput("Wrist Angle Degrees", getAbsoluteAngleDegrees());
     }
 
-   
-
     public void setWristVoltage(double voltage) {
         fieldsTable.recordOutput("Demand Voltage", voltage);
         voltage = MathUtil.clamp(voltage, -WRIST_VOLTAGE_LIMIT, WRIST_VOLTAGE_LIMIT);
@@ -78,8 +75,6 @@ public class Wrist extends SubsystemBase implements Tuneable {
     public double getAbsoluteAngleDegrees() {
         return wristAngleHelperDegrees.getAngle();
     }
-
-    
 
     public double calculateFeedforward(double desiredWristAngleDegrees, double desiredWristVelocity, boolean usePID) {
         fieldsTable.recordOutput("desiredWristAngleDegrees", desiredWristAngleDegrees);
@@ -109,6 +104,13 @@ public class Wrist extends SubsystemBase implements Tuneable {
         desiredStateVisualizer.update(state.position);
 
         return state;
+    }
+
+    public boolean isAtAngle(double desiredAngle) {
+        if (desiredAngle - getAbsoluteAngleDegrees() > IsAtAngle.MIN_WRIST_ANGLE_DEVAITION
+                && desiredAngle - getAbsoluteAngleDegrees() < IsAtAngle.MAX_WRIST_ANGLE_DEVAITION)
+            return true;
+        return false;
     }
 
     public void stop() {

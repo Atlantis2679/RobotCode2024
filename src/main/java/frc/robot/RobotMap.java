@@ -54,5 +54,7 @@ public class RobotMap {
 
     public class Loader {
         public final static int MOTOR_ID = 6;
+        public static final int BEAM_BREAK_ID = 6;
+
     }
 }

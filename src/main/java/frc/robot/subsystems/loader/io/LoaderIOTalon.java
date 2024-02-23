@@ -6,13 +6,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.lib.logfields.LogFieldsTable;
+import frc.robot.RobotMap.Loader;
+
 import static frc.robot.RobotMap.Loader.*;
 import static frc.robot.subsystems.loader.LoaderConstants.*;
 
 public class LoaderIOTalon extends LoaderIO {
     private final TalonSRX motor = new TalonSRX(MOTOR_ID);
 
-    private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
+    private final DigitalInput beamBreak = new DigitalInput(Loader.BEAM_BREAK_ID);
 
     public LoaderIOTalon(LogFieldsTable fieldsTable) {
         super(fieldsTable);
@@ -33,6 +35,6 @@ public class LoaderIOTalon extends LoaderIO {
 
     @Override
     public boolean getNoteDetectorValue() {
-        return beamBreak.get();
+        return !beamBreak.get();
     }
 }

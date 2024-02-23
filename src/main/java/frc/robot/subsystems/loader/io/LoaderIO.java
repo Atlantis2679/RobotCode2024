@@ -10,6 +10,7 @@ public abstract class LoaderIO extends IOBase {
 
     protected LoaderIO(LogFieldsTable fieldsTable) {
         super(fieldsTable);
+        
     }
 
     // OUTPUTS
