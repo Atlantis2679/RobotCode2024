@@ -18,6 +18,7 @@ public class WristIOSparkMax extends WristIO {
 
     public WristIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
+        wristMotor.setSmartCurrentLimit(25);
         wristMotor.setIdleMode(IdleMode.kBrake);
     }
 

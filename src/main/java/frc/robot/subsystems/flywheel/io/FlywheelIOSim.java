@@ -30,6 +30,7 @@ public class FlywheelIOSim extends FlywheelIO {
         return lowerRollerSim.getAngularVelocityRPM() / 60;
     }
 
+
     @Override
     public void setUpperRollerVoltage(double voltageDemand) {
         upperRollerSim.setInputVoltage(voltageDemand);

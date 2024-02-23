@@ -37,7 +37,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
 
     private final TuneableArmFeedforward feedforward = Robot.isSimulation() ? 
             new TuneableArmFeedforward(PitcherConstantsSim.KS, PitcherConstantsSim.KG, PitcherConstantsSim.KV)
-            : new TuneableArmFeedforward(KI, KD, KV);
+            : new TuneableArmFeedforward(KI, KG, KV);
 
     private final TuneableTrapezoidProfile trapezoidProfile = new TuneableTrapezoidProfile(
             new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCELERATION_DEG_PER_SEC));

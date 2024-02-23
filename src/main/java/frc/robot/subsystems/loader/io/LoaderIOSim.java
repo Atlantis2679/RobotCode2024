@@ -15,5 +15,4 @@ public class LoaderIOSim extends LoaderIO {
     protected boolean getNoteDetectorValue() {
         return false;
     }
-
 }

@@ -5,7 +5,7 @@ public class PitcherConstants {
     public static final double ANGLE_OFFSET_DEGREES = -155.2572038814301;
     public static final double GEAR_RATIO = 20;
 
-    public static final double KP = 0;
+    public static final double KP = 0.07;
     public static final double KI = 0;
     public static final double KD = 0;
 

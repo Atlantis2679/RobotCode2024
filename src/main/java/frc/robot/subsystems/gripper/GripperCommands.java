@@ -9,10 +9,10 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** Add your docs here. */
-public class GripperCMD {
+public class GripperCommands {
     private final Gripper gripper;
 
-    public GripperCMD(Gripper gripper) {
+    public GripperCommands(Gripper gripper) {
         this.gripper = gripper;
     }
 

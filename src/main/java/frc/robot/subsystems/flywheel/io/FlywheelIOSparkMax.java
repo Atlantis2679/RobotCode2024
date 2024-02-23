@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.lib.logfields.LogFieldsTable;
 
 import static frc.robot.RobotMap.Flywheel.*;
+import static frc.robot.subsystems.flywheel.FlywheelConstants.CURRENT_AMP_LIMIT;
 
 public class FlywheelIOSparkMax extends FlywheelIO {
     private final CANSparkMax upperRollerMotor = new CANSparkMax(UPPER_ROLLER_MOTOR_ID, MotorType.kBrushless);
@@ -19,7 +20,8 @@ public class FlywheelIOSparkMax extends FlywheelIO {
 
     public FlywheelIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
-
+        upperRollerMotor.setSmartCurrentLimit(CURRENT_AMP_LIMIT);
+        lowerRollerMotor.setSmartCurrentLimit(CURRENT_AMP_LIMIT);
         // double encodersDistancePerPulse = 1 / AMT103_PULSES_PER_ROUND;
         // upperRollerEncoder.setDistancePerPulse(encodersDistancePerPulse);
         // lowerRollerEncoder.setDistancePerPulse(encodersDistancePerPulse);

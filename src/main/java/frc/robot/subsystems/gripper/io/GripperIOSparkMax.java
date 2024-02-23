@@ -14,13 +14,14 @@ public class GripperIOSparkMax extends GripperIO {
 
   private final CANSparkMax rollersMotor = new CANSparkMax(ROLLERS_MOTOR_ID,
       MotorType.kBrushless);
-
+ 
   private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
 
   /** Creates a new GripperIOSparkMax. */
 
   public GripperIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
+        rollersMotor.setSmartCurrentLimit(30);
   }
   
   @Override

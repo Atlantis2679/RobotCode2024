@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,15 +29,18 @@ public class RobotContainer {
     private final Flywheel flywheel = new Flywheel();
     private final Loader loader = new Loader();
 
-    private final NaturalXboxController driverController = new
-    NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
+    PitcherCommands pitcherCMds = new PitcherCommands(pitcher);
+    FlywheelCommands flywheelCMDs = new FlywheelCommands(flywheel);
+
+    private final NaturalXboxController driverController = new NaturalXboxController(RobotMap.Controllers.DRIVER_PORT);
     private final NaturalXboxController operatorController = new NaturalXboxController(
             RobotMap.Controllers.OPERTATOR_PORT);
 
     private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
     // private final PitcherCommands pitcherCommands = new PitcherCommands(pitcher);
     // private final IntakeCommands intakeCommands = new IntakeCommands(intake);
-        private final AllCommands allCommands = new AllCommands(swerve, flywheel, pitcher, loader, wrist, gripper);
+    private final AllCommands allCommands = new AllCommands(swerve, flywheel, pitcher, loader, wrist, gripper);
+
     public RobotContainer() {
         configureDriverBindings();
         configureOperatorBindings();
@@ -43,10 +48,10 @@ public class RobotContainer {
 
     private void configureDriverBindings() {
         TuneableCommand driveCommand = swerveCommands.controller(
-        driverController::getLeftY,
-        driverController::getLeftX,
-        driverController::getRightX,
-        driverController.leftBumper().negate()::getAsBoolean);
+                driverController::getLeftY,
+                driverController::getLeftX,
+                driverController::getRightX,
+                driverController.leftBumper().negate()::getAsBoolean);
 
         swerve.setDefaultCommand(driveCommand);
         TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
@@ -54,19 +59,35 @@ public class RobotContainer {
         driverController.y().onTrue(swerveCommands.xWheelLock());
 
         TuneablesManager.add("Swerve/modules control mode",
-        swerveCommands.controlModules(
-        driverController::getLeftX,
-        driverController::getLeftY,
-        driverController::getRightY).fullTuneable());
+                swerveCommands.controlModules(
+                        driverController::getLeftX,
+                        driverController::getLeftY,
+                        driverController::getRightY).fullTuneable());
     }
 
     private void configureOperatorBindings() {
-        wrist.setDefaultCommand(allCommands.closeIntake());
-        operatorController.a().whileTrue(allCommands.openIntake());
-        operatorController.b().whileTrue(allCommands.shootToSpeaker());
-    }
+        operatorController.leftBumper().whileTrue(allCommands.manualShooter(
+                operatorController::getLeftY,
+                operatorController::getLeftX,
+                operatorController::getRightY,
+                operatorController::getRightY));
 
-    public void stopAll(){
+        pitcher.setDefaultCommand(allCommands.pitcherReadyToHandOff());
+        wrist.setDefaultCommand(allCommands.closeIntake());
+
+        operatorController.a().whileTrue(allCommands.openIntake());
+        operatorController.rightBumper().whileTrue(allCommands.readyToShootToSpeaker());
+        operatorController.b().whileTrue(allCommands.shootToSpeaker());
+
+        new Trigger(gripper::getIsNoteInside).onTrue(allCommands.handOff());
+    }
+    // operatorController.b().whileTrue(allCommands.openIntake());
+    // operatorController.a().whileTrue(allCommands.handOff());
+    // operatorController.x().whileTrue(allCommands.shootToSpeaker());
+    // operatorController.leftBumper().whileTrue(allCommands.shootToSpeaker());
+    // };
+
+    public void stopAll() {
         pitcher.stop();
         wrist.stop();
         gripper.stop();

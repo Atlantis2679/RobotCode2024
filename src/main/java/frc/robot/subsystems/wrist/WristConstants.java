@@ -27,8 +27,8 @@ public class WristConstants {
     // set
 
     public class IsAtAngle {
-        public static final double MAX_WRIST_ANGLE_DEVAITION = 3;
-        public static final double MIN_WRIST_ANGLE_DEVAITION = -3;
+        public static final double MAX_WRIST_ANGLE_DEVAITION = 10;
+        public static final double MIN_WRIST_ANGLE_DEVAITION = -10;
         
     }
     public static final double WRIST_VOLTAGE_LIMIT = 4;

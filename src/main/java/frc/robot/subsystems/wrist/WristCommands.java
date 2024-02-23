@@ -46,5 +46,5 @@ public class WristCommands {
             wrist.setWristVoltage(feedforwardResult + wristSpeed.getAsDouble() * ManualController.SPEED_MULTIPLIER);
         });
     }
-
+ 
 }

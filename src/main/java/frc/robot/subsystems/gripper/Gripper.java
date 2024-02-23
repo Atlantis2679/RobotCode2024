@@ -37,11 +37,10 @@ public class Gripper extends SubsystemBase {
     }
 
     public void stop() {
-        setSpeed(0);
+        io.setGripperSpeedPrecentOutput(0);
     }
 
     public boolean getIsNoteInside() {
         return io.noteDetectorValue.getAsBoolean();
     }
-
 }

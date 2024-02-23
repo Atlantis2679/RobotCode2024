@@ -13,15 +13,13 @@ public class Loader extends SubsystemBase {
             ? new LoaderIOSim(fieldsTable)
             : new LoaderIOTalon(fieldsTable);
 
-    private boolean isNoteInside = false;
-
     public Loader() {
         fieldsTable.update();
     }
 
     @Override
     public void periodic() {
-        fieldsTable.recordOutput("Is Note Inside", isNoteInside);
+        fieldsTable.recordOutput("Is Note Inside", getIsNoteInside());
     }
 
     public void setSpeed(double demandPrecentage) {
