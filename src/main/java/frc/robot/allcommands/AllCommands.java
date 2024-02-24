@@ -1,16 +1,18 @@
 package frc.robot.allcommands;
 
-import static frc.robot.allcommands.AllCommandsConstants.*;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-// import frc.robot.allcommands.AllCommandsConstants.CollectFromSource;
-// import frc.robot.allcommands.AllCommandsConstants.ScoreAmp;
-// import frc.robot.allcommands.AllCommandsConstants.ShootToSpeaker;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.allcommands.AllCommandsConstants.Close;
+import frc.robot.allcommands.AllCommandsConstants.CollectFromSource;
+import frc.robot.allcommands.AllCommandsConstants.Handoff;
+import frc.robot.allcommands.AllCommandsConstants.OpenIntake;
+import frc.robot.allcommands.AllCommandsConstants.ReadyToShootToAmp;
+import frc.robot.allcommands.AllCommandsConstants.ReadyToShootToSpeaker;
+import frc.robot.allcommands.AllCommandsConstants.ShootToSpeaker;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelCommands;
 import frc.robot.subsystems.gripper.Gripper;
@@ -55,81 +57,110 @@ public class AllCommands {
         }
 
         public Command pitcherReadyToHandOff() {
-                return pitcherCMDs.adjustToAngle(HandOff.PITCHER_HANDOF_ANGLE_DEGRRES);
+                return pitcherCMDs.adjustToAngle(Handoff.PITCHER_DEGRRES)
+                                .withName("pitcherReadyToHandoff");
+        }
+
+        public Command pitcherWithNoteIdle() {
+                return pitcherCMDs.adjustToAngle(ReadyToShootToSpeaker.PITCHER_DEGREES)
+                                .withName("readyToShootToSpeaker");
         }
 
         public Command readyToShootToSpeaker() {
-                return flywheelCMDs.spin(ReadyToShootToSpeaker.UPPER_ROLLERS_SPEED,
-                                ReadyToShootToSpeaker.LOWER_ROLLERS_SPEED);
+                return Commands.parallel(
+                                flywheelCMDs.spin(
+                                                ReadyToShootToSpeaker.UPPER_ROLLERS_SPEED,
+                                                ReadyToShootToSpeaker.LOWER_ROLLERS_SPEED),
+                                pitcherCMDs.adjustToAngle(ReadyToShootToSpeaker.PITCHER_DEGREES))
+                                .withName("readyToShootToSpeaker");
         }
 
-        public Command readyToScoreAmp() {
-                return flywheelCMDs.spin(ReadyToScoreAmp.UPPER_ROLLERS_SPEED,
-                                ReadyToScoreAmp.LOWEER_ROLLERS_SPEED);
+        public Command readyToShootToAmp() {
+                return Commands.parallel(
+                                flywheelCMDs.spin(
+                                                ReadyToShootToAmp.UPPER_ROLLERS_SPEED,
+                                                ReadyToShootToAmp.LOWER_ROLLERS_SPEED),
+                                pitcherCMDs.adjustToAngle(ReadyToShootToAmp.PITCHER_DEGREES))
+                                .withName("readyToShootToAmp");
         }
 
-        public Command shootToSpeaker() {
-                return Commands.waitUntil(() -> flywheel.atSpeed(
-                                ReadyToShootToSpeaker.UPPER_ROLLERS_SPEED,
-                                ReadyToShootToSpeaker.LOWER_ROLLERS_SPEED))
-                                .andThen(loaderCMDs.spin(ShootToSpeaker.SPEED_RELEASE));
-        }
-
-        public Command scoreAmp() {
-                return flywheelCMDs.spin(() -> ScoreAmp.UPPER_ROLLS_SPEED_RPS, () -> ScoreAmp.LOWER_ROLLS_SPEES_RPS)
-                                .alongWith(Commands
-                                                .waitUntil(() -> flywheel.atSpeed(ScoreAmp.UPPER_ROLLS_SPEED_RPS,
-                                                                ScoreAmp.LOWER_ROLLS_SPEES_RPS))
-                                                .andThen(loaderCMDs.spin(ScoreAmp.SPEED_RELEASE)));
+        public Command shoot() {
+                return Commands.waitUntil(flywheel::atSpeed)
+                                .andThen(loaderCMDs.spin(ShootToSpeaker.SPEED_RELEASE)).withName("shoot");
         }
 
         public Command collectFromSource() {
-                return pitcherCMDs.adjustToAngle(CollectFromSource.DEGREES_SOURCE).andThen(flywheelCMDs
-                                .spin(() -> CollectFromSource.UPPER_ROLLS_SPEED_RPS,
+                return Commands.parallel(
+                                pitcherCMDs.adjustToAngle(CollectFromSource.PITCHER_DEGREES),
+                                flywheelCMDs.spin(
+                                                () -> CollectFromSource.UPPER_ROLLS_SPEED_RPS,
                                                 () -> CollectFromSource.LOWER_ROLLS_SPEES_RPS)
-                                .alongWith(Commands
-                                                .waitUntil(loader::getIsNoteInside)
-                                                .andThen(loaderCMDs
-                                                                .spin(CollectFromSource.BRING_BACK_NOTE_TO_SHOOTER))
-                                                .alongWith(Commands
-                                                                .waitUntil(() -> loader.getIsNoteInside())
-                                                                .finallyDo(() -> loader.setSpeed(0)))));
+                                                .raceWith(Commands.waitUntil(loader::getIsNoteInside).andThen(
+                                                                Commands.waitUntil(() -> !loader.getIsNoteInside()))),
+                                Commands.waitUntil(loader::getIsNoteInside)
+                                                .andThen(loaderCMDs.spin(CollectFromSource.LOADER_SPEED_TO_INSIDE)
+                                                                .until(() -> !loader.getIsNoteInside()))
+                                                .andThen(loaderCMDs.spin(
+                                                                CollectFromSource.BRING_BACK_NOTE_TO_SHOOTER_LOADER_SPEED)
+                                                                .until(loader::getIsNoteInside)))
+                                .withName("collectFromSource");
+        }
+
+        public Command openIntake() {
+                return Commands.parallel(wristCMDs.moveToAngle(OpenIntake.COLLECTING_WRIST_ANGLE_DEGREE),
+                                runWhen(() -> wrist
+                                                .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
+                                                gripperCMD.spin(OpenIntake.GRIPPER_COLLECTING_SPEED)))
+                                .until(gripper::getIsNoteInside)
+                                .withName("openIntake");
+        }
+
+        public Command closeWrist() {
+                return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE).withName("closeIntake");
+        }
+
+        public Command handoff() {
+                return Commands.parallel(
+                                wristCMDs.moveToAngle(Handoff.WRIST_HANDOFF_ANGLE_DEGRRES),
+                                pitcherCMDs.adjustToAngle(Handoff.PITCHER_DEGRRES),
+                                runWhen(() -> wrist
+                                                .getAbsoluteAngleDegrees() < Handoff.WRIST_STARTING_LOADER_ANGLE_DEGRRE,
+                                                loaderCMDs.spin(Handoff.LOADER_HANDOFF_PRECENTAGE_OUTPUT)),
+                                runWhen(() -> wrist.isAtAngle(Handoff.WRIST_HANDOFF_ANGLE_DEGRRES),
+                                                gripperCMD.spin(Handoff.GRIPPER_HANDOFF_SPEED)))
+                                .until(loader::getIsNoteInside).withName("handoff");
+        }
+
+        public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
+                return Commands.parallel(
+                                wristCMDs.manualController(wristSpeed),
+                                gripperCMD.manualController(gripperSpeed))
+                                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                                .withName("manualIntake");
         }
 
         public Command manualShooter(DoubleSupplier pitcherSupplier, DoubleSupplier loaderSupplier,
                         DoubleSupplier upperRollSupplier, DoubleSupplier lowerRollSupplier) {
 
-                return pitcherCMDs.manualController(pitcherSupplier)
-                                .alongWith(loaderCMDs.manualController(loaderSupplier))
-                                .alongWith(flywheelCMDs.manualController(upperRollSupplier, lowerRollSupplier));
-        }
-
-        public Command openIntake() {
-                return wristCMDs.moveToAngle(Open.COLLECTING_WRIST_ANGLE_DEGREE)
-                                .alongWith(Commands.waitUntil(() -> wrist
-                                                .getAbsoluteAngleDegrees() < Open.START_GRIPPER_WRIST_ANGLE_DEGREE)
-                                                .andThen(gripperCMD.spin(Open.GRIPPER_COLLECTING_SPEED)));
-        }
-
-        public Command closeIntake() {
-                return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE);
-        }
-
-        public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
-                return wristCMDs.manualController(wristSpeed).alongWith(gripperCMD.manualController(gripperSpeed));
-        }
-
-        public Command handOff() {
                 return Commands.parallel(
-                                wristCMDs.moveToAngle(HandOff.WRIST_HANDOFF_ANGLE_DEGRRES),
-                                pitcherCMDs.adjustToAngle(HandOff.PITCHER_HANDOF_ANGLE_DEGRRES),
-                                runWhen(() -> wrist
-                                                .getAbsoluteAngleDegrees() < HandOff.WRIST_STARTING_LOADER_ANGLE_DEGRRE,
-                                                loaderCMDs.spin(HandOff.LOADER_HANDOFF_PRECENTAGE_OUTPUT)),
-                                runWhen(() -> wrist.isAtAngle(HandOff.WRIST_HANDOFF_ANGLE_DEGRRES),
-                                                gripperCMD.spin(HandOff.GRIPPER_HANDOFF_SPEED)))
-                                .until(() -> loader.getIsNoteInside())
-                                .andThen(Commands.run(() -> loaderCMDs.spin(0).alongWith(gripperCMD.spin(0))));
+                                pitcherCMDs.manualController(pitcherSupplier),
+                                loaderCMDs.manualController(loaderSupplier),
+                                flywheelCMDs.manualController(upperRollSupplier, lowerRollSupplier))
+                                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                                .withName("manualShooter");
+        }
+
+        public Command stopAll() {
+                return Commands.runOnce(() -> {
+                        pitcher.stop();
+                        wrist.stop();
+                        gripper.stop();
+                        flywheel.stop();
+                        loader.stop();
+                        swerve.stop();
+                }, pitcher, wrist, gripper, flywheel, loader, swerve)
+                                .ignoringDisable(true)
+                                .withName("stopAll");
         }
 
         private Command runWhen(BooleanSupplier condition, Command command) {

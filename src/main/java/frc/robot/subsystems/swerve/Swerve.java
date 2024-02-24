@@ -194,6 +194,10 @@ public class Swerve extends SubsystemBase implements Tuneable {
         driveChassisSpeed(desiredChassisSpeeds, false);
     }
 
+    public void stop() {
+        drive(0, 0, 0, false);
+    }
+
     public void driveChassisSpeed(ChassisSpeeds speeds, boolean useVoltage) {
         SwerveModuleState[] swerveModuleStates = swerveKinematics.toSwerveModuleStates(speeds);
 
