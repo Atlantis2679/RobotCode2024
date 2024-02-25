@@ -3,6 +3,7 @@ package frc.robot.subsystems.pitcher;
 public class PitcherConstants {
     public static final double MAX_VOLTAGE = 5;
     public static final double ANGLE_OFFSET_DEGREES = -180.2572038814301;
+    public static final double ANGLE_DEGREES_TOLERANCE = 4;
     public static final double GEAR_RATIO = 20;
 
     public static final double KP = 0.07;

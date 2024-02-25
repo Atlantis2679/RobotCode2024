@@ -50,6 +50,8 @@ public class Pitcher extends SubsystemBase implements Tuneable {
 
     private double lastAngleDegree;
     private double velocityDegPerSec;
+    
+    private double lastGoalDegrees = 0;
 
     public Pitcher() {
         fieldsTable.update();
@@ -115,7 +117,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
             double time,
             TrapezoidProfile.State initalState,
             TrapezoidProfile.State goalState) {
-
+        lastGoalDegrees = goalState.position;
         TrapezoidProfile.State state = trapezoidProfile.calculate(time, initalState, goalState);
 
         fieldsTable.recordOutput("Desired State Position", state.position);
@@ -124,6 +126,10 @@ public class Pitcher extends SubsystemBase implements Tuneable {
         
         desiredStateVisualizer.update(state.position);
         return state;
+    }
+
+    public final boolean atAngle() {
+        return Math.abs(getAngleDegrees() - lastGoalDegrees) < ANGLE_DEGREES_TOLERANCE;
     }
 
     @Override

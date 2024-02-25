@@ -60,7 +60,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "ScoreNoteToSpeaker"
+                        "pathName": "FromMiddleNoteToSpeaker"
                       }
                     },
                     {

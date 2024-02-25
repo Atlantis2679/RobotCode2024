@@ -3,12 +3,10 @@ package frc.robot.allcommands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.lib.tuneables.extensions.TuneableWrapperCommand;
@@ -112,7 +110,7 @@ public class AllCommands {
         }
 
         public Command shoot() {
-                return Commands.waitUntil(flywheel::atSpeed)
+                return Commands.waitUntil(() -> flywheel.atSpeed() && pitcher.atAngle())
                                 .andThen(loaderCMDs.spin(ShootToSpeaker.SPEED_RELEASE)).withName("shoot");
         }
 
