@@ -39,9 +39,9 @@ public class AllCommandsConstants {
     }
 
     public static class ReadyToShootToSpeaker {
-        public static final double UPPER_ROLLERS_SPEED = 40;
-        public static final double LOWER_ROLLERS_SPEED = 40;
-        public static final double PITCHER_DEGREES = 40;
+        public static final double UPPER_ROLLERS_SPEED = 45;
+        public static final double LOWER_ROLLERS_SPEED = 45;
+        public static final double PITCHER_DEGREES = 38;
         public static final double GRIPPER_SPEED = -0.4;
 
     }

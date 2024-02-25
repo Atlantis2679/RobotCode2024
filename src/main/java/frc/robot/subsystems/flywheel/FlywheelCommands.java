@@ -32,8 +32,8 @@ public class FlywheelCommands {
 
     public Command manualController(DoubleSupplier upperRollerSpeedJoystick, DoubleSupplier lowerRollerSpeedJoystick) {
         return flywheel.run(() -> flywheel.setSpeed(
-                upperRollerSpeedJoystick.getAsDouble() * MAX_VOLTAGE,
-                lowerRollerSpeedJoystick.getAsDouble() * MAX_VOLTAGE))
+                -upperRollerSpeedJoystick.getAsDouble() * MAX_VOLTAGE,
+                -lowerRollerSpeedJoystick.getAsDouble() * MAX_VOLTAGE))
                 .finallyDo(flywheel::stop);
     }
 
