@@ -26,12 +26,12 @@ public class SwerveContants {
     public final static double MODULE_ANGLE_KD = 0;
 
     public class PathPlanner {
-        public final static double TRANSLATION_KP = 0.75;
+        public final static double TRANSLATION_KP = 1;
         public final static double TRANSLATION_KI = 0;
-        public final static double TRANSLATION_KD = 0.018;
+        public final static double TRANSLATION_KD = 0.021;
 
-        public final static double ROTATION_KP = 0.9;
+        public final static double ROTATION_KP = 1.2;
         public final static double ROTATION_KI = 0;
-        public final static double ROTATION_KD = 0.008;
+        public final static double ROTATION_KD = 0.011;
     }
 }

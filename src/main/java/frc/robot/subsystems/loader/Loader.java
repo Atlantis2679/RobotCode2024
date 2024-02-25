@@ -1,5 +1,6 @@
 package frc.robot.subsystems.loader;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
 import frc.robot.Robot;
@@ -19,6 +20,7 @@ public class Loader extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putBoolean("loader note inside", getIsNoteInside());
         fieldsTable.recordOutput("Is Note Inside", getIsNoteInside());
     }
 

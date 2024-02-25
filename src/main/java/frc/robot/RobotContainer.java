@@ -67,6 +67,16 @@ public class RobotContainer {
 
                 secondAutoCommandChooser.addOption("Get Out of Staring Line",
                                 () -> new PathPlannerAuto("getOutOfStartingLine"));
+
+                secondAutoCommandChooser.addOption("Speaker Close To Amp",
+                                () -> new PathPlannerAuto("SpeakerCloseToAmp"));
+                secondAutoCommandChooser.addOption("Speaker Close To Amp And Out",
+                                () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
+
+                secondAutoCommandChooser.addOption("Speaker Far From Amp",
+                                () -> new PathPlannerAuto("SpeakerFarFromAmp"));
+                secondAutoCommandChooser.addOption("Speaker Far From Amp And Out",
+                                () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
         }
 
         private void configureDriverBindings() {
@@ -113,7 +123,7 @@ public class RobotContainer {
                                 allCommands.closeWrist(),
                                 gripper::getIsNoteInside).withName("wrist default"));
 
-                operatorController.x().whileTrue(allCommands.handoff());
+                operatorController.y().whileTrue(allCommands.handoff());
 
                 operatorController.a().whileTrue(allCommands.openIntake());
 
