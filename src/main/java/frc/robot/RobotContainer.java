@@ -77,6 +77,11 @@ public class RobotContainer {
                                 () -> new PathPlannerAuto("SpeakerFarFromAmp"));
                 secondAutoCommandChooser.addOption("Speaker Far From Amp And Out",
                                 () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
+
+                secondAutoCommandChooser.addOption("Middle Speaker",
+                                () -> new PathPlannerAuto("MiddleSpeaker"));
+                secondAutoCommandChooser.addOption("Middle Speaker And Out",
+                                () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
         }
 
         private void configureDriverBindings() {
