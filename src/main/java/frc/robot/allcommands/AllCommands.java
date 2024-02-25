@@ -3,9 +3,16 @@ package frc.robot.allcommands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.lib.tuneables.extensions.TuneableCommand;
+import frc.lib.tuneables.extensions.TuneableWrapperCommand;
+import frc.lib.valueholders.DoubleHolder;
 import frc.robot.allcommands.AllCommandsConstants.Close;
 import frc.robot.allcommands.AllCommandsConstants.CollectFromSource;
 import frc.robot.allcommands.AllCommandsConstants.Handoff;
@@ -54,6 +61,7 @@ public class AllCommands {
                 wristCMDs = new WristCommands(wrist);
                 gripperCMD = new GripperCommands(gripper);
                 swerve.registerCallbackOnPoseUpdate(shootingCalculator::update);
+
         }
 
         public Command pitcherReadyToHandOff() {
@@ -71,8 +79,9 @@ public class AllCommands {
                                 flywheelCMDs.spin(
                                                 ReadyToShootToSpeaker.UPPER_ROLLERS_SPEED,
                                                 ReadyToShootToSpeaker.LOWER_ROLLERS_SPEED),
-                                pitcherCMDs.adjustToAngle(ReadyToShootToSpeaker.PITCHER_DEGREES))
-                                .withName("readyToShootToSpeaker");
+                                pitcherCMDs.adjustToAngle(ReadyToShootToSpeaker.PITCHER_DEGREES),
+                                Commands.race(gripperCMD.spin(ReadyToShootToSpeaker.GRIPPER_SPEED), Commands.waitSeconds(1.5))
+                                .withName("readyToShootToSpeaker"));
         }
 
         public Command readyToShootToAmp() {
@@ -80,8 +89,26 @@ public class AllCommands {
                                 flywheelCMDs.spin(
                                                 ReadyToShootToAmp.UPPER_ROLLERS_SPEED,
                                                 ReadyToShootToAmp.LOWER_ROLLERS_SPEED),
-                                pitcherCMDs.adjustToAngle(ReadyToShootToAmp.PITCHER_DEGREES))
-                                .withName("readyToShootToAmp");
+                                pitcherCMDs.adjustToAngle(ReadyToShootToAmp.PITCHER_DEGREES),
+                                Commands.race(gripperCMD.spin(ReadyToShootToAmp.GRIPPER_SPEED), Commands.waitSeconds(1.5))
+                                .withName("readyToShootToAmp"));
+        }
+
+        public TuneableCommand readyToShootTuneable() {
+                return TuneableWrapperCommand.wrap((table) -> {
+                        DoubleHolder upperRollerRPS = table.addNumber("upper rollers RPS",
+                                        30.0);
+                        DoubleHolder lowerRollerRPS = table.addNumber("lower rollers RPS",
+                                        30.0);
+                        DoubleHolder pitcherDegrees = table.addNumber("pitcher degrees",
+                                        0.0);
+                        return Commands.parallel(
+                                        flywheelCMDs.spin(
+                                                        upperRollerRPS.get(),
+                                                        lowerRollerRPS.get()),
+                                        pitcherCMDs.adjustToAngle(pitcherDegrees.get()))
+                                        .withName("readyToShootTuneable");
+                });
         }
 
         public Command shoot() {
@@ -128,7 +155,7 @@ public class AllCommands {
                                                 loaderCMDs.spin(Handoff.LOADER_HANDOFF_PRECENTAGE_OUTPUT)),
                                 runWhen(() -> wrist.isAtAngle(Handoff.WRIST_HANDOFF_ANGLE_DEGRRES),
                                                 gripperCMD.spin(Handoff.GRIPPER_HANDOFF_SPEED)))
-                                .until(loader::getIsNoteInside).withName("handoff");
+                                .withName("handoff");
         }
 
         public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
@@ -161,6 +188,14 @@ public class AllCommands {
                 }, pitcher, wrist, gripper, flywheel, loader, swerve)
                                 .ignoringDisable(true)
                                 .withName("stopAll");
+        }
+
+        public Command check() {
+                return new PathPlannerAuto("collectAndShootFromSource");
+        }
+
+        public Command autoGetOutsideOfStartingLineRight() {
+                return new PathPlannerAuto("getOutOfStartingLine");
         }
 
         private Command runWhen(BooleanSupplier condition, Command command) {

@@ -63,6 +63,7 @@ public class Wrist extends SubsystemBase implements Tuneable {
         wristAngleHelperDegrees.update(io.wristAngleDegrees.getAsDouble());
         realStateVisualizer.update(getAbsoluteAngleDegrees());
         fieldsTable.recordOutput("Wrist Angle Degrees", getAbsoluteAngleDegrees());
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public void setWristVoltage(double voltage) {

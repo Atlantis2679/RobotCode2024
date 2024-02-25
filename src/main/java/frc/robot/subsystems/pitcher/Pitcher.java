@@ -70,6 +70,7 @@ public class Pitcher extends SubsystemBase implements Tuneable {
 
         fieldsTable.recordOutput("Velocity RadPerSec", getVelocityDegPerSec());
         fieldsTable.recordOutput("Angle Degrees", getAngleDegrees());
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public LogFieldsTable getSubFieldsTable(String name) {

@@ -22,6 +22,7 @@ public class Gripper extends SubsystemBase {
 
     @Override
     public void periodic() {
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public void setSpeed(double speedPrecentageOutput) {

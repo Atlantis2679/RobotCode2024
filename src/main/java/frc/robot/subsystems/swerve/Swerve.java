@@ -89,14 +89,14 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     private RotationalSensorHelper gyroYawHelperCCW;
 
-    private final List<BiConsumer<Pose2d, Boolean>> callbacksOnPoseUpdate = new ArrayList<>();  
+    private final List<BiConsumer<Pose2d, Boolean>> callbacksOnPoseUpdate = new ArrayList<>();
     private final PoseEstimatorWithVision poseEstimator;
 
     public Swerve() {
         fieldsTable.update();
 
         gyroYawHelperCCW = new RotationalSensorHelper(
-            Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
+                Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
 
         poseEstimator = new PoseEstimatorWithVision(fieldsTable, getYawCCW(), getModulesPositions(), swerveKinematics);
 
@@ -119,7 +119,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 pathFollowerConfigs,
                 this::getIsRedAlliance,
                 this);
-                
+
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
@@ -170,6 +170,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
         fieldsTable.recordOutput("Robot Yaw Radians CCW", getYawCCW().getRadians());
         fieldsTable.recordOutput("Yaw Degrees CW", -getYawCCW().getDegrees());
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public void drive(double forward, double sidewaysRightPositive, double angularVelocityCW, boolean isFieldRelative) {
@@ -179,15 +180,23 @@ public class Swerve extends SubsystemBase implements Tuneable {
         double sidewaysLeftPositive = -sidewaysRightPositive;
 
         if (isFieldRelative) {
-            desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    forward,
-                    sidewaysLeftPositive,
-                    angularVelocityCCW,
-                    getYawCCW());
+            if (getIsRedAlliance()) {
+                desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                        -forward,
+                        -sidewaysLeftPositive,
+                        angularVelocityCCW,
+                        getYawCCW());
+            } else {
+                desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                        forward,
+                        sidewaysLeftPositive,
+                        angularVelocityCCW,
+                        getYawCCW());
+            }
         } else {
             desiredChassisSpeeds = new ChassisSpeeds(
-                    forward,
-                    sidewaysLeftPositive,
+                    -forward,
+                    -sidewaysLeftPositive,
                     angularVelocityCCW);
         }
 
@@ -234,11 +243,14 @@ public class Swerve extends SubsystemBase implements Tuneable {
         resetPose(new Pose2d(
                 currentPose.getX(),
                 currentPose.getY(),
-                new Rotation2d(-newYawDegreesCW)));
+                Rotation2d.fromDegrees(-newYawDegreesCW)));
     }
 
     public void resetYaw() {
-        setYawDegreesCW(0);
+        if (getIsRedAlliance())
+            setYawDegreesCW(180);
+        else
+            setYawDegreesCW(0);
     }
 
     public Pose2d getPose() {

@@ -25,6 +25,7 @@ public class Loader extends SubsystemBase {
     public void setSpeed(double demandPrecentage) {
         io.setSpeed(demandPrecentage);
         fieldsTable.recordOutput("Demand Speed", demandPrecentage);
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public void stop() {
