@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.NamedCommands;
@@ -40,14 +42,11 @@ public class RobotContainer {
         private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
         private final AllCommands allCommands = new AllCommands(swerve, flywheel, pitcher, loader, wrist, gripper);
 
-        private final LoggedDashboardChooser<Command> firstAutoCommandChooser = new LoggedDashboardChooser<>(
+        private final LoggedDashboardChooser<Supplier<Command>> firstAutoCommandChooser = new LoggedDashboardChooser<>(
                         "First Auto Command");
 
-        private final LoggedDashboardChooser<Command> secondAutoCommandChooser = new LoggedDashboardChooser<>(
+        private final LoggedDashboardChooser<Supplier<Command>> secondAutoCommandChooser = new LoggedDashboardChooser<>(
                         "Second Auto Command");
-
-        private final LoggedDashboardChooser<Integer> startingPositionChooser = new LoggedDashboardChooser<>(
-                        "Start Position Chooser");
 
         public RobotContainer() {
                 new Trigger(DriverStation::isDisabled).onTrue(allCommands.stopAll());
@@ -59,18 +58,15 @@ public class RobotContainer {
                         CameraServer.startAutomaticCapture();
                 }
 
-                firstAutoCommandChooser.addDefaultOption("None", new InstantCommand());
+                firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                firstAutoCommandChooser.addOption("Shoot Note to Speaker", allCommands.readyToShootToSpeaker()
+                firstAutoCommandChooser.addOption("Shoot Note to Speaker", () -> allCommands.readyToShootToSpeaker()
                                 .raceWith(allCommands.shoot().until(() -> !loader.getIsNoteInside())));
 
-                firstAutoCommandChooser.addOption("Shoot note to AMP", allCommands.readyToShootToAmp()
-                                .raceWith(allCommands.shoot().until(() -> !loader.getIsNoteInside())));
-
-                secondAutoCommandChooser.addDefaultOption("None", new InstantCommand());
+                secondAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 secondAutoCommandChooser.addOption("Get Out of Staring Line",
-                                new PathPlannerAuto("getOutOfStartingLine"));
+                                () -> new PathPlannerAuto("getOutOfStartingLine"));
         }
 
         private void configureDriverBindings() {
@@ -145,7 +141,7 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return firstAutoCommandChooser.get()
-                                .andThen(secondAutoCommandChooser.get());
+                return firstAutoCommandChooser.get().get()
+                                .andThen(secondAutoCommandChooser.get().get());
         }
 }
