@@ -141,7 +141,7 @@ public class RobotContainer {
                 operatorController.povDown().whileTrue(allCommands.readyToShootToAmp());
                 operatorController.b().whileTrue(allCommands.shoot());
 
-                operatorController.x().onTrue(allCommands.stopAll());
+                operatorController.x().whileTrue(allCommands.keepNoteInSpeaker());
                 TuneableCommand tuneableReadyToShootCMD = allCommands.readyToShootTuneable();
                 operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
                 TuneablesManager.add("tuneable ready to shoot", (Tuneable) tuneableReadyToShootCMD);

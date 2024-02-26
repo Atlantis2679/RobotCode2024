@@ -3,8 +3,6 @@ package frc.robot.allcommands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -78,8 +76,9 @@ public class AllCommands {
                                                 ReadyToShootToSpeaker.UPPER_ROLLERS_SPEED,
                                                 ReadyToShootToSpeaker.LOWER_ROLLERS_SPEED),
                                 pitcherCMDs.adjustToAngle(ReadyToShootToSpeaker.PITCHER_DEGREES),
-                                Commands.race(gripperCMD.spin(ReadyToShootToSpeaker.GRIPPER_SPEED), Commands.waitSeconds(1.5))
-                                .withName("readyToShootToSpeaker"));
+                                Commands.race(gripperCMD.spin(ReadyToShootToSpeaker.GRIPPER_SPEED),
+                                                Commands.waitSeconds(1.5))
+                                                .withName("readyToShootToSpeaker"));
         }
 
         public Command readyToShootToAmp() {
@@ -88,8 +87,15 @@ public class AllCommands {
                                                 ReadyToShootToAmp.UPPER_ROLLERS_SPEED,
                                                 ReadyToShootToAmp.LOWER_ROLLERS_SPEED),
                                 pitcherCMDs.adjustToAngle(ReadyToShootToAmp.PITCHER_DEGREES),
-                                Commands.race(gripperCMD.spin(ReadyToShootToAmp.GRIPPER_SPEED), Commands.waitSeconds(1.5))
-                                .withName("readyToShootToAmp"));
+                                Commands.race(gripperCMD.spin(ReadyToShootToAmp.GRIPPER_SPEED),
+                                                Commands.waitSeconds(1.5))
+                                                .withName("readyToShootToAmp"));
+        }
+
+        public Command keepNoteInSpeaker() {
+                return Commands.waitUntil(() -> !loader.getIsNoteInside())
+                                .andThen(loaderCMDs.spin(0.2))
+                                .until(loader::getIsNoteInside).repeatedly();
         }
 
         public TuneableCommand readyToShootTuneable() {
@@ -186,14 +192,6 @@ public class AllCommands {
                 }, pitcher, wrist, gripper, flywheel, loader, swerve)
                                 .ignoringDisable(true)
                                 .withName("stopAll");
-        }
-
-        public Command check() {
-                return new PathPlannerAuto("collectAndShootFromSource");
-        }
-
-        public Command autoGetOutsideOfStartingLineRight() {
-                return new PathPlannerAuto("getOutOfStartingLine");
         }
 
         private Command runWhen(BooleanSupplier condition, Command command) {

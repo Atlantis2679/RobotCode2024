@@ -9,8 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,6 +37,8 @@ import static frc.robot.subsystems.swerve.SwerveContants.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -92,7 +93,11 @@ public class Swerve extends SubsystemBase implements Tuneable {
     private final List<BiConsumer<Pose2d, Boolean>> callbacksOnPoseUpdate = new ArrayList<>();
     private final PoseEstimatorWithVision poseEstimator;
 
+    private final LoggedDashboardChooser<Boolean> isRedAlliance = new LoggedDashboardChooser<>("alliance");
+
     public Swerve() {
+        isRedAlliance.addDefaultOption("red", true);
+        isRedAlliance.addDefaultOption("blue", false);
         fieldsTable.update();
 
         gyroYawHelperCCW = new RotationalSensorHelper(
@@ -170,6 +175,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
         fieldsTable.recordOutput("Robot Yaw Radians CCW", getYawCCW().getRadians());
         fieldsTable.recordOutput("Yaw Degrees CW", -getYawCCW().getDegrees());
+        SmartDashboard.putBoolean("isRedAlliance", getIsRedAlliance());
         fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
@@ -293,7 +299,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
     }
 
     public boolean getIsRedAlliance() {
-        return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+        return isRedAlliance.get() != null ? isRedAlliance.get().booleanValue() : true;
     }
 
     @Override
