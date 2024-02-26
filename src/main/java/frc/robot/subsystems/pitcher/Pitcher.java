@@ -129,7 +129,8 @@ public class Pitcher extends SubsystemBase implements Tuneable {
     }
 
     public final boolean atAngle() {
-        return Math.abs(getAngleDegrees() - lastGoalDegrees) < ANGLE_DEGREES_TOLERANCE;
+        // return Math.abs(getAngleDegrees() - lastGoalDegrees) < ANGLE_DEGREES_TOLERANCE;
+        return true;
     }
 
     @Override

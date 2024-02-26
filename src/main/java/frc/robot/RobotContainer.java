@@ -17,9 +17,13 @@ import frc.lib.tuneables.Tuneable;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
+import frc.robot.allcommands.AllCommandsConstants.ReadyToShootToAmp;
+import frc.robot.allcommands.AllCommandsConstants.ShootToSpeaker;
 import frc.robot.subsystems.flywheel.Flywheel;
+import frc.robot.subsystems.flywheel.FlywheelCommands;
 import frc.robot.subsystems.gripper.Gripper;
 import frc.robot.subsystems.loader.Loader;
+import frc.robot.subsystems.loader.LoaderCommands;
 import frc.robot.subsystems.pitcher.Pitcher;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveCommands;
@@ -61,27 +65,37 @@ public class RobotContainer {
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 firstAutoCommandChooser.addOption("Shoot Note to Speaker", () -> allCommands.readyToShootToSpeaker()
-                                .raceWith(allCommands.shoot().until(() -> !loader.getIsNoteInside())));
+                                .raceWith(allCommands.shoot().withTimeout(4)));
+
+
+                firstAutoCommandChooser.addOption("Release Note", () -> new FlywheelCommands(flywheel).spin(
+                                5,
+                                5)
+                                .alongWith(new LoaderCommands(loader).spin(0.6)).withTimeout(4));
 
                 secondAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                secondAutoCommandChooser.addOption("Get Out of Staring Line",
-                                () -> new PathPlannerAuto("getOutOfStartingLine"));
+                // secondAutoCommandChooser.addOption("Get Out of Staring Line",
+                // () -> new PathPlannerAuto("getOutOfStartingLine"));
 
                 secondAutoCommandChooser.addOption("Speaker Close To Amp",
-                                () -> new PathPlannerAuto("SpeakerCloseToAmp"));
-                secondAutoCommandChooser.addOption("Speaker Close To Amp And Out",
-                                () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
+                () -> new PathPlannerAuto("SpeakerCloseToAmp"));
+                // secondAutoCommandChooser.addOption("Speaker Close To Amp And Out",
+                // () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
 
                 secondAutoCommandChooser.addOption("Speaker Far From Amp",
                                 () -> new PathPlannerAuto("SpeakerFarFromAmp"));
-                secondAutoCommandChooser.addOption("Speaker Far From Amp And Out",
-                                () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
+                // secondAutoCommandChooser.addOption("Speaker Far From Amp And Out",
+                // () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
 
-                secondAutoCommandChooser.addOption("Middle Speaker",
-                                () -> new PathPlannerAuto("MiddleSpeaker"));
-                secondAutoCommandChooser.addOption("Middle Speaker And Out",
-                                () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
+                // secondAutoCommandChooser.addOption("Middle Speaker",
+                // () -> new PathPlannerAuto("MiddleSpeaker"));
+                // secondAutoCommandChooser.addOption("Middle Speaker And Out",
+                // () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
+
+                secondAutoCommandChooser.addOption("Get out",
+                                () -> new PathPlannerAuto("getOutOfStartingLine"));
+
         }
 
         private void configureDriverBindings() {

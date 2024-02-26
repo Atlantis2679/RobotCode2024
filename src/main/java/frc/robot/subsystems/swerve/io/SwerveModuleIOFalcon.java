@@ -56,7 +56,7 @@ public class SwerveModuleIOFalcon extends SwerveModuleIO {
         angleMotorConfiguration.ClosedLoopGeneral.ContinuousWrap = true;
         angleMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         angleMotorConfiguration.CurrentLimits.SupplyCurrentLimit = 25;
-        angleMotorConfiguration.CurrentLimits.SupplyCurrentThreshold = 40;
+        angleMotorConfiguration.CurrentLimits.SupplyCurrentThreshold = 30;
         angleMotorConfiguration.CurrentLimits.SupplyTimeThreshold = 0.1;
 
         slot0ConfigsAngle = angleMotorConfiguration.Slot0;

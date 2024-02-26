@@ -18,6 +18,7 @@ public class PitcherIOSparkMax extends PitcherIO {
         encoder.setDistancePerRotation(360);
         motor.setIdleMode(IdleMode.kBrake);
         motor.setInverted(false);
+        motor.setSmartCurrentLimit(30);
     }
 
     @Override
