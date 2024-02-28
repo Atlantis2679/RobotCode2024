@@ -24,16 +24,21 @@ public class Gripper extends SubsystemBase {
     public void periodic() {
     }
 
-    public void setSpeed(double speedPrecentageOutput) {
-        speedPrecentageOutput = rollersSpeedLimiter.calculate(speedPrecentageOutput);
-        io.setGripperSpeedPrecentOutput(MathUtil.clamp(
-                speedPrecentageOutput,
-                -GRIPPER_SPEED_LIMIT_PRECENTAGE,
-                GRIPPER_SPEED_LIMIT_PRECENTAGE));
+    public void setSpeed(double speedPrecentageOutputUpperGripper, double speedPrecentageOutputLowerGripper) {
+        speedPrecentageOutputUpperGripper = rollersSpeedLimiter.calculate(speedPrecentageOutputUpperGripper);
+        io.setGripperSpeedPrecentOutput(
+                MathUtil.clamp(
+                        speedPrecentageOutputUpperGripper,
+                        -GRIPPER_SPEED_LIMIT_PRECENTAGE,
+                        GRIPPER_SPEED_LIMIT_PRECENTAGE),
+                MathUtil.clamp(
+                        speedPrecentageOutputLowerGripper,
+                        -GRIPPER_SPEED_LIMIT_PRECENTAGE,
+                        GRIPPER_SPEED_LIMIT_PRECENTAGE));
     }
 
     public void stop() {
-        io.setGripperSpeedPrecentOutput(0);
+        io.setGripperSpeedPrecentOutput(0, 0);
     }
 
     public boolean getIsNoteInside() {
