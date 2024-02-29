@@ -19,7 +19,7 @@ public abstract class GripperIO extends IOBase {
   }
 
   // OUTPUT
-  public abstract void setGripperSpeedPrecentOutput(double rollersSpeed);
+  public abstract void setGripperSpeedPrecentOutput(double upperGripperSpeedr, double lowerGripperSpeed);
 
   // INPUTS
   protected abstract boolean getNoteDetectorValue();

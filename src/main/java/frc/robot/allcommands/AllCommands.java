@@ -141,7 +141,7 @@ public class AllCommands {
                 return Commands.parallel(wristCMDs.moveToAngle(OpenIntake.COLLECTING_WRIST_ANGLE_DEGREE),
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
-                                                gripperCMD.spin(OpenIntake.GRIPPER_COLLECTING_SPEED)))
+                                                gripperCMD.spin(OpenIntake.UPPER_GRIPPER_COLLECTING_SPEED, OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)))
                                 .until(gripper::getIsNoteInside)
                                 .withName("openIntake");
         }
@@ -162,10 +162,10 @@ public class AllCommands {
                                 .withName("handoff");
         }
 
-        public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
+        public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier upperGripperSpeed, DoubleSupplier lowerGripperSpeed) {
                 return Commands.parallel(
                                 wristCMDs.manualController(wristSpeed),
-                                gripperCMD.manualController(gripperSpeed))
+                                gripperCMD.manualController(upperGripperSpeed, lowerGripperSpeed))
                                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
                                 .withName("manualIntake");
         }

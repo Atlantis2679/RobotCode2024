@@ -21,7 +21,8 @@ public class AllCommandsConstants {
 
     public static class OpenIntake {
         public static final double COLLECTING_WRIST_ANGLE_DEGREE = -27;
-        public static final double GRIPPER_COLLECTING_SPEED = 0.5;
+        public static final double UPPER_GRIPPER_COLLECTING_SPEED = 0.5;
+        public static final double LOWER_GRIPPER_COLLECTING_SPEED = 0;
         public static final double START_GRIPPER_WRIST_ANGLE_DEGREE = 0;
     }
 
@@ -32,8 +33,9 @@ public class AllCommandsConstants {
 
     public static class Handoff {
         public static final double WRIST_HANDOFF_ANGLE_DEGRRES = 194.8;
-        public static final double PITCHER_DEGRRES = 10;
-        public static final double GRIPPER_HANDOFF_SPEED = -0.3;
+        public static final double PITCHER_DEGRRES = -20;
+        public static final double UPPER_GRIPPER_HANDOFF_SPEED = -0.3;
+        public static final double LOWER_GRIPPER_HANDOFF_SPEED = 0;
         public static final double LOADER_HANDOFF_PRECENTAGE_OUTPUT = 0.3;
         public static final double WRIST_STARTING_LOADER_ANGLE_DEGRRE = 170;
     }

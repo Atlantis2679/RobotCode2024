@@ -12,24 +12,28 @@ import static frc.robot.RobotMap.Intake.*;
 
 public class GripperIOSparkMax extends GripperIO {
 
-  private final CANSparkMax rollersMotor = new CANSparkMax(ROLLERS_MOTOR_ID,
-      MotorType.kBrushless);
- 
-  private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
+    private final CANSparkMax upperGriperMotor = new CANSparkMax(UPPER_ROLLER_MOTOR_ID,
+            MotorType.kBrushless);
 
-  /** Creates a new GripperIOSparkMax. */
+    private final CANSparkMax lowerGrippeMotor = new CANSparkMax(LOWER_ROLLER_MOTOR_ID,
+            MotorType.kBrushless);
 
-  public GripperIOSparkMax(LogFieldsTable fieldsTable) {
+    private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
+
+    public GripperIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
-        rollersMotor.setSmartCurrentLimit(30);
-  }
-  
-  @Override
-  public void setGripperSpeedPrecentOutput(double speed) {
-      rollersMotor.set(speed);
-  }
-  public boolean getNoteDetectorValue(){
-    return !beamBreak.get();
-}
+        upperGriperMotor.setSmartCurrentLimit(30);
+        lowerGrippeMotor.setSmartCurrentLimit(30);
+    }
+
+    @Override
+    public void setGripperSpeedPrecentOutput(double upperGripperSpeed, double lowerGripperSpeed) {
+        upperGriperMotor.set(upperGripperSpeed);
+        lowerGrippeMotor.set(lowerGripperSpeed);
+    }
+
+    public boolean getNoteDetectorValue() {
+        return !beamBreak.get();
+    }
 
 }

@@ -36,7 +36,8 @@ public class RobotMap {
     }
 
     public class Intake {
-        public static final int ROLLERS_MOTOR_ID = 11;
+        public static final int LOWER_ROLLER_MOTOR_ID = 11;
+        public static final int UPPER_ROLLER_MOTOR_ID = 0;
         public static final int WRIST_MOTOR_ID = 10;
         public static final int WRIST_ENCODER_ID = 9;
         public static final int BEAM_BREAK_ID = 0;
