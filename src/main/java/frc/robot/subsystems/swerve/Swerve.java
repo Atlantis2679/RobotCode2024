@@ -6,16 +6,21 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.swerve.SwerveContants.PathPlanner;
 import frc.robot.subsystems.swerve.io.GyroIO;
 import frc.robot.subsystems.swerve.io.GyroIONavX;
 import frc.robot.subsystems.swerve.io.GyroIOSim;
+import frc.robot.subsystems.swerve.poseEstimator.PoseEstimatorWithVision;
+import frc.robot.utils.LocalADStarAK;
+import frc.robot.utils.RotationalSensorHelper;
 import frc.lib.logfields.LogFieldsTable;
 import frc.lib.tuneables.SendableType;
 import frc.lib.tuneables.Tuneable;
@@ -23,12 +28,23 @@ import frc.lib.tuneables.TuneableBuilder;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.valueholders.DoubleHolder;
 import frc.robot.Robot;
-import frc.robot.RobotMap.Module0;
-import frc.robot.RobotMap.Module1;
-import frc.robot.RobotMap.Module2;
-import frc.robot.RobotMap.Module3;
+import frc.robot.RobotMap.ModuleFR;
+import frc.robot.RobotMap.ModuleBR;
+import frc.robot.RobotMap.ModuleBL;
+import frc.robot.RobotMap.ModuleFL;
 
 import static frc.robot.subsystems.swerve.SwerveContants.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 public class Swerve extends SubsystemBase implements Tuneable {
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
@@ -37,18 +53,16 @@ public class Swerve extends SubsystemBase implements Tuneable {
             ? new GyroIOSim(fieldsTable.getSubTable("Gyro"))
             : new GyroIONavX(fieldsTable.getSubTable("Gyro"));
 
-    private final SwerveDriveOdometry odometry;
-
     // Should be FL, FR, BL, BR
     private final SwerveModule[] modules = {
-            new SwerveModule(0, Module3.DRIVE_MOTOR_ID, Module3.ANGLE_MOTOR_ID, Module3.ENCODER_ID,
-                    MODULE_3_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
-            new SwerveModule(1, Module0.DRIVE_MOTOR_ID, Module0.ANGLE_MOTOR_ID, Module0.ENCODER_ID,
-                    MODULE_0_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
-            new SwerveModule(2, Module2.DRIVE_MOTOR_ID, Module2.ANGLE_MOTOR_ID, Module2.ENCODER_ID,
-                    MODULE_2_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
-            new SwerveModule(3, Module1.DRIVE_MOTOR_ID, Module1.ANGLE_MOTOR_ID, Module1.ENCODER_ID,
-                    MODULE_1_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable)
+            new SwerveModule(0, ModuleFL.DRIVE_MOTOR_ID, ModuleFL.ANGLE_MOTOR_ID, ModuleFL.ENCODER_ID,
+                    MODULE_FL_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
+            new SwerveModule(1, ModuleFR.DRIVE_MOTOR_ID, ModuleFR.ANGLE_MOTOR_ID, ModuleFR.ENCODER_ID,
+                    MODULE_FR_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
+            new SwerveModule(2, ModuleBL.DRIVE_MOTOR_ID, ModuleBL.ANGLE_MOTOR_ID, ModuleBL.ENCODER_ID,
+                    MODULE_BL_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable),
+            new SwerveModule(3, ModuleBR.DRIVE_MOTOR_ID, ModuleBR.ANGLE_MOTOR_ID, ModuleBR.ENCODER_ID,
+                    MODULE_BR_ABSOLUTE_ANGLE_OFFSET_DEGREES, fieldsTable)
     };
 
     // The x and y might seem a bit weird, but this is how they are defined in
@@ -73,19 +87,49 @@ public class Swerve extends SubsystemBase implements Tuneable {
             BACK_LEFT_LOCATION,
             BACK_RIGHT_LOCATION);
 
-    private double currYawDegreesCW = 0;
-    private double yawOffsetDegreesCW = 0;
+    private RotationalSensorHelper gyroYawHelperCCW;
+
+    private final List<BiConsumer<Pose2d, Boolean>> callbacksOnPoseUpdate = new ArrayList<>();  
+    private final PoseEstimatorWithVision poseEstimator;
 
     public Swerve() {
         fieldsTable.update();
 
-        odometry = new SwerveDriveOdometry(
-                swerveKinematics,
-                gyroIO.isConnected.getAsBoolean() ? new Rotation2d(gyroIO.yawDegreesCW.getAsDouble())
-                        : new Rotation2d(0),
-                getModulesPositions());
+        gyroYawHelperCCW = new RotationalSensorHelper(
+            Rotation2d.fromDegrees(gyroIO.isConnected.getAsBoolean() ? -gyroIO.yawDegreesCW.getAsDouble() : 0));
+
+        poseEstimator = new PoseEstimatorWithVision(fieldsTable, getYawCCW(), getModulesPositions(), swerveKinematics);
 
         TuneablesManager.add("Swerve", (Tuneable) this);
+
+        resetYaw();
+
+        HolonomicPathFollowerConfig pathFollowerConfigs = new HolonomicPathFollowerConfig(
+                new PIDConstants(PathPlanner.TRANSLATION_KP, PathPlanner.TRANSLATION_KI, PathPlanner.TRANSLATION_KD),
+                new PIDConstants(PathPlanner.ROTATION_KP, PathPlanner.ROTATION_KI, PathPlanner.ROTATION_KD),
+                MAX_MODULE_SPEED,
+                TRACK_RADIUS_M,
+                new ReplanningConfig());
+
+        AutoBuilder.configureHolonomic(
+                this::getPose,
+                this::resetPose,
+                this::getRobotRelativeSpeeds,
+                this::driveVoltageChassisSpeed,
+                pathFollowerConfigs,
+                this::getIsRedAlliance,
+                this);
+                
+        Pathfinding.setPathfinder(new LocalADStarAK());
+        PathPlannerLogging.setLogActivePathCallback(
+                (activePath) -> {
+                    fieldsTable.recordOutput(
+                            "PathPlanner/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+                });
+        PathPlannerLogging.setLogTargetPoseCallback(
+                (targetPose) -> {
+                    fieldsTable.recordOutput("PathPlanner/TrajectorySetpoint", targetPose);
+                });
     }
 
     @Override
@@ -95,7 +139,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
         }
 
         if (gyroIO.isConnected.getAsBoolean()) {
-            currYawDegreesCW = gyroIO.yawDegreesCW.getAsDouble();
+            gyroYawHelperCCW.update(Rotation2d.fromDegrees(-gyroIO.yawDegreesCW.getAsDouble()));
         } else {
             Twist2d twist = swerveKinematics.toTwist2d(
                     modules[0].getModulePositionDelta(),
@@ -103,12 +147,15 @@ public class Swerve extends SubsystemBase implements Tuneable {
                     modules[2].getModulePositionDelta(),
                     modules[3].getModulePositionDelta());
 
-            currYawDegreesCW += Math.toDegrees(-twist.dtheta);
+            gyroYawHelperCCW.update(gyroYawHelperCCW.getMeasuredAngle().plus(Rotation2d.fromRadians(twist.dtheta)));
         }
 
-        odometry.update(Rotation2d.fromRadians(Math.toRadians(-getCurrYawDegreesCW())), getModulesPositions());
+        poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
+        callbacksOnPoseUpdate.forEach(callback -> {
+            callback.accept(getPose(), getIsRedAlliance());
+        });
 
-        fieldsTable.recordOutput("Odometry", odometry.getPoseMeters());
+        fieldsTable.recordOutput("Estimated Robot Pose", getPose());
         fieldsTable.recordOutput("Module States",
                 modules[0].getModuleState(),
                 modules[1].getModuleState(),
@@ -121,7 +168,8 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 modules[2].getModuleStateIntegreated(),
                 modules[3].getModuleStateIntegreated());
 
-        fieldsTable.recordOutput("Robot Yaw Radians CWW", -Math.toRadians(getCurrYawDegreesCW()));
+        fieldsTable.recordOutput("Robot Yaw Radians CCW", getYawCCW().getRadians());
+        fieldsTable.recordOutput("Yaw Degrees CW", -getYawCCW().getDegrees());
     }
 
     public void drive(double forward, double sidewaysRightPositive, double angularVelocityCW, boolean isFieldRelative) {
@@ -135,7 +183,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                     forward,
                     sidewaysLeftPositive,
                     angularVelocityCCW,
-                    Rotation2d.fromDegrees(-getCurrYawDegreesCW()));
+                    getYawCCW());
         } else {
             desiredChassisSpeeds = new ChassisSpeeds(
                     forward,
@@ -143,14 +191,27 @@ public class Swerve extends SubsystemBase implements Tuneable {
                     angularVelocityCCW);
         }
 
-        SwerveModuleState[] swerveModuleStates = swerveKinematics.toSwerveModuleStates(desiredChassisSpeeds);
+        driveChassisSpeed(desiredChassisSpeeds, false);
+    }
+
+    public void stop() {
+        drive(0, 0, 0, false);
+    }
+
+    public void driveChassisSpeed(ChassisSpeeds speeds, boolean useVoltage) {
+        SwerveModuleState[] swerveModuleStates = swerveKinematics.toSwerveModuleStates(speeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveContants.MAX_SPEED_MPS);
 
-        setModulesState(swerveModuleStates, true, true);
+        setModulesState(swerveModuleStates, true, true, useVoltage);
     }
 
-    public void setModulesState(SwerveModuleState[] moduleStates, boolean preventJittering, boolean optimizeState) {
+    public void driveVoltageChassisSpeed(ChassisSpeeds speeds) {
+        driveChassisSpeed(speeds, true);
+    }
+
+    public void setModulesState(SwerveModuleState[] moduleStates, boolean preventJittering, boolean optimizeState,
+            boolean useVoltage) {
         fieldsTable.recordOutput(
                 "Module Desired States",
                 moduleStates[0],
@@ -159,35 +220,40 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 moduleStates[3]);
 
         for (SwerveModule module : modules) {
-            module.setDesiredState(moduleStates[module.getModuleNumber()], preventJittering, optimizeState);
+            module.setDesiredState(moduleStates[module.getModuleNumber()], preventJittering, optimizeState, useVoltage);
         }
     }
 
-    private double getCurrYawDegreesCW() {
-        return currYawDegreesCW - yawOffsetDegreesCW;
+    private Rotation2d getYawCCW() {
+        return gyroYawHelperCCW.getAngle();
     }
 
-    public void setCurrYawDegreesCW(double newYawDegreesCW) {
-        Pose2d currentPose = odometry.getPoseMeters();
-        yawOffsetDegreesCW = currYawDegreesCW - newYawDegreesCW;
+    public void setYawDegreesCW(double newYawDegreesCW) {
+        Pose2d currentPose = getPose();
 
-        odometry.resetPosition(
-                Rotation2d.fromDegrees(-getCurrYawDegreesCW()),
-                getModulesPositions(),
-                new Pose2d(
-                        currentPose.getX(),
-                        currentPose.getY(),
-                        new Rotation2d(-newYawDegreesCW)));
+        resetPose(new Pose2d(
+                currentPose.getX(),
+                currentPose.getY(),
+                new Rotation2d(-newYawDegreesCW)));
     }
 
     public void resetYaw() {
-        setCurrYawDegreesCW(0);
+        setYawDegreesCW(0);
+    }
+
+    public Pose2d getPose() {
+        return poseEstimator.getPose();
     }
 
     public void requestResetModulesToAbsolute() {
         for (SwerveModule module : modules) {
             module.queueResetToAbsolute();
         }
+    }
+
+    public void registerCallbackOnPoseUpdate(BiConsumer<Pose2d, Boolean> callback) {
+        callbacksOnPoseUpdate.add(callback);
+        callback.accept(getPose(), getIsRedAlliance());
     }
 
     public SwerveModulePosition[] getModulesPositions() {
@@ -202,12 +268,28 @@ public class Swerve extends SubsystemBase implements Tuneable {
         return modulePosition;
     }
 
+    public void resetPose(Pose2d pose2d) {
+        gyroYawHelperCCW.resetAngle(pose2d.getRotation());
+        poseEstimator.resetPosition(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions(), pose2d);
+    }
+
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+        return swerveKinematics.toChassisSpeeds(modules[0].getModuleState(),
+                modules[1].getModuleState(),
+                modules[2].getModuleState(),
+                modules[3].getModuleState());
+    }
+
+    public boolean getIsRedAlliance() {
+        return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+    }
+
     @Override
     public void initTuneable(TuneableBuilder builder) {
         builder.addChild("Swerve Subsystem", (Sendable) this);
 
         builder.addChild("Modules Angle PID", (Tuneable) (builderPID) -> {
-            builderPID.setSendableType(SendableType.PID);
+            builderPID.setSendableType(SendableType.PIDController);
             builderPID.addDoubleProperty("p", modules[0]::getP, (p) -> {
                 for (SwerveModule module : modules) {
                     module.setP(p);
@@ -240,7 +322,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 for (SwerveModule swerveModule : modules) {
                     swerveModule.setAbsoluteEncoderAngleDegrees(angleToResetDegrees.get());
                 }
-            }));
+            }).ignoringDisable(false));
         });
 
         builder.addChild("coast mode", new RunCommand(() -> {
