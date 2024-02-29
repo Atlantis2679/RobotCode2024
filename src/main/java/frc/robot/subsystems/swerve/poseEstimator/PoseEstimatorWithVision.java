@@ -16,6 +16,8 @@ import java.io.IOException;
 
 import org.photonvision.PhotonUtils;
 
+import static frc.robot.subsystems.swerve.poseEstimator.PoseEstimatorConstants.*;
+
 public class PoseEstimatorWithVision {
     private final VisionAprilTagsIO visionIO;
     private final SwerveDrivePoseEstimator poseEstimator;
@@ -41,8 +43,8 @@ public class PoseEstimatorWithVision {
                 currentAngle,
                 positions,
                 new Pose2d(),
-                VecBuilder.fill(0.1, 0.1, 0.1),
-                VecBuilder.fill(0.9, 0.9, 0.9));
+                VecBuilder.fill(STATE_TRUST_LEVEL_X, STATE_TRUST_LEVEL_Y, STATE_TRUST_LEVEL_Z),
+                VecBuilder.fill(VISION_TRUST_LEVEL_X, VISION_TRUST_LEVEL_Y, VISION_TRUST_LEVEL_Z));
     }
 
     public void update(Rotation2d gyroMeasurmentCCW, SwerveModulePosition[] modulesPositions) {

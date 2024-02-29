@@ -34,8 +34,8 @@ public class WristConstants {
     public static final double WRIST_VOLTAGE_LIMIT = 4;
 
     // trapezoidProfile
-    public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 100;
-    public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 120;
+    public static final double WRIST_MAX_ACCELERATION_DEG_PER_SEC = 200;
+    public static final double WRIST_MAX_VELOCITY_DEG_PER_SEC = 200;
 
     // SlewRateLimiter
 

@@ -16,8 +16,9 @@ public class LoaderCommands {
     }
 
     public Command manualController(DoubleSupplier joystick) {
-        return loader.run(() ->
-                loader.setSpeed(joystick.getAsDouble())
+        return loader.runEnd(() ->
+                loader.setSpeed(joystick.getAsDouble()),
+                loader::stop
         );
     }
 }

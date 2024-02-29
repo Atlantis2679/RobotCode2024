@@ -1,6 +1,7 @@
 package frc.robot.subsystems.pitcher.io;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -15,7 +16,9 @@ public class PitcherIOSparkMax extends PitcherIO {
     public PitcherIOSparkMax(LogFieldsTable fieldsTable) {
         super(fieldsTable);
         encoder.setDistancePerRotation(360);
+        motor.setIdleMode(IdleMode.kBrake);
         motor.setInverted(false);
+        motor.setSmartCurrentLimit(30);
     }
 
     @Override

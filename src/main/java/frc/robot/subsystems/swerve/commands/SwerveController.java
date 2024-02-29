@@ -24,7 +24,7 @@ public class SwerveController extends TuneableCommand {
     private DoubleHolder maxSpeedAngular = tuneablesTable.addNumber("Max Angular Velocity", MAX_ANGULAR_VELOCITY);
     private SendableChooser<Double> velocityMultiplierChooser = new SendableChooser<>();
 
-    public SwerveController(Swerve swerve, DoubleSupplier forwardSupplier, DoubleSupplier sidewaysSupplier, 
+    public SwerveController(Swerve swerve, DoubleSupplier forwardSupplier, DoubleSupplier sidewaysSupplier,
             DoubleSupplier rotationsSupplier, BooleanSupplier isFieldRelative) {
         this.swerve = swerve;
         addRequirements(swerve);

@@ -8,7 +8,7 @@ public class AllCommandsConstants {
     public static class ScoreAmp {
         public static final double UPPER_ROLLS_SPEED_RPS = 0;
         public static final double LOWER_ROLLS_SPEES_RPS = 0;
-        public static final double SPEED_RELEASE = 0.4;
+        public static final double SPEED_RELEASE = 0.7;
     }
 
     public static class CollectFromSource {
@@ -41,15 +41,17 @@ public class AllCommandsConstants {
     }
 
     public static class ReadyToShootToSpeaker {
-        public static final double UPPER_ROLLERS_SPEED = 6;
-        public static final double LOWER_ROLLERS_SPEED = 6;
-        public static final double PITCHER_DEGREES = 50;
+        public static final double UPPER_ROLLERS_SPEED = 45;
+        public static final double LOWER_ROLLERS_SPEED = 45;
+        public static final double PITCHER_DEGREES = 38;
+        public static final double GRIPPER_SPEED = -0.4;
 
     }
 
     public static class ReadyToShootToAmp {
-        public static final double UPPER_ROLLERS_SPEED = 0;
-        public static final double LOWER_ROLLERS_SPEED = 0;
-        public static final double PITCHER_DEGREES = 0;
+        public static final double UPPER_ROLLERS_SPEED = 7.5;
+        public static final double LOWER_ROLLERS_SPEED = 12.5;
+        public static final double PITCHER_DEGREES = 42;
+        public static final double GRIPPER_SPEED = -0.5;
     }
 }

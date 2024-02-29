@@ -5,6 +5,13 @@ import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.GeometryUtil;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +29,7 @@ public class SwerveCommands {
 
     public TuneableCommand controller(DoubleSupplier forwardSupplier, DoubleSupplier sidewaysSupplier,
             DoubleSupplier rotationSupplier, BooleanSupplier isFieldRelativeSupplier) {
+
         return new SwerveController(swerve, forwardSupplier, sidewaysSupplier, rotationSupplier,
                 isFieldRelativeSupplier);
     }
@@ -35,8 +43,8 @@ public class SwerveCommands {
                 double steerX = steerXSupplier.getAsDouble();
                 double speed = speedSupplier.getAsDouble();
                 Logger.recordOutput("angle", steerX != 0 || steerY != 0
-                                            ? Math.atan2(steerY, steerX) - Math.toRadians(90)
-                                            : 0);
+                        ? Math.atan2(steerY, steerX) - Math.toRadians(90)
+                        : 0);
                 SwerveModuleState[] moduleStates = new SwerveModuleState[4];
                 for (int i = 0; i < moduleStates.length; i++) {
                     moduleStates[i] = new SwerveModuleState(
@@ -61,5 +69,21 @@ public class SwerveCommands {
 
             swerve.setModulesState(moduleStates, false, false, false);
         });
+    }
+
+    public Command driveToPose(Pose2d targetPoseBlueAlliance) {
+        Pose2d targetPose = swerve.getIsRedAlliance()
+                ? GeometryUtil.flipFieldPose(targetPoseBlueAlliance)
+                : targetPoseBlueAlliance;
+
+        PathPlannerPath path = new PathPlannerPath(
+                PathPlannerPath.bezierFromPoses(
+                        swerve.getPose(),
+                        targetPose),
+                new PathConstraints(1, 1, 8, 6),
+                new GoalEndState(0, targetPose.getRotation()));
+
+        path.preventFlipping = true;
+        return AutoBuilder.followPath(path);
     }
 }
