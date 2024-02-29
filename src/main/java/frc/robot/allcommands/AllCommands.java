@@ -110,7 +110,7 @@ public class AllCommands {
                 return Commands.parallel(wristCMDs.moveToAngle(OpenIntake.COLLECTING_WRIST_ANGLE_DEGREE),
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
-                                                gripperCMD.spin(OpenIntake.GRIPPER_COLLECTING_SPEED)))
+                                                gripperCMD.spin(OpenIntake.UPPER_GRIPPER_COLLECTING_SPEED, OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)))
                                 .until(gripper::getIsNoteInside)
                                 .withName("openIntake");
         }
@@ -127,14 +127,14 @@ public class AllCommands {
                                                 .getAbsoluteAngleDegrees() < Handoff.WRIST_STARTING_LOADER_ANGLE_DEGRRE,
                                                 loaderCMDs.spin(Handoff.LOADER_HANDOFF_PRECENTAGE_OUTPUT)),
                                 runWhen(() -> wrist.isAtAngle(Handoff.WRIST_HANDOFF_ANGLE_DEGRRES),
-                                                gripperCMD.spin(Handoff.GRIPPER_HANDOFF_SPEED)))
+                                                gripperCMD.spin(Handoff.UPPER_GRIPPER_HANDOFF_SPEED, Handoff.LOWER_GRIPPER_HANDOFF_SPEED)))
                                 .until(loader::getIsNoteInside).withName("handoff");
         }
 
-        public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier gripperSpeed) {
+        public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier upperGripperSpeed, DoubleSupplier lowerGripperSpeed) {
                 return Commands.parallel(
                                 wristCMDs.manualController(wristSpeed),
-                                gripperCMD.manualController(gripperSpeed))
+                                gripperCMD.manualController(upperGripperSpeed, lowerGripperSpeed))
                                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
                                 .withName("manualIntake");
         }

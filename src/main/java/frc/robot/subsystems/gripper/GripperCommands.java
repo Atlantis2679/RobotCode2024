@@ -16,11 +16,12 @@ public class GripperCommands {
         this.gripper = gripper;
     }
 
-    public Command spin(double speed) {
-        return gripper.startEnd(() -> gripper.setSpeed(speed), gripper::stop);
+    public Command spin(double upperGripperSpeed, double lowerGripperSpeed) {
+        return gripper.startEnd(() -> gripper.setSpeed(upperGripperSpeed, lowerGripperSpeed), gripper::stop);
     }
 
-    public Command manualController(DoubleSupplier speed){
-        return gripper.run(()-> gripper.setSpeed(speed.getAsDouble())).finallyDo(gripper::stop);
+    public Command manualController(DoubleSupplier upperGripperSpeed, DoubleSupplier lowerGripperSpeed) {
+        return gripper.run(() -> gripper.setSpeed(upperGripperSpeed.getAsDouble(), lowerGripperSpeed.getAsDouble()))
+                .finallyDo(gripper::stop);
     }
 }

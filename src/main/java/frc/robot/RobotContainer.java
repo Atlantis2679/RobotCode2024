@@ -65,7 +65,7 @@ public class RobotContainer {
                 operatorController::getRightTriggerAxis));
 
         operatorController.rightBumper()
-                .whileTrue(allCommands.manualIntake(operatorController::getLeftY, operatorController::getRightY));
+                .whileTrue(allCommands.manualIntake(operatorController::getLeftY, operatorController::getRightY, operatorController::getRightY));
 
         Command handoffCMD = allCommands.handoff();
         wrist.setDefaultCommand(Commands.either(
