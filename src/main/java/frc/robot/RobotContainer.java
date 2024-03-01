@@ -8,8 +8,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.tuneables.Tuneable;
@@ -18,6 +21,8 @@ import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.gripper.Gripper;
+import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.leds.LedsCommands;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.subsystems.wrist.Wrist;
@@ -28,12 +33,14 @@ public class RobotContainer {
         private final Wrist wrist = new Wrist();
         private final Gripper gripper = new Gripper();
         private final Elevator elevator = new Elevator();
+        private final Leds leds = new Leds();
 
         private final NaturalXboxController driverController = new NaturalXboxController(
                         RobotMap.Controllers.DRIVER_PORT);
         private final NaturalXboxController operatorController = new NaturalXboxController(
                         RobotMap.Controllers.OPERTATOR_PORT);
 
+        private final LedsCommands ledsCommands = new LedsCommands(leds);
         private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
         private final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
 
@@ -51,13 +58,16 @@ public class RobotContainer {
 
                 if (Robot.isReal()) {
                         CameraServer.startAutomaticCapture();
+                        CvSink cvSink = CameraServer.getVideo();
+                        CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
                 }
 
                 // ---- first auto command chooser ----
 
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                firstAutoCommandChooser.addOption("Eject Note", () -> allCommands.getReadyToScoreAMP().alongWith(allCommands.scoreAMP()));
+                firstAutoCommandChooser.addOption("Eject Note",
+                                () -> allCommands.getReadyToScoreAMP().alongWith(allCommands.scoreAMP()));
 
                 // ---- second auto command chooser ----
 
@@ -67,15 +77,18 @@ public class RobotContainer {
 
                 secondAutoCommandChooser.addOption("GetOutFromSource", () -> new PathPlannerAuto("GetOutFromSource"));
 
-                secondAutoCommandChooser.addOption("MiddleSpeakerAndGetOut", () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
+                secondAutoCommandChooser.addOption("MiddleSpeakerAndGetOut",
+                                () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
 
                 secondAutoCommandChooser.addOption("MiddleSpeaker", () -> new PathPlannerAuto("MiddleSpeaker"));
 
-                secondAutoCommandChooser.addOption("SpeakerCloseToAmpAndGetOut", () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
+                secondAutoCommandChooser.addOption("SpeakerCloseToAmpAndGetOut",
+                                () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
 
                 secondAutoCommandChooser.addOption("SpeakerCloseToAmp", () -> new PathPlannerAuto("SpeakerCloseToAmp"));
 
-                secondAutoCommandChooser.addOption("SpeakerFarFromAmpAndGetOut", () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
+                secondAutoCommandChooser.addOption("SpeakerFarFromAmpAndGetOut",
+                                () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
         }
 
         private void configureDriverBindings() {
@@ -90,8 +103,10 @@ public class RobotContainer {
                 driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
                 driverController.x().onTrue(swerveCommands.xWheelLock());
 
-                driverController.leftTrigger().onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
-                driverController.rightTrigger().onTrue(allCommands.manualElevator(driverController::getRightTriggerAxis, () -> false));
+                driverController.leftTrigger()
+                                .onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
+                driverController.rightTrigger()
+                                .onTrue(allCommands.manualElevator(driverController::getRightTriggerAxis, () -> false));
 
                 TuneablesManager.add("Swerve/modules control mode",
                                 swerveCommands.controlModules(
@@ -128,6 +143,12 @@ public class RobotContainer {
         }
 
         public void configureNamedCommands() {
+        }
+
+        public void configureLeds() {
+                operatorController.a()
+                                .whileTrue(gripper.getIsNoteInside() ? ledsCommands.setGreen() : ledsCommands.setRed());
+                operatorController.a().whileFalse(ledsCommands.set00BEBE());
         }
 
         public Command getAutonomousCommand() {
