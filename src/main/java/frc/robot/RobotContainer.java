@@ -10,21 +10,14 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.tuneables.Tuneable;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
-import frc.robot.allcommands.AllCommandsConstants.ReadyToShootToAmp;
-import frc.robot.allcommands.AllCommandsConstants.ShootToSpeaker;
-import frc.robot.subsystems.flywheel.Flywheel;
-import frc.robot.subsystems.flywheel.FlywheelCommands;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.gripper.Gripper;
-import frc.robot.subsystems.loader.Loader;
-import frc.robot.subsystems.loader.LoaderCommands;
-import frc.robot.subsystems.pitcher.Pitcher;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.subsystems.wrist.Wrist;
@@ -32,11 +25,9 @@ import frc.robot.utils.NaturalXboxController;
 
 public class RobotContainer {
         private final Swerve swerve = new Swerve();
-        private final Pitcher pitcher = new Pitcher();
         private final Wrist wrist = new Wrist();
         private final Gripper gripper = new Gripper();
-        private final Flywheel flywheel = new Flywheel();
-        private final Loader loader = new Loader();
+        private final Elevator elevator = new Elevator();
 
         private final NaturalXboxController driverController = new NaturalXboxController(
                         RobotMap.Controllers.DRIVER_PORT);
@@ -44,7 +35,7 @@ public class RobotContainer {
                         RobotMap.Controllers.OPERTATOR_PORT);
 
         private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-        private final AllCommands allCommands = new AllCommands(swerve, flywheel, pitcher, loader, wrist, gripper);
+        private final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
 
         private final LoggedDashboardChooser<Supplier<Command>> firstAutoCommandChooser = new LoggedDashboardChooser<>(
                         "First Auto Command");
@@ -62,40 +53,29 @@ public class RobotContainer {
                         CameraServer.startAutomaticCapture();
                 }
 
+                // ---- first auto command chooser ----
+
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                firstAutoCommandChooser.addOption("Shoot Note to Speaker", () -> allCommands.readyToShootToSpeaker()
-                                .raceWith(allCommands.shoot().withTimeout(4)));
+                firstAutoCommandChooser.addOption("Eject Note", () -> allCommands.getReadyToScoreAMP().alongWith(allCommands.scoreAMP()));
 
-
-                firstAutoCommandChooser.addOption("Release Note", () -> new FlywheelCommands(flywheel).spin(
-                                5,
-                                5)
-                                .alongWith(new LoaderCommands(loader).spin(0.6)).withTimeout(4));
+                // ---- second auto command chooser ----
 
                 secondAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                // secondAutoCommandChooser.addOption("Get Out of Staring Line",
-                // () -> new PathPlannerAuto("getOutOfStartingLine"));
+                secondAutoCommandChooser.addOption("GetToAmp", () -> new PathPlannerAuto("GetToAmp"));
 
-                secondAutoCommandChooser.addOption("Speaker Close To Amp",
-                () -> new PathPlannerAuto("SpeakerCloseToAmp"));
-                // secondAutoCommandChooser.addOption("Speaker Close To Amp And Out",
-                // () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
+                secondAutoCommandChooser.addOption("GetOutFromSource", () -> new PathPlannerAuto("GetOutFromSource"));
 
-                secondAutoCommandChooser.addOption("Speaker Far From Amp",
-                                () -> new PathPlannerAuto("SpeakerFarFromAmp"));
-                // secondAutoCommandChooser.addOption("Speaker Far From Amp And Out",
-                // () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
+                secondAutoCommandChooser.addOption("MiddleSpeakerAndGetOut", () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
 
-                // secondAutoCommandChooser.addOption("Middle Speaker",
-                // () -> new PathPlannerAuto("MiddleSpeaker"));
-                // secondAutoCommandChooser.addOption("Middle Speaker And Out",
-                // () -> new PathPlannerAuto("MiddleSpeakerAndGetOut"));
+                secondAutoCommandChooser.addOption("MiddleSpeaker", () -> new PathPlannerAuto("MiddleSpeaker"));
 
-                secondAutoCommandChooser.addOption("Get out",
-                                () -> new PathPlannerAuto("getOutOfStartingLine"));
+                secondAutoCommandChooser.addOption("SpeakerCloseToAmpAndGetOut", () -> new PathPlannerAuto("SpeakerCloseToAmpAndGetOut"));
 
+                secondAutoCommandChooser.addOption("SpeakerCloseToAmp", () -> new PathPlannerAuto("SpeakerCloseToAmp"));
+
+                secondAutoCommandChooser.addOption("SpeakerFarFromAmpAndGetOut", () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
         }
 
         private void configureDriverBindings() {
@@ -109,6 +89,9 @@ public class RobotContainer {
                 TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
                 driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
                 driverController.x().onTrue(swerveCommands.xWheelLock());
+
+                driverController.leftTrigger().onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
+                driverController.rightTrigger().onTrue(allCommands.manualElevator(driverController::getRightTriggerAxis, () -> false));
 
                 TuneablesManager.add("Swerve/modules control mode",
                                 swerveCommands.controlModules(
@@ -126,47 +109,25 @@ public class RobotContainer {
         }
 
         private void configureOperatorBindings() {
-                operatorController.leftBumper().whileTrue(allCommands.manualShooter(
-                                operatorController::getLeftY,
-                                operatorController::getRightY,
-                                operatorController::getLeftTriggerAxis,
-                                operatorController::getRightTriggerAxis));
-
                 operatorController.rightBumper()
-                                .whileTrue(allCommands.manualIntake(operatorController::getLeftY,
-                                                operatorController::getRightY));
+                                .whileTrue(allCommands.manualIntake(null, null, null));
 
-                Command autoHandoffCMD = allCommands.handoff().until(loader::getIsNoteInside).withName("auto handoff");
-                wrist.setDefaultCommand(Commands.either(
-                                Commands.runOnce(() -> autoHandoffCMD.schedule()),
-                                allCommands.closeWrist(),
-                                gripper::getIsNoteInside).withName("wrist default"));
-
-                operatorController.y().whileTrue(allCommands.handoff());
+                wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
 
                 operatorController.a().whileTrue(allCommands.openIntake());
 
-                pitcher.setDefaultCommand(Commands.either(
-                                allCommands.pitcherWithNoteIdle(),
-                                allCommands.pitcherReadyToHandOff(),
-                                loader::getIsNoteInside).withName("pitcher default"));
+                operatorController.leftTrigger().whileTrue(allCommands.getReadyToScoreAMP());
+                operatorController.b().whileTrue(allCommands.scoreAMP());
 
-                operatorController.povUp().whileTrue(allCommands.readyToShootToSpeaker());
-                operatorController.povDown().whileTrue(allCommands.readyToShootToAmp());
-                operatorController.b().whileTrue(allCommands.shoot());
+                operatorController.povUp().onTrue(allCommands.changeCounter(() -> true));
+                operatorController.povDown().onTrue(allCommands.changeCounter(() -> false));
 
-                operatorController.x().whileTrue(allCommands.keepNoteInSpeaker());
                 TuneableCommand tuneableReadyToShootCMD = allCommands.readyToShootTuneable();
                 operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
                 TuneablesManager.add("tuneable ready to shoot", (Tuneable) tuneableReadyToShootCMD);
         }
 
         public void configureNamedCommands() {
-                NamedCommands.registerCommand("readyToShootToSpeaker", allCommands.readyToShootToSpeaker());
-                NamedCommands.registerCommand("shootUntilStopSeeNote",
-                                allCommands.shoot().until(() -> !loader.getIsNoteInside()));
-                NamedCommands.registerCommand("stopAll", allCommands.stopAll());
-                NamedCommands.registerCommand("openIntake", allCommands.openIntake());
         }
 
         public Command getAutonomousCommand() {

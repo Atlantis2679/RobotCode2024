@@ -6,6 +6,7 @@ public class ElevatorConstants {
     public final static int ELEVATOR_MOTOR_LETF_ID = 0 ;
 
     public final static double SPEED_LIMIT = 1;
-    
-    public final static double SPEED = 0;
+
+    public final static int CURRENT_LIMIT_LEFT_MOTOR = 0;
+    public final static int CURRENT_LIMIT_RIGHT_MOTOR = 0;
 }
