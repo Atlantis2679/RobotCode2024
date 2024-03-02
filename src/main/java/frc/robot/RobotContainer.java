@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -12,10 +11,8 @@ import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.tuneables.Tuneable;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
@@ -55,6 +52,7 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
                 configureNamedCommands();
+                // configureLeds();
 
                 if (Robot.isReal()) {
                         CameraServer.startAutomaticCapture();
@@ -96,7 +94,8 @@ public class RobotContainer {
                                 () -> driverController.getLeftY(),
                                 () -> driverController.getLeftX(),
                                 () -> driverController.getRightX(),
-                                driverController.leftBumper().negate()::getAsBoolean);
+                                driverController.leftBumper().negate()::getAsBoolean,
+                                driverController.rightBumper()::getAsBoolean);
 
                 swerve.setDefaultCommand(driveCommand);
                 TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
@@ -125,21 +124,21 @@ public class RobotContainer {
 
         private void configureOperatorBindings() {
                 operatorController.rightBumper()
-                                .whileTrue(allCommands.manualIntake(null, null, null));
+                                .whileTrue(allCommands.manualIntake(operatorController::getRightY, operatorController::getLeftTriggerAxis, operatorController::getRightTriggerAxis));
 
                 wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
 
                 operatorController.a().whileTrue(allCommands.openIntake());
 
-                operatorController.leftTrigger().whileTrue(allCommands.getReadyToScoreAMP());
+                operatorController.leftBumper().whileTrue(allCommands.getReadyToScoreAMP());
                 operatorController.b().whileTrue(allCommands.scoreAMP());
 
-                operatorController.povUp().onTrue(allCommands.changeCounter(() -> true));
-                operatorController.povDown().onTrue(allCommands.changeCounter(() -> false));
+                // operatorController.povUp().onTrue(allCommands.changeCounter(() -> true));
+                // operatorController.povDown().onTrue(allCommands.changeCounter(() -> false));
 
-                TuneableCommand tuneableReadyToShootCMD = allCommands.readyToShootTuneable();
-                operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
-                TuneablesManager.add("tuneable ready to shoot", (Tuneable) tuneableReadyToShootCMD);
+                // TuneableCommand tuneableReadyToShootCMD = allCommands.readyToShootTuneable();
+                // operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
+                // TuneablesManager.add("tuneable ready to shoot", (Tuneable) tuneableReadyToShootCMD);
         }
 
         public void configureNamedCommands() {
@@ -147,9 +146,11 @@ public class RobotContainer {
 
         public void configureLeds() {
                 operatorController.a()
-                                .whileTrue(gripper.getIsNoteInside() ? ledsCommands.setGreen() : ledsCommands.setRed());
-                operatorController.a().whileFalse(ledsCommands.set00BEBE());
+                                .whileTrue(ledsCommands.setRed().until(() -> gripper.getIsNoteInside()).andThen(ledsCommands.setGreen()));
+
+                leds.setDefaultCommand(ledsCommands.set00BEBE());
         }
+
 
         public Command getAutonomousCommand() {
                 return firstAutoCommandChooser.get().get()

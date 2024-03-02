@@ -2,7 +2,7 @@ package frc.robot.subsystems.elevator.io;
 
 
 import com.revrobotics.CANSparkMax;
-
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.lib.logfields.LogFieldsTable;
@@ -19,6 +19,8 @@ public class ElevatorIOSparkMax extends ElevatorIO {
         motorLeft.restoreFactoryDefaults();
         motorLeft.setSmartCurrentLimit(CURRENT_LIMIT_LEFT_MOTOR);
         motorRight.setSmartCurrentLimit(CURRENT_LIMIT_RIGHT_MOTOR);
+        motorLeft.setIdleMode(IdleMode.kBrake);
+        motorRight.setIdleMode(IdleMode.kBrake);
     }
 
     @Override

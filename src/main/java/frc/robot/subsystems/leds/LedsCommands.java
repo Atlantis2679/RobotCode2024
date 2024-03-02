@@ -10,7 +10,6 @@ public class LedsCommands {
 
     public Command set00BEBE() {
         return leds.run(() -> leds.setColor(0, 190, 190));
-
     }
 
     public Command setRed() {

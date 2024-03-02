@@ -13,13 +13,13 @@ public class WristConstants {
 
     // Feedforward wrist
     public static final double KS = 0;
-    public static final double KG = 0.3; // 0.556000
+    public static final double KG = -0.5; // 0.556000
     public static final double KV = 0.023;
     public static final double KA = 0;
 
     public class Sim {
         public static final double KS = 0;
-        public static final double KG = 0.3; // 0.556000
+        public static final double KG = -0.5; // 0.556000
         public static final double KV = 0.023;
         public static final double KA = 0;
 
@@ -47,7 +47,7 @@ public class WristConstants {
 
     // wrist angles
     public static final double WIRST_ANGLE_UPPER_BOUND_DEGREES = 250;
-    public static final double WIRST_ANGLE_OFFSET_DEGREES = 12.7;
+    public static final double WIRST_ANGLE_OFFSET_DEGREES = 220 ;
 
     // rollers speeds
 

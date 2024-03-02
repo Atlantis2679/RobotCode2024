@@ -28,10 +28,10 @@ public class SwerveCommands {
     }
 
     public TuneableCommand controller(DoubleSupplier forwardSupplier, DoubleSupplier sidewaysSupplier,
-            DoubleSupplier rotationSupplier, BooleanSupplier isFieldRelativeSupplier) {
+            DoubleSupplier rotationSupplier, BooleanSupplier isFieldRelativeSupplier, BooleanSupplier isSensetiveMode) {
 
         return new SwerveController(swerve, forwardSupplier, sidewaysSupplier, rotationSupplier,
-                isFieldRelativeSupplier);
+                isFieldRelativeSupplier, isSensetiveMode);
     }
 
     public TuneableCommand controlModules(DoubleSupplier steerXSupplier, DoubleSupplier steerYSupplier,

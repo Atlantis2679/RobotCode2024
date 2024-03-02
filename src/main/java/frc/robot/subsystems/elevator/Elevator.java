@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
 import frc.robot.subsystems.elevator.io.ElevatorIO;
@@ -25,6 +26,8 @@ public class Elevator extends SubsystemBase{
 
         setSpeedLeft(speed);
         setSpeedRight(speed);
+
+        SmartDashboard.putNumber("speed", speed);
     }
 
     public void stop() {
