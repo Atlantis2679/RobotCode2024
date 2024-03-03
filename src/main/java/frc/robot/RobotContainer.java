@@ -165,7 +165,8 @@ public class RobotContainer {
                                                                 ledsCommands.setGreen())
                                                                 .andThen(ledsCommands.set00BEBE())));
 
-                // leds.setDefaultCommand(ledsCommands.set00BEBE());
+                
+                operatorController.a().onFalse(ledsCommands.set00BEBE());
         }
 
         public Command getAutonomousCommand() {
