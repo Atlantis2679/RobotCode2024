@@ -71,8 +71,9 @@ public class AllCommands {
 
         public Command getReadyToScoreAMP() {
                 return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
-                                .alongWith(gripperCMD.spin(-GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
-                                                GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS))
+                                .alongWith(Commands.race(gripperCMD.spin(GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+                                                -GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS),
+                                                Commands.waitSeconds(2)))
                                 .withName("getReadyToScoreAMP");
         }
 
@@ -92,8 +93,8 @@ public class AllCommands {
 
         public Command makeSureNoteStaysInside() {
                 return runWhen(() -> !gripper.getIsNoteInside(),
-                                gripperCMD.spin(-MakeSureNoteStaysInside.KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS,
-                                                MakeSureNoteStaysInside.KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS));
+                                gripperCMD.spin(MakeSureNoteStaysInside.KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+                                                -MakeSureNoteStaysInside.KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS));
         }
 
         public Command deliver() {

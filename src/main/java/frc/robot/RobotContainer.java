@@ -6,14 +6,16 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.tuneables.Tuneable;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
@@ -59,6 +61,14 @@ public class RobotContainer {
                         // CameraServer.startAutomaticCapture();
                         // CvSink cvSink = CameraServer.getVideo();
                         // CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
+                        UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+                        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+                        mjpegServer1.setSource(usbCamera);
+                        CvSink cvSink = new CvSink("opencv_USB Camera 0");
+                        cvSink.setSource(usbCamera);
+                        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+                        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+                        mjpegServer2.setSource(outputStream);
                 }
 
                 // ---- first auto command chooser ----
@@ -151,8 +161,9 @@ public class RobotContainer {
         public void configureLeds() {
                 operatorController.a()
                                 .onTrue(ledsCommands.setRed().until(() -> gripper.getIsNoteInside())
-                                                .andThen(ledsCommands.setGreen().until(operatorController.a()
-                                                                .onFalse(ledsCommands.set00BEBE()))));
+                                                .andThen(Commands.race(Commands.waitSeconds(5),
+                                                                ledsCommands.setGreen())
+                                                                .andThen(ledsCommands.set00BEBE())));
 
                 // leds.setDefaultCommand(ledsCommands.set00BEBE());
         }

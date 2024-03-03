@@ -9,7 +9,7 @@ public class AllCommandsConstants {
 
     public static class GetReadyToScoreAMP {
         public static final double AMP_DEGREES = 68;
-        public static final double KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.00001;
+        public static final double KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.08;
     }
 
     public static class OpenIntake {
@@ -36,7 +36,7 @@ public class AllCommandsConstants {
     }
 
     public static class MakeSureNoteStaysInside {
-        public static final double KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.09;
+        public static final double KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.04;
         
     }
 }
