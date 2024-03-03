@@ -133,14 +133,11 @@ public class RobotContainer {
 
                 operatorController.a().whileTrue(allCommands.openIntake());
                 operatorController.y().whileTrue(allCommands.deliver());
-                operatorController.povUp().whileTrue(allCommands.puke());
+                operatorController.povUp().whileTrue(allCommands.eject());
                 operatorController.povDown().whileTrue(allCommands.eat());
                 operatorController.leftBumper().whileTrue(allCommands.getReadyToScoreAMP());
                 operatorController.b().whileTrue(allCommands.scoreAMP());
                 operatorController.x().whileTrue(allCommands.makeSureNoteStaysInside());
-
-                // operatorController.povUp().onTrue(allCommands.changeCounter(() -> true));
-                // operatorController.povDown().onTrue(allCommands.changeCounter(() -> false));
 
                 // TuneableCommand tuneableReadyToShootCMD = allCommands.scoreAMPTuenble();
                 // operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
