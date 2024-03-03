@@ -132,7 +132,9 @@ public class RobotContainer {
                 wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
 
                 operatorController.a().whileTrue(allCommands.openIntake());
-
+                operatorController.y().whileTrue(allCommands.deliver());
+                operatorController.povUp().whileTrue(allCommands.puke());
+                operatorController.povDown().whileTrue(allCommands.eat());
                 operatorController.leftBumper().whileTrue(allCommands.getReadyToScoreAMP());
                 operatorController.b().whileTrue(allCommands.scoreAMP());
 

@@ -107,12 +107,17 @@ public class AllCommands {
                                 wristCMDs.moveToAngle(Deliver.DELIVERY_WRIST_ANGLE_DEGREE),
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < Deliver.START_GRIPPER_WRIST_ANGLE_DEGREE,
-                                                gripperCMD.spin(Deliver.DELIVERY_GRIPPERS_SPEED_RPS,
+                                                gripperCMD.spin(-Deliver.DELIVERY_GRIPPERS_SPEED_RPS,
                                                                 Deliver.DELIVERY_GRIPPERS_SPEED_RPS)));
         }
 
         public Command eat() {
-                return gripperCMD.spin(Eat.GRIPPER_EATING_SPEED_RPS, Eat.GRIPPER_EATING_SPEED_RPS);
+                return gripperCMD.spin(Eat.GRIPPER_EATING_SPEED_RPS, -Eat.GRIPPER_EATING_SPEED_RPS);
+
+        }
+
+                public Command puke() {
+                return gripperCMD.spin(-Eat.GRIPPER_EATING_SPEED_RPS, Eat.GRIPPER_EATING_SPEED_RPS);
 
         }
 
