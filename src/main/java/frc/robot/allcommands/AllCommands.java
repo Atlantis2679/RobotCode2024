@@ -15,6 +15,7 @@ import frc.robot.allcommands.AllCommandsConstants.Close;
 import frc.robot.allcommands.AllCommandsConstants.Deliver;
 import frc.robot.allcommands.AllCommandsConstants.Eat;
 import frc.robot.allcommands.AllCommandsConstants.GetReadyToScoreAMP;
+import frc.robot.allcommands.AllCommandsConstants.MakeSureNoteStaysInside;
 import frc.robot.allcommands.AllCommandsConstants.OpenIntake;
 import frc.robot.allcommands.AllCommandsConstants.ScoreAmp;
 import frc.robot.subsystems.elevator.Elevator;
@@ -102,6 +103,12 @@ public class AllCommands {
                 return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE).withName("closeIntake");
         }
 
+        public Command makeSureNoteStaysInside() {
+                return runWhen(() -> !gripper.getIsNoteInside(),
+                                gripperCMD.spin(-MakeSureNoteStaysInside.KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+                                                MakeSureNoteStaysInside.KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS));
+        }
+
         public Command deliver() {
                 return Commands.parallel(
                                 wristCMDs.moveToAngle(Deliver.DELIVERY_WRIST_ANGLE_DEGREE),
@@ -116,7 +123,7 @@ public class AllCommands {
 
         }
 
-                public Command puke() {
+        public Command puke() {
                 return gripperCMD.spin(-Eat.GRIPPER_EATING_SPEED_RPS, Eat.GRIPPER_EATING_SPEED_RPS);
 
         }
@@ -154,4 +161,5 @@ public class AllCommands {
         private Command runWhen(BooleanSupplier condition, Command command) {
                 return Commands.waitUntil(condition).andThen(command);
         }
+
 }

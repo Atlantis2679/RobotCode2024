@@ -137,6 +137,7 @@ public class RobotContainer {
                 operatorController.povDown().whileTrue(allCommands.eat());
                 operatorController.leftBumper().whileTrue(allCommands.getReadyToScoreAMP());
                 operatorController.b().whileTrue(allCommands.scoreAMP());
+                operatorController.x().whileTrue(allCommands.makeSureNoteStaysInside());
 
                 // operatorController.povUp().onTrue(allCommands.changeCounter(() -> true));
                 // operatorController.povDown().onTrue(allCommands.changeCounter(() -> false));
