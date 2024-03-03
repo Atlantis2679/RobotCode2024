@@ -12,6 +12,8 @@ import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.lib.tuneables.extensions.TuneableWrapperCommand;
 import frc.lib.valueholders.DoubleHolder;
 import frc.robot.allcommands.AllCommandsConstants.Close;
+import frc.robot.allcommands.AllCommandsConstants.Deliver;
+import frc.robot.allcommands.AllCommandsConstants.Eat;
 import frc.robot.allcommands.AllCommandsConstants.GetReadyToScoreAMP;
 import frc.robot.allcommands.AllCommandsConstants.OpenIntake;
 import frc.robot.allcommands.AllCommandsConstants.ScoreAmp;
@@ -81,6 +83,8 @@ public class AllCommands {
 
         public Command getReadyToScoreAMP() {
                 return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
+                                .alongWith(gripperCMD.spin(-GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+                                                GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS))
                                 .withName("getReadyToScoreAMP");
         }
 
@@ -98,9 +102,19 @@ public class AllCommands {
                 return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE).withName("closeIntake");
         }
 
-        // public Command deliver(){
-        //         return wristCMDs.moveToAngle()
-        // }
+        public Command deliver() {
+                return Commands.parallel(
+                                wristCMDs.moveToAngle(Deliver.DELIVERY_WRIST_ANGLE_DEGREE),
+                                runWhen(() -> wrist
+                                                .getAbsoluteAngleDegrees() < Deliver.START_GRIPPER_WRIST_ANGLE_DEGREE,
+                                                gripperCMD.spin(Deliver.DELIVERY_GRIPPERS_SPEED_RPS,
+                                                                Deliver.DELIVERY_GRIPPERS_SPEED_RPS)));
+        }
+
+        public Command eat() {
+                return gripperCMD.spin(Eat.GRIPPER_EATING_SPEED_RPS, Eat.GRIPPER_EATING_SPEED_RPS);
+
+        }
 
         public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier upperGripperSpeed,
                         DoubleSupplier lowerGripperSpeed) {

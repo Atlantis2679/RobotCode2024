@@ -9,6 +9,7 @@ public class AllCommandsConstants {
 
     public static class GetReadyToScoreAMP {
         public static final double AMP_DEGREES = 68;
+        public static final double KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.00001;
     }
 
     public static class OpenIntake {
@@ -23,8 +24,14 @@ public class AllCommandsConstants {
         public static final double STOP_GRIPPER_WRIST_ANGLE_DEGREE = 150;
     }
 
-    // public static class Deliver {
-        
-        
-    // }
+    public static class Deliver {
+        public static final double DELIVERY_WRIST_ANGLE_DEGREE = 0;
+        public static final double START_GRIPPER_WRIST_ANGLE_DEGREE = 0;
+        public static final double DELIVERY_GRIPPERS_SPEED_RPS = 0;
+    }
+
+    public static class Eat {
+        public static final double GRIPPER_EATING_SPEED_RPS = 0;
+
+    }
 }
