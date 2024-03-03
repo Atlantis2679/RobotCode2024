@@ -7,7 +7,7 @@ public class WristConstants {
     }
 
     // Angle PID
-    public static final double KP = 0; // 0.1
+    public static final double KP = 0.1; // 0.1
     public static final double KI = 0;
     public static final double KD = 0;
 

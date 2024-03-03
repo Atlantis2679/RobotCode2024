@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.tuneables.Tuneable;
 import frc.lib.tuneables.TuneablesManager;
 import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
@@ -52,12 +53,12 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
                 configureNamedCommands();
-                // configureLeds();
+                configureLeds();
 
                 if (Robot.isReal()) {
-                        CameraServer.startAutomaticCapture();
-                        CvSink cvSink = CameraServer.getVideo();
-                        CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
+                        // CameraServer.startAutomaticCapture();
+                        // CvSink cvSink = CameraServer.getVideo();
+                        // CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
                 }
 
                 // ---- first auto command chooser ----
@@ -124,9 +125,11 @@ public class RobotContainer {
 
         private void configureOperatorBindings() {
                 operatorController.rightBumper()
-                                .whileTrue(allCommands.manualIntake(operatorController::getRightY, operatorController::getLeftTriggerAxis, operatorController::getRightTriggerAxis));
+                                .whileTrue(allCommands.manualIntake(operatorController::getRightY,
+                                                () -> -operatorController.getLeftTriggerAxis(),
+                                                operatorController::getRightTriggerAxis));
 
-                wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
+                // wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
 
                 operatorController.a().whileTrue(allCommands.openIntake());
 
@@ -136,9 +139,10 @@ public class RobotContainer {
                 // operatorController.povUp().onTrue(allCommands.changeCounter(() -> true));
                 // operatorController.povDown().onTrue(allCommands.changeCounter(() -> false));
 
-                // TuneableCommand tuneableReadyToShootCMD = allCommands.readyToShootTuneable();
+                // TuneableCommand tuneableReadyToShootCMD = allCommands.scoreAMPTuenble();
                 // operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
-                // TuneablesManager.add("tuneable ready to shoot", (Tuneable) tuneableReadyToShootCMD);
+                // TuneablesManager.add("tuneable ready to shoot", (Tuneable)
+                // tuneableReadyToShootCMD);
         }
 
         public void configureNamedCommands() {
@@ -146,11 +150,12 @@ public class RobotContainer {
 
         public void configureLeds() {
                 operatorController.a()
-                                .whileTrue(ledsCommands.setRed().until(() -> gripper.getIsNoteInside()).andThen(ledsCommands.setGreen()));
+                                .onTrue(ledsCommands.setRed().until(() -> gripper.getIsNoteInside())
+                                                .andThen(ledsCommands.setGreen().until(operatorController.a()
+                                                                .onFalse(ledsCommands.set00BEBE()))));
 
-                leds.setDefaultCommand(ledsCommands.set00BEBE());
+                // leds.setDefaultCommand(ledsCommands.set00BEBE());
         }
-
 
         public Command getAutonomousCommand() {
                 return firstAutoCommandChooser.get().get()

@@ -52,19 +52,15 @@ public class AllCommands {
                 this.counter = 0;
         }
 
-        public TuneableCommand readyToShootTuneable() {
+        public TuneableCommand scoreAMPTuenble() {
                 return TuneableWrapperCommand.wrap((table) -> {
                         DoubleHolder upperRollerRPS = table.addNumber("upper rollers RPS",
-                                        30.0);
+                                        -0.35);
                         DoubleHolder lowerRollerRPS = table.addNumber("lower rollers RPS",
-                                        30.0);
-                        DoubleHolder wristDegrees = table.addNumber("wrist degrees",
-                                        0.0);
+                                        0.5);
                         return Commands.parallel(
-                                        wristCMDs.moveToAngle(wristDegrees.get()),
-                                        runWhen(() -> wrist.isAtAngle(wristDegrees.get()),
-                                                        gripperCMD.spin(upperRollerRPS.get(),
-                                                                        lowerRollerRPS.get())))
+                                        gripperCMD.spin(upperRollerRPS.get(),
+                                                        lowerRollerRPS.get()))
                                         .withName("readyToShootTuneable");
                 });
         }
@@ -76,6 +72,12 @@ public class AllCommands {
                                                                 ScoreAmp.LOWER_ROLLS_SPEES_RPS)))
                                 .withName("scoreAMP");
         }
+
+        // public Command scoreAMP() {
+        // return gripperCMD.spin(ScoreAmp.UPPER_ROLLS_SPEED_RPS,
+        // ScoreAmp.LOWER_ROLLS_SPEES_RPS)
+        // .withName("scoreAMP");
+        // }
 
         public Command getReadyToScoreAMP() {
                 return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
@@ -95,6 +97,10 @@ public class AllCommands {
         public Command closeWrist() {
                 return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE).withName("closeIntake");
         }
+
+        // public Command deliver(){
+        //         return wristCMDs.moveToAngle()
+        // }
 
         public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier upperGripperSpeed,
                         DoubleSupplier lowerGripperSpeed) {
