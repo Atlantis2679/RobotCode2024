@@ -34,8 +34,9 @@ public class Wrist extends SubsystemBase implements Tuneable {
             new TrapezoidProfile.Constraints(WRIST_MAX_VELOCITY_DEG_PER_SEC, WRIST_MAX_ACCELERATION_DEG_PER_SEC));
 
     private final TuneableArmFeedforward feedForwardWrist = Robot.isSimulation()
-            ? new TuneableArmFeedforward(KS, KG, KV, KA)
-            : new TuneableArmFeedforward(Sim.KS, Sim.KG, Sim.KV, Sim.KA);
+            ? new TuneableArmFeedforward(Sim.KS, Sim.KG, Sim.KV, Sim.KA)
+            : new TuneableArmFeedforward(KS, KG, KV, KA);
+            
     private final PIDController wristPidController = new PIDController(KP, KI, KD);
 
     private final WristVisualizer realStateVisualizer = new WristVisualizer(
@@ -63,6 +64,7 @@ public class Wrist extends SubsystemBase implements Tuneable {
         wristAngleHelperDegrees.update(io.wristAngleDegrees.getAsDouble());
         realStateVisualizer.update(getAbsoluteAngleDegrees());
         fieldsTable.recordOutput("Wrist Angle Degrees", getAbsoluteAngleDegrees());
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public void setWristVoltage(double voltage) {

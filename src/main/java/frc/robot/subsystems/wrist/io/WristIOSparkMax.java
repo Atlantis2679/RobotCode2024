@@ -27,8 +27,6 @@ public class WristIOSparkMax extends WristIO {
         wristMotor.setVoltage(voltage);
     }
 
-
-
     @Override
     public double getWristAngleDegrees() {
         return (1 - wristEncoder.getAbsolutePosition()) * 360;

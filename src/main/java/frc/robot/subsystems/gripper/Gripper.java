@@ -4,6 +4,7 @@ import static frc.robot.subsystems.gripper.GripperConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logfields.LogFieldsTable;
 import frc.robot.subsystems.gripper.io.GripperIO;
@@ -22,6 +23,9 @@ public class Gripper extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putBoolean("gripper note inside", getIsNoteInside());
+        fieldsTable.recordOutput("Is Note inside", getIsNoteInside());
+        fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
     }
 
     public void setSpeed(double speedPrecentageOutputUpperGripper, double speedPrecentageOutputLowerGripper) {

@@ -37,9 +37,11 @@ public class SwerveModuleIOFalcon extends SwerveModuleIO {
         TalonFXConfiguration driveMotorConfiguration = new TalonFXConfiguration();
         driveMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveMotorConfiguration.Feedback.SensorToMechanismRatio = GEAR_RATIO_DRIVE;
+        driveMotorConfiguration.CurrentLimits.StatorCurrentLimit = 50;
+        driveMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         driveMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveMotorConfiguration.CurrentLimits.SupplyCurrentLimit = 35;
-        driveMotorConfiguration.CurrentLimits.SupplyCurrentThreshold = 60;
+        driveMotorConfiguration.CurrentLimits.SupplyCurrentThreshold = 45;
         driveMotorConfiguration.CurrentLimits.SupplyTimeThreshold = 0.1;
 
         driveMotor.getVelocity().setUpdateFrequency(100);
@@ -54,8 +56,10 @@ public class SwerveModuleIOFalcon extends SwerveModuleIO {
         angleMotorConfiguration.ClosedLoopGeneral.ContinuousWrap = true;
         angleMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         angleMotorConfiguration.CurrentLimits.SupplyCurrentLimit = 25;
-        angleMotorConfiguration.CurrentLimits.SupplyCurrentThreshold = 40;
+        angleMotorConfiguration.CurrentLimits.SupplyCurrentThreshold = 30;
         angleMotorConfiguration.CurrentLimits.SupplyTimeThreshold = 0.1;
+        angleMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+        angleMotorConfiguration.CurrentLimits.StatorCurrentLimit = 30;
 
         slot0ConfigsAngle = angleMotorConfiguration.Slot0;
         slot0ConfigsAngle.kP = MODULE_ANGLE_KP;

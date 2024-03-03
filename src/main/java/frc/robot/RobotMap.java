@@ -11,10 +11,22 @@ public class RobotMap {
         public static final int OPERTATOR_PORT = 1;
     }
 
-    public class ModuleFR {
+    public class ModuleFL {
         public final static int DRIVE_MOTOR_ID = 20;
         public final static int ANGLE_MOTOR_ID = 21;
         public final static int ENCODER_ID = 50;
+    }
+
+    public class ModuleFR {
+        public final static int DRIVE_MOTOR_ID = 26;
+        public final static int ANGLE_MOTOR_ID = 27;
+        public final static int ENCODER_ID = 53;
+    }
+    
+    public class ModuleBL {
+        public final static int DRIVE_MOTOR_ID = 24;
+        public final static int ANGLE_MOTOR_ID = 25;
+        public final static int ENCODER_ID = 52;
     }
 
     public class ModuleBR {
@@ -23,38 +35,11 @@ public class RobotMap {
         public final static int ENCODER_ID = 51;
     }
 
-    public class ModuleBL {
-        public final static int DRIVE_MOTOR_ID = 24;
-        public final static int ANGLE_MOTOR_ID = 25;
-        public final static int ENCODER_ID = 52;
-    }
-
-    public class ModuleFL {
-        public final static int DRIVE_MOTOR_ID = 26;
-        public final static int ANGLE_MOTOR_ID = 27;
-        public final static int ENCODER_ID = 53;
-    }
-
     public class Intake {
-        public static final int ROLLERS_MOTOR_ID = 11;
+        public static final int LOWER_ROLLER_MOTOR_ID = 11;
+        public static final int UPPER_ROLLER_MOTOR_ID = 14;
         public static final int WRIST_MOTOR_ID = 10;
-        public static final int WRIST_ENCODER_ID = 9;
-        public static final int BEAM_BREAK_ID = 0;
-    }
-  
-    public class Flywheel {
-        public final static int UPPER_ROLLER_MOTOR_ID = 14;
-        public final static int LOWER_ROLLER_MOTOR_ID = 13;
-    }
-
-    public class Pitcher {
-        public final static int MOTOR_ID = 12;
-        public final static int ENCODER_ID = 8;
-    }
-
-    public class Loader {
-        public final static int MOTOR_ID = 6;
-        public static final int BEAM_BREAK_ID = 6;
-
+        public static final int WRIST_ENCODER_ID = 0;
+        public static final int BEAM_BREAK_ID = 1;
     }
 }
