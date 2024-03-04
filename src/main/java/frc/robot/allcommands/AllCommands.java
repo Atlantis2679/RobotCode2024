@@ -68,6 +68,11 @@ public class AllCommands {
                                 .withName("scoreAMP");
         }
 
+        public Command scoreAMPwithNoWaiting() {
+                return gripperCMD.spin(ScoreAmp.UPPER_ROLLS_SPEED_RPS,
+                                                                ScoreAmp.LOWER_ROLLS_SPEES_RPS);
+        }
+
 
         public Command getReadyToScoreAMP() {
                 return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)

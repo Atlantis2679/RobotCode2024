@@ -116,8 +116,8 @@ public class RobotContainer {
                 thirdAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 thirdAutoCommandChooser.addOption("Score Amp", () -> Commands.waitSeconds(1)
-                                .andThen(allCommands.getReadyToScoreAMP()
-                                                .andThen(Commands.waitSeconds(1).andThen(allCommands.scoreAMP()))));
+                                .andThen(swerveCommands.xWheelLock().andThen(Commands.race(allCommands.getReadyToScoreAMP(), Commands.waitSeconds(3))
+                                                .andThen(Commands.waitSeconds(1).andThen(allCommands.scoreAMPwithNoWaiting())))));
         }
 
         private void configureDriverBindings() {
