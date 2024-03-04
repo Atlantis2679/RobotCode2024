@@ -50,6 +50,9 @@ public class RobotContainer {
         private final LoggedDashboardChooser<Supplier<Command>> secondAutoCommandChooser = new LoggedDashboardChooser<>(
                         "Second Auto Command");
 
+        private final LoggedDashboardChooser<Supplier<Command>> thirdAutoCommandChooser = new LoggedDashboardChooser<>(
+                        "Third Auto Command");
+
         public RobotContainer() {
                 new Trigger(DriverStation::isDisabled).onTrue(allCommands.stopAll());
                 configureDriverBindings();
@@ -76,13 +79,22 @@ public class RobotContainer {
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 firstAutoCommandChooser.addOption("Eject Note",
-                                () -> allCommands.getReadyToScoreAMP().alongWith(allCommands.scoreAMP()));
+                                () -> allCommands.eject());
+
+                firstAutoCommandChooser.addOption("Wait 7 Seconds", () -> Commands.waitSeconds(7));
+
+                firstAutoCommandChooser.addOption("Wait 5 Seconds", () -> Commands.waitSeconds(5));
+
+                firstAutoCommandChooser.addOption("Wait 3 Seconds", () -> Commands.waitSeconds(3));
 
                 // ---- second auto command chooser ----
 
                 secondAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                secondAutoCommandChooser.addOption("GetToAmp", () -> new PathPlannerAuto("GetToAmp"));
+                secondAutoCommandChooser.addOption("GetToAmpClose", () -> new PathPlannerAuto("GetToAmpClose"));
+
+                secondAutoCommandChooser.addOption("GetToAmpFromCloseWall",
+                                () -> new PathPlannerAuto("GetToAmpFromCloseWall"));
 
                 secondAutoCommandChooser.addOption("GetOutFromSource", () -> new PathPlannerAuto("GetOutFromSource"));
 
@@ -98,6 +110,14 @@ public class RobotContainer {
 
                 secondAutoCommandChooser.addOption("SpeakerFarFromAmpAndGetOut",
                                 () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
+
+                // ---- second auto command chooser ----
+
+                thirdAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
+
+                thirdAutoCommandChooser.addOption("Score Amp", () -> Commands.waitSeconds(1)
+                                .andThen(allCommands.getReadyToScoreAMP()
+                                                .andThen(Commands.waitSeconds(1).andThen(allCommands.scoreAMP()))));
         }
 
         private void configureDriverBindings() {
@@ -165,12 +185,12 @@ public class RobotContainer {
                                                                 ledsCommands.setGreen())
                                                                 .andThen(ledsCommands.set00BEBE())));
 
-                
                 operatorController.a().onFalse(ledsCommands.set00BEBE());
         }
 
         public Command getAutonomousCommand() {
                 return firstAutoCommandChooser.get().get()
-                                .andThen(secondAutoCommandChooser.get().get());
+                                .andThen(secondAutoCommandChooser.get().get()
+                                                .andThen(thirdAutoCommandChooser.get().get()));
         }
 }
