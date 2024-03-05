@@ -13,7 +13,7 @@ public class AllCommandsConstants {
     }
 
     public static class OpenIntake {
-        public static final double COLLECTING_WRIST_ANGLE_DEGREE = -45;
+        public static final double COLLECTING_WRIST_ANGLE_DEGREE = -47;
         public static final double UPPER_GRIPPER_COLLECTING_SPEED = 0.5;
         public static final double LOWER_GRIPPER_COLLECTING_SPEED = -0.5;
         public static final double START_GRIPPER_WRIST_ANGLE_DEGREE = 0;
@@ -31,7 +31,7 @@ public class AllCommandsConstants {
     }
 
     public static class Eat {
-        public static final double GRIPPER_EATING_SPEED_RPS = 0.1;
+        public static final double GRIPPER_EATING_SPEED_RPS = 0.13;
 
     }
 

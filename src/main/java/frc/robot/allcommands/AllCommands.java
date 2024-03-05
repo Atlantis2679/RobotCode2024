@@ -87,8 +87,8 @@ public class AllCommands {
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
                                                 gripperCMD.spin(OpenIntake.UPPER_GRIPPER_COLLECTING_SPEED,
-                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)))
-                                .until(gripper::getIsNoteInside)
+                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)).
+                                                                until(() -> gripper.getIsNoteInside()))
                                 .withName("openIntake");
         }
 
@@ -134,6 +134,11 @@ public class AllCommands {
                 return Commands.parallel(
                                 closeWrist(),
                                 elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+        }
+
+        public Command elevator5seconds() {
+                return Commands.race(Commands.waitSeconds(5),
+                elevator.run(() -> elevator.setSpeed(1, true)));
         }
 
         public Command stopAll() {

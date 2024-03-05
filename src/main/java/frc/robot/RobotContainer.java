@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.MjpegServer;
@@ -42,7 +43,7 @@ public class RobotContainer {
 
         private final LedsCommands ledsCommands = new LedsCommands(leds);
         private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-        private final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
+        public final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
 
         private final LoggedDashboardChooser<Supplier<Command>> firstAutoCommandChooser = new LoggedDashboardChooser<>(
                         "First Auto Command");
@@ -53,6 +54,9 @@ public class RobotContainer {
         private final LoggedDashboardChooser<Supplier<Command>> thirdAutoCommandChooser = new LoggedDashboardChooser<>(
                         "Third Auto Command");
 
+        // private final LoggedDashboardChooser<Supplier<Command>> fourthAutoCommandChooser = new LoggedDashboardChooser<>(
+        //                 "Fourth Auto Command");
+
         public RobotContainer() {
                 new Trigger(DriverStation::isDisabled).onTrue(allCommands.stopAll());
                 configureDriverBindings();
@@ -61,20 +65,19 @@ public class RobotContainer {
                 configureLeds();
 
                 if (Robot.isReal()) {
-                        // CameraServer.startAutomaticCapture();
-                        // CvSink cvSink = CameraServer.getVideo();
-                        // CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
-                        UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-                        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-                        mjpegServer1.setSource(usbCamera);
-                        CvSink cvSink = new CvSink("opencv_USB Camera 0");
-                        cvSink.setSource(usbCamera);
-                        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-                        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-                        mjpegServer2.setSource(outputStream);
+                        CameraServer.startAutomaticCapture();
+                        CvSink cvSink = CameraServer.getVideo();
+                        CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
+                        // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+                        // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+                        // mjpegServer1.setSource(usbCamera);
+                        // CvSink cvSink = new CvSink("opencv_USB Camera 0");
+                        // cvSink.setSource(usbCamera);
+                        // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480,
+                        // 30);
+                        // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+                        // mjpegServer2.setSource(outputStream);
                 }
-
-                // ---- first auto command chooser ----
 
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
@@ -111,13 +114,21 @@ public class RobotContainer {
                 secondAutoCommandChooser.addOption("SpeakerFarFromAmpAndGetOut",
                                 () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
 
-                // ---- second auto command chooser ----
+                // ---- third auto command chooser ----
 
                 thirdAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 thirdAutoCommandChooser.addOption("Score Amp", () -> Commands.waitSeconds(1)
-                                .andThen(swerveCommands.xWheelLock().andThen(Commands.race(allCommands.getReadyToScoreAMP(), Commands.waitSeconds(3))
-                                                .andThen(Commands.waitSeconds(1).andThen(allCommands.scoreAMPwithNoWaiting())))));
+                                .andThen(swerveCommands.xWheelLock().andThen(Commands
+                                                .race(allCommands.getReadyToScoreAMP(), Commands.waitSeconds(3))
+                                                .andThen(Commands.waitSeconds(1)
+                                                                .andThen(allCommands.scoreAMPwithNoWaiting())))));
+
+                // // ---- fourth auto command chooser ----
+
+                // fourthAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
+
+                // fourthAutoCommandChooser.addOption("Get out of line after AMP", () -> new PathPlannerAuto("GetOutOfStartingLineAfterAMP"));
         }
 
         private void configureDriverBindings() {
