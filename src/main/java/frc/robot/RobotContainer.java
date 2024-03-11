@@ -135,7 +135,7 @@ public class RobotContainer {
                 TuneableCommand driveCommand = swerveCommands.controller(
                                 () -> driverController.getLeftY(),
                                 () -> driverController.getLeftX(),
-                                () -> -driverController.getRightX(),
+                                () -> driverController.getRightX(),
                                 driverController.leftBumper().negate()::getAsBoolean,
                                 driverController.rightBumper()::getAsBoolean);
 
@@ -167,7 +167,7 @@ public class RobotContainer {
         private void configureOperatorBindings() {
                 operatorController.rightBumper()
                                 .whileTrue(allCommands.manualIntake(operatorController::getRightY,
-                                                () -> -operatorController.getLeftTriggerAxis(),
+                                                () -> operatorController.getLeftTriggerAxis(),
                                                 operatorController::getRightTriggerAxis));
 
                 wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
