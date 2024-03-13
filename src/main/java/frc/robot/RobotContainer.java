@@ -65,9 +65,9 @@ public class RobotContainer {
                 configureLeds();
 
                 if (Robot.isReal()) {
-                        CameraServer.startAutomaticCapture();
-                        CvSink cvSink = CameraServer.getVideo();
-                        CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
+                        // CameraServer.startAutomaticCapture();
+                        // CvSink cvSink = CameraServer.getVideo();
+                        // CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
                         // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
                         // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
                         // mjpegServer1.setSource(usbCamera);
