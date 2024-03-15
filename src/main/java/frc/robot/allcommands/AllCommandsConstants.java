@@ -39,15 +39,10 @@ public class AllCommandsConstants {
 
     public static class MakeSureNoteStaysInside {
         public static final double KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.04;
-<<<<<<< Updated upstream
     }
 
     public static class DriveToAMP {
         public static final Pose2d ampPose2d = new Pose2d(2, 8.3,
                 Rotation2d.fromDegrees(90));
-
-=======
-        
->>>>>>> Stashed changes
     }
 }
