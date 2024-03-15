@@ -81,7 +81,11 @@ public class AllCommands {
 
 
         public Command getReadyToScoreAMP() {
+<<<<<<< Updated upstream
                 return wristCMD.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
+=======
+                return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
+>>>>>>> Stashed changes
                                 .alongWith(Commands.race(gripperCMD.spin(GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
                                                 -GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS),
                                                 Commands.waitSeconds(2)))

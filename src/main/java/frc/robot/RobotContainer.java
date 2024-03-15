@@ -49,10 +49,6 @@ public class RobotContainer {
         private final LoggedDashboardChooser<Supplier<Command>> thirdAutoCommandChooser = new LoggedDashboardChooser<>(
                         "Third Auto Command");
 
-        // private final LoggedDashboardChooser<Supplier<Command>>
-        // fourthAutoCommandChooser = new LoggedDashboardChooser<>(
-        // "Fourth Auto Command");
-
         public RobotContainer() {
                 new Trigger(DriverStation::isDisabled).onTrue(allCommands.stopAll());
                 configureDriverBindings();
