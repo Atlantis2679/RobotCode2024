@@ -6,11 +6,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.util.PixelFormat;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -50,6 +46,9 @@ public class RobotContainer {
         private final LoggedDashboardChooser<Supplier<Command>> secondAutoCommandChooser = new LoggedDashboardChooser<>(
                         "Second Auto Command");
 
+        private final LoggedDashboardChooser<Supplier<Command>> thirdAutoCommandChooser = new LoggedDashboardChooser<>(
+                        "Third Auto Command");
+
         public RobotContainer() {
                 new Trigger(DriverStation::isDisabled).onTrue(allCommands.stopAll());
                 configureDriverBindings();
@@ -58,31 +57,28 @@ public class RobotContainer {
                 configureLeds();
 
                 if (Robot.isReal()) {
-                        // CameraServer.startAutomaticCapture();
-                        // CvSink cvSink = CameraServer.getVideo();
-                        // CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
-                        UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-                        MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-                        mjpegServer1.setSource(usbCamera);
-                        CvSink cvSink = new CvSink("opencv_USB Camera 0");
-                        cvSink.setSource(usbCamera);
-                        CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-                        MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-                        mjpegServer2.setSource(outputStream);
+                        CameraServer.startAutomaticCapture();
                 }
-
-                // ---- first auto command chooser ----
 
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 firstAutoCommandChooser.addOption("Eject Note",
-                                () -> allCommands.getReadyToScoreAMP().alongWith(allCommands.scoreAMP()));
+                                () -> allCommands.eject());
+
+                firstAutoCommandChooser.addOption("Wait 7 Seconds", () -> Commands.waitSeconds(7));
+
+                firstAutoCommandChooser.addOption("Wait 5 Seconds", () -> Commands.waitSeconds(5));
+
+                firstAutoCommandChooser.addOption("Wait 3 Seconds", () -> Commands.waitSeconds(3));
 
                 // ---- second auto command chooser ----
 
                 secondAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
-                secondAutoCommandChooser.addOption("GetToAmp", () -> new PathPlannerAuto("GetToAmp"));
+                secondAutoCommandChooser.addOption("GetToAmpClose", () -> new PathPlannerAuto("GetToAmpClose"));
+
+                secondAutoCommandChooser.addOption("GetToAmpFromCloseWall",
+                                () -> new PathPlannerAuto("GetToAmpFromCloseWall"));
 
                 secondAutoCommandChooser.addOption("GetOutFromSource", () -> new PathPlannerAuto("GetOutFromSource"));
 
@@ -98,13 +94,23 @@ public class RobotContainer {
 
                 secondAutoCommandChooser.addOption("SpeakerFarFromAmpAndGetOut",
                                 () -> new PathPlannerAuto("SpeakerFarFromAmpAndGetOut"));
+
+                // ---- third auto command chooser ----
+
+                thirdAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
+
+                thirdAutoCommandChooser.addOption("Score Amp", () -> Commands.waitSeconds(1)
+                                .andThen(swerveCommands.xWheelLock().andThen(Commands
+                                                .race(allCommands.getReadyToScoreAMP(), Commands.waitSeconds(3))
+                                                .andThen(Commands.waitSeconds(1)
+                                                                .andThen(allCommands.scoreAMPwithNoWaiting())))));
         }
 
         private void configureDriverBindings() {
                 TuneableCommand driveCommand = swerveCommands.controller(
                                 () -> driverController.getLeftY(),
                                 () -> driverController.getLeftX(),
-                                () -> -driverController.getRightX(),
+                                () -> driverController.getRightX(),
                                 driverController.leftBumper().negate()::getAsBoolean,
                                 driverController.rightBumper()::getAsBoolean);
 
@@ -112,7 +118,6 @@ public class RobotContainer {
                 TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
                 driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
                 driverController.x().onTrue(swerveCommands.xWheelLock());
-
                 driverController.leftTrigger()
                                 .onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
                 driverController.rightTrigger()
@@ -124,23 +129,16 @@ public class RobotContainer {
                                                 driverController::getLeftY,
                                                 driverController::getRightY).fullTuneable());
 
-                // driverController.y().onTrue(Commands.runOnce(() -> {
-                // swerve.resetPose(new Pose2d(new Translation2d(2, 7.22),
-                // Rotation2d.fromDegrees(90)));
-                // }));
-
-                // driverController.x().whileTrue(swerveCommands.driveToPose(new Pose2d(2, 8.3,
-                // Rotation2d.fromDegrees(90))));
+                driverController.x().whileTrue(allCommands.driveToAMP());
         }
 
         private void configureOperatorBindings() {
                 operatorController.rightBumper()
                                 .whileTrue(allCommands.manualIntake(operatorController::getRightY,
-                                                () -> -operatorController.getLeftTriggerAxis(),
+                                                () -> operatorController.getLeftTriggerAxis(),
                                                 operatorController::getRightTriggerAxis));
 
                 wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
-
                 operatorController.a().whileTrue(allCommands.openIntake());
                 operatorController.y().whileTrue(allCommands.deliver());
                 operatorController.povUp().whileTrue(allCommands.eject());
@@ -148,11 +146,6 @@ public class RobotContainer {
                 operatorController.leftBumper().whileTrue(allCommands.getReadyToScoreAMP());
                 operatorController.b().whileTrue(allCommands.scoreAMP());
                 operatorController.x().whileTrue(allCommands.makeSureNoteStaysInside());
-
-                // TuneableCommand tuneableReadyToShootCMD = allCommands.scoreAMPTuenble();
-                // operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
-                // TuneablesManager.add("tuneable ready to shoot", (Tuneable)
-                // tuneableReadyToShootCMD);
         }
 
         public void configureNamedCommands() {
@@ -165,12 +158,12 @@ public class RobotContainer {
                                                                 ledsCommands.setGreen())
                                                                 .andThen(ledsCommands.set00BEBE())));
 
-                
                 operatorController.a().onFalse(ledsCommands.set00BEBE());
         }
 
         public Command getAutonomousCommand() {
                 return firstAutoCommandChooser.get().get()
-                                .andThen(secondAutoCommandChooser.get().get());
+                                .andThen(secondAutoCommandChooser.get().get()
+                                                .andThen(thirdAutoCommandChooser.get().get()));
         }
 }

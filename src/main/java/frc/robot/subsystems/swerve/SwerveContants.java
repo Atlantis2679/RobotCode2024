@@ -16,10 +16,10 @@ public class SwerveContants {
     public final static double TRACK_LENGTH_M = 0.575;
     public final static double TRACK_RADIUS_M = 0.407;
 
+    public final static double MODULE_BL_ABSOLUTE_ANGLE_OFFSET_DEGREES = -60.73242 + 180;
+    public final static double MODULE_FL_ABSOLUTE_ANGLE_OFFSET_DEGREES = -13.5 + 180;
     public final static double MODULE_FR_ABSOLUTE_ANGLE_OFFSET_DEGREES = -56.25;
-    public final static double MODULE_BR_ABSOLUTE_ANGLE_OFFSET_DEGREES = 169.7 - 180;
-    public final static double MODULE_BL_ABSOLUTE_ANGLE_OFFSET_DEGREES = 123.32;
-    public final static double MODULE_FL_ABSOLUTE_ANGLE_OFFSET_DEGREES = 159.7 - 180; 
+    public final static double MODULE_BR_ABSOLUTE_ANGLE_OFFSET_DEGREES = -22.93945 + 180;
 
     public final static double MODULE_ANGLE_KP = 1.8 * 12;
     public final static double MODULE_ANGLE_KI = 0;
@@ -31,10 +31,10 @@ public class SwerveContants {
     public class PathPlanner {
         public final static double TRANSLATION_KP = 1;
         public final static double TRANSLATION_KI = 0;
-        public final static double TRANSLATION_KD = 0.021;
+        public final static double TRANSLATION_KD = 0.027;
 
-        public final static double ROTATION_KP = 1.2;
+        public final static double ROTATION_KP = 0.1;
         public final static double ROTATION_KI = 0;
-        public final static double ROTATION_KD = 0.011;
+        public final static double ROTATION_KD = 0.001;
     }
 }

@@ -3,6 +3,8 @@ package frc.robot.allcommands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -11,7 +13,9 @@ import frc.lib.tuneables.extensions.TuneableWrapperCommand;
 import frc.lib.valueholders.DoubleHolder;
 import frc.robot.allcommands.AllCommandsConstants.Close;
 import frc.robot.allcommands.AllCommandsConstants.Deliver;
+import frc.robot.allcommands.AllCommandsConstants.DriveToAMP;
 import frc.robot.allcommands.AllCommandsConstants.Eat;
+import frc.robot.allcommands.AllCommandsConstants.Elevator5Seconds;
 import frc.robot.allcommands.AllCommandsConstants.GetReadyToScoreAMP;
 import frc.robot.allcommands.AllCommandsConstants.MakeSureNoteStaysInside;
 import frc.robot.allcommands.AllCommandsConstants.OpenIntake;
@@ -21,6 +25,7 @@ import frc.robot.subsystems.elevator.ElevatorCommands;
 import frc.robot.subsystems.gripper.Gripper;
 import frc.robot.subsystems.gripper.GripperCommands;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristCommands;
 
@@ -29,9 +34,10 @@ public class AllCommands {
         private final Wrist wrist;
         private final Gripper gripper;
         private final Elevator elevator;
-        private final WristCommands wristCMDs;
+        private final WristCommands wristCMD;
         private final GripperCommands gripperCMD;
         private final ElevatorCommands elevatorCMD;
+        private final SwerveCommands swerveCMD;
         private double counter;
 
         public AllCommands(Swerve swerve, Wrist wrist, Gripper gripper, Elevator elevator) {
@@ -40,9 +46,10 @@ public class AllCommands {
                 this.elevator = elevator;
                 this.gripper = gripper;
 
-                wristCMDs = new WristCommands(wrist);
+                wristCMD = new WristCommands(wrist);
                 gripperCMD = new GripperCommands(gripper);
                 elevatorCMD = new ElevatorCommands(elevator);
+                swerveCMD = new SwerveCommands(swerve);
 
                 this.counter = 0;
         }
@@ -68,27 +75,36 @@ public class AllCommands {
                                 .withName("scoreAMP");
         }
 
+        public Command scoreAMPwithNoWaiting() {
+                return gripperCMD.spin(ScoreAmp.UPPER_ROLLS_SPEED_RPS,
+                                ScoreAmp.LOWER_ROLLS_SPEES_RPS);
+        }
 
         public Command getReadyToScoreAMP() {
+<<<<<<< HEAD
                 return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
-                                .alongWith(Commands.race(gripperCMD.spin(GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+=======
+                return wristCMD.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
+>>>>>>> 3598997219cba77f6c9eb3c5803c0ce66911f867
+                                .alongWith(Commands.race(gripperCMD.spin(
+                                                GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
                                                 -GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS),
                                                 Commands.waitSeconds(2)))
                                 .withName("getReadyToScoreAMP");
         }
 
         public Command openIntake() {
-                return Commands.parallel(wristCMDs.moveToAngle(OpenIntake.COLLECTING_WRIST_ANGLE_DEGREE),
+                return Commands.parallel(wristCMD.moveToAngle(OpenIntake.COLLECTING_WRIST_ANGLE_DEGREE),
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
                                                 gripperCMD.spin(OpenIntake.UPPER_GRIPPER_COLLECTING_SPEED,
-                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)))
-                                .until(gripper::getIsNoteInside)
+                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED))
+                                                .until(() -> gripper.getIsNoteInside()))
                                 .withName("openIntake");
         }
 
         public Command closeWrist() {
-                return wristCMDs.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE).withName("closeIntake");
+                return wristCMD.moveToAngle(Close.CLOSED_WRIST_ANGLE_DEGREE).withName("closeIntake");
         }
 
         public Command makeSureNoteStaysInside() {
@@ -99,7 +115,7 @@ public class AllCommands {
 
         public Command deliver() {
                 return Commands.parallel(
-                                wristCMDs.moveToAngle(Deliver.DELIVERY_WRIST_ANGLE_DEGREE),
+                                wristCMD.moveToAngle(Deliver.DELIVERY_WRIST_ANGLE_DEGREE),
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < Deliver.START_GRIPPER_WRIST_ANGLE_DEGREE,
                                                 gripperCMD.spin(-Deliver.DELIVERY_GRIPPERS_SPEED_RPS,
@@ -119,7 +135,7 @@ public class AllCommands {
         public Command manualIntake(DoubleSupplier wristSpeed, DoubleSupplier upperGripperSpeed,
                         DoubleSupplier lowerGripperSpeed) {
                 return Commands.parallel(
-                                wristCMDs.manualController(wristSpeed),
+                                wristCMD.manualController(wristSpeed),
                                 gripperCMD.manualController(upperGripperSpeed, lowerGripperSpeed))
                                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
                                 .withName("manualIntake");
@@ -128,8 +144,25 @@ public class AllCommands {
         public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
                 return Commands.parallel(
                                 closeWrist(),
-                                elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                                 elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                                //elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
         }
+
+<<<<<<< HEAD
+        // public Command elevator5seconds() 
+        //         return elevator.run(() -> elevator.setSpeed(1, true)).withTimeout(5);
+        // }
+=======
+        public Command elevator5seconds() {
+                return Commands.race(Commands.waitSeconds(5),
+                                elevator.run(() -> elevator.setSpeed(Elevator5Seconds.ELEVATOR_SPEED,
+                                                Elevator5Seconds.IS_NEGATIVE)));
+        }
+
+        public Command driveToAMP() {
+                return swerveCMD.driveToPose(DriveToAMP.AMP_POSE2D);
+        }
+>>>>>>> 3598997219cba77f6c9eb3c5803c0ce66911f867
 
         public Command stopAll() {
                 return Commands.runOnce(() -> {

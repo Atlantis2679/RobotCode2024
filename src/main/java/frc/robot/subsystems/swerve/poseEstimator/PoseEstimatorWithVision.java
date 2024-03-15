@@ -32,6 +32,7 @@ public class PoseEstimatorWithVision {
             visionIO = Robot.isSimulation()
                     ? new VisionAprilTagsIOSim(fieldsTable)
                     : new VisionAprilTagsIOPhoton(fieldsTable, tagsLayout);
+                    
         } catch (IOException e) {
             DriverStation.reportError("AprilTagFieldLayout blew up", e.getStackTrace());
             throw new RuntimeException(e);
@@ -48,9 +49,11 @@ public class PoseEstimatorWithVision {
     }
 
     public void update(Rotation2d gyroMeasurmentCCW, SwerveModulePosition[] modulesPositions) {
+        fieldsTable.recordOutput("ALIVE", Math.random());
         poseEstimator.update(gyroMeasurmentCCW, modulesPositions);
         double visionToEstimateDifferenceMeters = getVisionToEstimateDifferenceMeters();
         fieldsTable.recordOutput("Vision To Estimate Difference", visionToEstimateDifferenceMeters);
+
         if (visionIO.hasNewRobotPose.getAsBoolean()) {
             fieldsTable.recordOutput("Vision Pose3d", visionIO.poseEstimate.get());
             fieldsTable.recordOutput("Vision Pose2d", visionIO.poseEstimate.get().toPose2d());
