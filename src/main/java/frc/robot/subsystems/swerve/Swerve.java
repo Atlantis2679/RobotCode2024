@@ -201,8 +201,8 @@ public class Swerve extends SubsystemBase implements Tuneable {
             }
         } else {
             desiredChassisSpeeds = new ChassisSpeeds(
-                    -forward,
-                    -sidewaysLeftPositive,
+                    forward,
+                    sidewaysLeftPositive,
                     angularVelocityCCW);
         }
 

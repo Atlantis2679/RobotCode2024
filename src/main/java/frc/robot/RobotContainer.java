@@ -143,7 +143,6 @@ public class RobotContainer {
                 TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
                 driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
                 driverController.x().onTrue(swerveCommands.xWheelLock());
-
                 driverController.leftTrigger()
                                 .onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
                 driverController.rightTrigger()
@@ -171,7 +170,6 @@ public class RobotContainer {
                                                 operatorController::getRightTriggerAxis));
 
                 wrist.setDefaultCommand(allCommands.closeWrist().withName("wrist default"));
-
                 operatorController.a().whileTrue(allCommands.openIntake());
                 operatorController.y().whileTrue(allCommands.deliver());
                 operatorController.povUp().whileTrue(allCommands.eject());

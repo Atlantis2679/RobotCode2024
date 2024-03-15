@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SPI;
-import frc.robot.subsystems.elevator.Elevator;
 
 public class RobotMap {
     public final static SPI.Port NAVX_PORT = SPI.Port.kMXP;
@@ -12,25 +11,25 @@ public class RobotMap {
         public static final int OPERTATOR_PORT = 1;
     }
 
-    public class ModuleBR {
+    public class ModuleFL {
         public final static int DRIVE_MOTOR_ID = 20;
         public final static int ANGLE_MOTOR_ID = 21;
         public final static int ENCODER_ID = 50;
     }
 
-    public class ModuleBL {
+    public class ModuleFR {
         public final static int DRIVE_MOTOR_ID = 26;
         public final static int ANGLE_MOTOR_ID = 27;
         public final static int ENCODER_ID = 53;
     }
 
-    public class ModuleFR {
+    public class ModuleBL {
         public final static int DRIVE_MOTOR_ID = 24;
         public final static int ANGLE_MOTOR_ID = 25;
         public final static int ENCODER_ID = 52;
     }
 
-    public class ModuleFL {
+    public class ModuleBR {
         public final static int DRIVE_MOTOR_ID = 22;
         public final static int ANGLE_MOTOR_ID = 23;
         public final static int ENCODER_ID = 51;
@@ -47,8 +46,8 @@ public class RobotMap {
     public class Elevator {
         public final static int ELEVATOR_MOTOR_RIGHT_ID = 12;
         public final static int ELEVATOR_MOTOR_LETF_ID = 13;
-        public final static int LEFT_LIMIT_SWITCH_ID = 0;
-        public final static int RIGHT_LIMIT_SWITCH_ID = 0;
+        public final static int LEFT_LIMIT_SWITCH_ID = 2;
+        public final static int RIGHT_LIMIT_SWITCH_ID = 3;
 
     }
 }

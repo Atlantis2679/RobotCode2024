@@ -70,13 +70,13 @@ public class AllCommands {
 
         public Command scoreAMPwithNoWaiting() {
                 return gripperCMD.spin(ScoreAmp.UPPER_ROLLS_SPEED_RPS,
-                                                                ScoreAmp.LOWER_ROLLS_SPEES_RPS);
+                                ScoreAmp.LOWER_ROLLS_SPEES_RPS);
         }
-
 
         public Command getReadyToScoreAMP() {
                 return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
-                                .alongWith(Commands.race(gripperCMD.spin(GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+                                .alongWith(Commands.race(gripperCMD.spin(
+                                                GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
                                                 -GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS),
                                                 Commands.waitSeconds(2)))
                                 .withName("getReadyToScoreAMP");
@@ -87,8 +87,8 @@ public class AllCommands {
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
                                                 gripperCMD.spin(OpenIntake.UPPER_GRIPPER_COLLECTING_SPEED,
-                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)).
-                                                                until(() -> gripper.getIsNoteInside()))
+                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED))
+                                                .until(() -> gripper.getIsNoteInside()))
                                 .withName("openIntake");
         }
 
@@ -133,13 +133,13 @@ public class AllCommands {
         public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
                 return Commands.parallel(
                                 closeWrist(),
-                                elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                                 elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                                //elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
         }
 
-        public Command elevator5seconds() {
-                return Commands.race(Commands.waitSeconds(5),
-                elevator.run(() -> elevator.setSpeed(1, true)));
-        }
+        // public Command elevator5seconds() 
+        //         return elevator.run(() -> elevator.setSpeed(1, true)).withTimeout(5);
+        // }
 
         public Command stopAll() {
                 return Commands.runOnce(() -> {

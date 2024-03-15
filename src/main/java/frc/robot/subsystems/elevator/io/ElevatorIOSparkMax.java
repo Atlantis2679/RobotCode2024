@@ -36,12 +36,11 @@ public class ElevatorIOSparkMax extends ElevatorIO {
     }
 
     public boolean getLeftLimitSwitchValue() {
-        return leftLimitSwitch.get();
+        return !leftLimitSwitch.get();
     }
 
     @Override
     protected boolean getRightLimitSwitchValue() {
-        return rightLimitSwitch.get();
+        return !rightLimitSwitch.get();
     }
-
 }
