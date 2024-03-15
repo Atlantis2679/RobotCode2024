@@ -41,8 +41,13 @@ public class AllCommandsConstants {
         public static final double KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.04;
     }
 
+    public static class Elevator5Seconds {
+        public static final double ELEVATOR_SPEED = 1;
+        public static final boolean IS_NEGATIVE = true;
+    }
+
     public static class DriveToAMP {
-        public static final Pose2d ampPose2d = new Pose2d(2, 8.3,
+        public static final Pose2d AMP_POSE2D = new Pose2d(2, 8.3,
                 Rotation2d.fromDegrees(90));
     }
 }

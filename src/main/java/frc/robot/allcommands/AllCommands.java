@@ -15,6 +15,7 @@ import frc.robot.allcommands.AllCommandsConstants.Close;
 import frc.robot.allcommands.AllCommandsConstants.Deliver;
 import frc.robot.allcommands.AllCommandsConstants.DriveToAMP;
 import frc.robot.allcommands.AllCommandsConstants.Eat;
+import frc.robot.allcommands.AllCommandsConstants.Elevator5Seconds;
 import frc.robot.allcommands.AllCommandsConstants.GetReadyToScoreAMP;
 import frc.robot.allcommands.AllCommandsConstants.MakeSureNoteStaysInside;
 import frc.robot.allcommands.AllCommandsConstants.OpenIntake;
@@ -76,13 +77,13 @@ public class AllCommands {
 
         public Command scoreAMPwithNoWaiting() {
                 return gripperCMD.spin(ScoreAmp.UPPER_ROLLS_SPEED_RPS,
-                                                                ScoreAmp.LOWER_ROLLS_SPEES_RPS);
+                                ScoreAmp.LOWER_ROLLS_SPEES_RPS);
         }
-
 
         public Command getReadyToScoreAMP() {
                 return wristCMD.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
-                                .alongWith(Commands.race(gripperCMD.spin(GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
+                                .alongWith(Commands.race(gripperCMD.spin(
+                                                GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
                                                 -GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS),
                                                 Commands.waitSeconds(2)))
                                 .withName("getReadyToScoreAMP");
@@ -93,8 +94,8 @@ public class AllCommands {
                                 runWhen(() -> wrist
                                                 .getAbsoluteAngleDegrees() < OpenIntake.START_GRIPPER_WRIST_ANGLE_DEGREE,
                                                 gripperCMD.spin(OpenIntake.UPPER_GRIPPER_COLLECTING_SPEED,
-                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED)).
-                                                                until(() -> gripper.getIsNoteInside()))
+                                                                OpenIntake.LOWER_GRIPPER_COLLECTING_SPEED))
+                                                .until(() -> gripper.getIsNoteInside()))
                                 .withName("openIntake");
         }
 
@@ -144,11 +145,12 @@ public class AllCommands {
 
         public Command elevator5seconds() {
                 return Commands.race(Commands.waitSeconds(5),
-                elevator.run(() -> elevator.setSpeed(1, true)));
+                                elevator.run(() -> elevator.setSpeed(Elevator5Seconds.ELEVATOR_SPEED,
+                                                Elevator5Seconds.IS_NEGATIVE)));
         }
 
         public Command driveToAMP() {
-                return swerveCMD.driveToPose(DriveToAMP.ampPose2d);
+                return swerveCMD.driveToPose(DriveToAMP.AMP_POSE2D);
         }
 
         public Command stopAll() {
