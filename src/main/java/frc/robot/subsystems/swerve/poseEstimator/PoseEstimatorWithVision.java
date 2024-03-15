@@ -32,6 +32,7 @@ public class PoseEstimatorWithVision {
             visionIO = Robot.isSimulation()
                     ? new VisionAprilTagsIOSim(fieldsTable)
                     : new VisionAprilTagsIOPhoton(fieldsTable, tagsLayout);
+                    
         } catch (IOException e) {
             DriverStation.reportError("AprilTagFieldLayout blew up", e.getStackTrace());
             throw new RuntimeException(e);

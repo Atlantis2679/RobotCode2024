@@ -7,11 +7,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,7 +38,7 @@ public class RobotContainer {
 
         private final LedsCommands ledsCommands = new LedsCommands(leds);
         private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-        public final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
+        private final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
 
         private final LoggedDashboardChooser<Supplier<Command>> firstAutoCommandChooser = new LoggedDashboardChooser<>(
                         "First Auto Command");
@@ -54,9 +49,6 @@ public class RobotContainer {
         private final LoggedDashboardChooser<Supplier<Command>> thirdAutoCommandChooser = new LoggedDashboardChooser<>(
                         "Third Auto Command");
 
-        // private final LoggedDashboardChooser<Supplier<Command>> fourthAutoCommandChooser = new LoggedDashboardChooser<>(
-        //                 "Fourth Auto Command");
-
         public RobotContainer() {
                 new Trigger(DriverStation::isDisabled).onTrue(allCommands.stopAll());
                 configureDriverBindings();
@@ -65,18 +57,7 @@ public class RobotContainer {
                 configureLeds();
 
                 if (Robot.isReal()) {
-                        // CameraServer.startAutomaticCapture();
-                        // CvSink cvSink = CameraServer.getVideo();
-                        // CvSource outputStream = CameraServer.putVideo("blur", 640, 480);
-                        // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-                        // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-                        // mjpegServer1.setSource(usbCamera);
-                        // CvSink cvSink = new CvSink("opencv_USB Camera 0");
-                        // cvSink.setSource(usbCamera);
-                        // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480,
-                        // 30);
-                        // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-                        // mjpegServer2.setSource(outputStream);
+                        CameraServer.startAutomaticCapture();
                 }
 
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
@@ -123,12 +104,6 @@ public class RobotContainer {
                                                 .race(allCommands.getReadyToScoreAMP(), Commands.waitSeconds(3))
                                                 .andThen(Commands.waitSeconds(1)
                                                                 .andThen(allCommands.scoreAMPwithNoWaiting())))));
-
-                // // ---- fourth auto command chooser ----
-
-                // fourthAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
-
-                // fourthAutoCommandChooser.addOption("Get out of line after AMP", () -> new PathPlannerAuto("GetOutOfStartingLineAfterAMP"));
         }
 
         private void configureDriverBindings() {
@@ -154,13 +129,7 @@ public class RobotContainer {
                                                 driverController::getLeftY,
                                                 driverController::getRightY).fullTuneable());
 
-                // driverController.y().onTrue(Commands.runOnce(() -> {
-                // swerve.resetPose(new Pose2d(new Translation2d(2, 7.22),
-                // Rotation2d.fromDegrees(90)));
-                // }));
-
-                // driverController.x().whileTrue(swerveCommands.driveToPose(new Pose2d(2, 8.3,
-                // Rotation2d.fromDegrees(90))));
+                driverController.x().whileTrue(allCommands.driveToAMP());
         }
 
         private void configureOperatorBindings() {
@@ -177,11 +146,6 @@ public class RobotContainer {
                 operatorController.leftBumper().whileTrue(allCommands.getReadyToScoreAMP());
                 operatorController.b().whileTrue(allCommands.scoreAMP());
                 operatorController.x().whileTrue(allCommands.makeSureNoteStaysInside());
-
-                // TuneableCommand tuneableReadyToShootCMD = allCommands.scoreAMPTuenble();
-                // operatorController.povLeft().and(TuneablesManager::isEnabled).whileTrue(tuneableReadyToShootCMD);
-                // TuneablesManager.add("tuneable ready to shoot", (Tuneable)
-                // tuneableReadyToShootCMD);
         }
 
         public void configureNamedCommands() {
