@@ -29,7 +29,6 @@ public class VisionAprilTagsIOPhoton extends VisionAprilTagsIO {
         camera = new PhotonCamera(RobotMap.FRONT_CAMERA_NAME);
         photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera,
                 PoseEstimatorConstants.ROBOT_TO_CAMERA_TRANSFORM);
-
     }
 
     @Override

@@ -1,5 +1,8 @@
 package frc.robot.allcommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class AllCommandsConstants {
     public static class ScoreAmp {
         public static final double UPPER_ROLLS_SPEED_RPS = -0.35;
@@ -32,11 +35,15 @@ public class AllCommandsConstants {
 
     public static class Eat {
         public static final double GRIPPER_EATING_SPEED_RPS = 0.13;
-
     }
 
     public static class MakeSureNoteStaysInside {
         public static final double KEEP_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.04;
-        
+    }
+
+    public static class DriveToAMP {
+        public static final Pose2d ampPose2d = new Pose2d(2, 8.3,
+                Rotation2d.fromDegrees(90));
+
     }
 }
