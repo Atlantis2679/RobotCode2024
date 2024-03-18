@@ -7,6 +7,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -117,7 +119,7 @@ public class RobotContainer {
                 swerve.setDefaultCommand(driveCommand);
                 TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
                 driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
-                driverController.x().onTrue(swerveCommands.xWheelLock());
+                // driverController.x().onTrue(swerveCommands.xWheelLock());
                 driverController.leftTrigger()
                                 .onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
                 driverController.rightTrigger()
@@ -130,6 +132,7 @@ public class RobotContainer {
                                                 driverController::getRightY).fullTuneable());
 
                 driverController.x().whileTrue(allCommands.driveToAMP());
+                driverController.y().onTrue(Commands.run(() -> swerve.resetPose(new Pose2d(2.15, 7.92, Rotation2d.fromDegrees(0)))));
         }
 
         private void configureOperatorBindings() {
