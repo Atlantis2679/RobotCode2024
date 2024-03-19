@@ -49,7 +49,6 @@ public class PoseEstimatorWithVision {
     }
 
     public void update(Rotation2d gyroMeasurmentCCW, SwerveModulePosition[] modulesPositions) {
-        fieldsTable.recordOutput("ALIVE", Math.random());
         poseEstimator.update(gyroMeasurmentCCW, modulesPositions);
         double visionToEstimateDifferenceMeters = getVisionToEstimateDifferenceMeters();
         fieldsTable.recordOutput("Vision To Estimate Difference", visionToEstimateDifferenceMeters);

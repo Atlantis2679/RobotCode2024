@@ -14,22 +14,23 @@ public class Elevator extends SubsystemBase {
     private final ElevatorIO io = new ElevatorIOSparkMax(fieldsTable);
 
     public void setSpeedRight(double speed) {
-        speed = isElevatorRightDown() ? 0 : speed;
         speed = MathUtil.clamp(speed, -ElevatorConstants.SPEED_LIMIT, ElevatorConstants.SPEED_LIMIT);
         io.setSpeedRight(speed);
     }
+    
 
     public void setSpeedLeft(double speed) {
-        speed = isElevatorLeftDown() ? 0 : speed;
         speed = MathUtil.clamp(speed, -ElevatorConstants.SPEED_LIMIT, ElevatorConstants.SPEED_LIMIT);
         io.setSpeedLeft(speed);
     }
 
     public void setSpeed(double speed, boolean isNegative) {
-        speed = isNegative ? -speed : speed;
-
-        setSpeedLeft(isElevatorLeftDown() ? 0 : speed);
-        setSpeedRight(isElevatorRightDown() ? 0: speed);
+        speed = isNegative ? -speed : speed;   
+        
+    double leftSpeed = (isElevatorLeftDown()&&isNegative) ? 0 : speed;
+        double rightSpeed = (isElevatorRightDown()&&isNegative) ? 0 : speed;
+        setSpeedLeft(-leftSpeed/2);
+        setSpeedRight(rightSpeed/2);
 
         SmartDashboard.putNumber("speed", speed);
         fieldsTable.recordOutput("elevatorSpeed", speed);

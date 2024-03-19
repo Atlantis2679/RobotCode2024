@@ -254,9 +254,9 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     public void resetYaw() {
         if (getIsRedAlliance())
-            setYawDegreesCW(0);
-        else
             setYawDegreesCW(180);
+        else
+            setYawDegreesCW(0);
     }
 
     public Pose2d getPose() {
@@ -340,7 +340,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
                 for (SwerveModule swerveModule : modules) {
                     swerveModule.setAbsoluteEncoderAngleDegrees(angleToResetDegrees.get());
                 }
-            }));
+            }).ignoringDisable(true));
         });
 
         builder.addChild("coast mode", new RunCommand(() -> {

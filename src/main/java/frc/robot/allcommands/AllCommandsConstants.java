@@ -11,7 +11,7 @@ public class AllCommandsConstants {
     }
 
     public static class GetReadyToScoreAMP {
-        public static final double AMP_DEGREES = 68;
+        public static final double AMP_DEGREES = 65;
         public static final double KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.08;
     }
 
@@ -47,7 +47,7 @@ public class AllCommandsConstants {
     }
 
     public static class DriveToAMP {
-        public static final Pose2d AMP_POSE2D = new Pose2d(2, 8.3,
+        public static final Pose2d AMP_POSE2D = new Pose2d(1.84, 7.78,
                 Rotation2d.fromDegrees(90));
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.allcommands;
 
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -81,11 +82,7 @@ public class AllCommands {
         }
 
         public Command getReadyToScoreAMP() {
-<<<<<<< HEAD
-                return wristCMDs.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
-=======
                 return wristCMD.moveToAngle(GetReadyToScoreAMP.AMP_DEGREES + counter)
->>>>>>> 3598997219cba77f6c9eb3c5803c0ce66911f867
                                 .alongWith(Commands.race(gripperCMD.spin(
                                                 GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS,
                                                 -GetReadyToScoreAMP.KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS),
@@ -144,15 +141,11 @@ public class AllCommands {
         public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
                 return Commands.parallel(
                                 closeWrist(),
-                                 elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
-                                //elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                                elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                // elevatorCMD.manualControl(elevatorSpeed,
+                // isNegative)).withName("manualElevator");
         }
 
-<<<<<<< HEAD
-        // public Command elevator5seconds() 
-        //         return elevator.run(() -> elevator.setSpeed(1, true)).withTimeout(5);
-        // }
-=======
         public Command elevator5seconds() {
                 return Commands.race(Commands.waitSeconds(5),
                                 elevator.run(() -> elevator.setSpeed(Elevator5Seconds.ELEVATOR_SPEED,
@@ -162,7 +155,6 @@ public class AllCommands {
         public Command driveToAMP() {
                 return swerveCMD.driveToPose(DriveToAMP.AMP_POSE2D);
         }
->>>>>>> 3598997219cba77f6c9eb3c5803c0ce66911f867
 
         public Command stopAll() {
                 return Commands.runOnce(() -> {

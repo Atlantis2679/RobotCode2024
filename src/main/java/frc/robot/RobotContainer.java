@@ -7,6 +7,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -54,7 +56,6 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
                 configureNamedCommands();
-                configureLeds();
 
                 if (Robot.isReal()) {
                         CameraServer.startAutomaticCapture();
@@ -129,7 +130,7 @@ public class RobotContainer {
                                                 driverController::getLeftY,
                                                 driverController::getRightY).fullTuneable());
 
-                driverController.x().whileTrue(allCommands.driveToAMP());
+                driverController.y().whileTrue(allCommands.driveToAMP());
         }
 
         private void configureOperatorBindings() {
@@ -152,13 +153,7 @@ public class RobotContainer {
         }
 
         public void configureLeds() {
-                operatorController.a()
-                                .onTrue(ledsCommands.setRed().until(() -> gripper.getIsNoteInside())
-                                                .andThen(Commands.race(Commands.waitSeconds(5),
-                                                                ledsCommands.setGreen())
-                                                                .andThen(ledsCommands.set00BEBE())));
 
-                operatorController.a().onFalse(ledsCommands.set00BEBE());
         }
 
         public Command getAutonomousCommand() {
