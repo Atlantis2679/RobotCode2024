@@ -56,7 +56,6 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
                 configureNamedCommands();
-                configureLeds();
 
                 if (Robot.isReal()) {
                         CameraServer.startAutomaticCapture();
@@ -156,13 +155,7 @@ public class RobotContainer {
         }
 
         public void configureLeds() {
-                operatorController.a()
-                                .onTrue(ledsCommands.setRed().until(() -> gripper.getIsNoteInside())
-                                                .andThen(Commands.race(Commands.waitSeconds(5),
-                                                                ledsCommands.setGreen())
-                                                                .andThen(ledsCommands.set00BEBE())));
 
-                operatorController.a().onFalse(ledsCommands.set00BEBE());
         }
 
         public Command getAutonomousCommand() {
