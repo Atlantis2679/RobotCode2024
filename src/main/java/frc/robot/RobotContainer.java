@@ -118,7 +118,7 @@ public class RobotContainer {
                 swerve.setDefaultCommand(driveCommand);
                 TuneablesManager.add("Swerve/drive command", driveCommand.fullTuneable());
                 driverController.a().onTrue(new InstantCommand(swerve::resetYaw));
-                // driverController.x().onTrue(swerveCommands.xWheelLock());
+                driverController.x().onTrue(swerveCommands.xWheelLock());
                 driverController.leftTrigger()
                                 .onTrue(allCommands.manualElevator(driverController::getLeftTriggerAxis, () -> true));
                 driverController.rightTrigger()
@@ -130,9 +130,7 @@ public class RobotContainer {
                                                 driverController::getLeftY,
                                                 driverController::getRightY).fullTuneable());
 
-                driverController.x().whileTrue(allCommands.driveToAMP());
-                driverController.y().onTrue(Commands.run(() -> swerve.resetPose(new Pose2d(1.84, 7.78,
-                Rotation2d.fromDegrees(90)))));
+                driverController.y().whileTrue(allCommands.driveToAMP());
         }
 
         private void configureOperatorBindings() {
