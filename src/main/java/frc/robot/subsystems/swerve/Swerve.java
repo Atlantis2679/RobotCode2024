@@ -254,9 +254,9 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     public void resetYaw() {
         if (getIsRedAlliance())
-            setYawDegreesCW(0);
-        else
             setYawDegreesCW(180);
+        else
+            setYawDegreesCW(0);
     }
 
     public Pose2d getPose() {

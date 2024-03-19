@@ -132,7 +132,8 @@ public class RobotContainer {
                                                 driverController::getRightY).fullTuneable());
 
                 driverController.x().whileTrue(allCommands.driveToAMP());
-                driverController.y().onTrue(Commands.run(() -> swerve.resetPose(new Pose2d(2.15, 7.92, Rotation2d.fromDegrees(0)))));
+                driverController.y().onTrue(Commands.run(() -> swerve.resetPose(new Pose2d(1.84, 7.78,
+                Rotation2d.fromDegrees(90)))));
         }
 
         private void configureOperatorBindings() {

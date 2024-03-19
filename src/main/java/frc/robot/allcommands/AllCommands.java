@@ -1,5 +1,6 @@
 package frc.robot.allcommands;
 
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -140,9 +141,11 @@ public class AllCommands {
         public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
                 return Commands.parallel(
                                 closeWrist(),
-                                 elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
-                                //elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                                elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+                // elevatorCMD.manualControl(elevatorSpeed,
+                // isNegative)).withName("manualElevator");
         }
+
         public Command elevator5seconds() {
                 return Commands.race(Commands.waitSeconds(5),
                                 elevator.run(() -> elevator.setSpeed(Elevator5Seconds.ELEVATOR_SPEED,
