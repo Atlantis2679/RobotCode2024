@@ -9,6 +9,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.AnalogAccelerometer;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer.Range;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -16,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.swerve.SwerveContants.PathPlanner;
 import frc.robot.subsystems.swerve.io.GyroIO;
 import frc.robot.subsystems.swerve.io.GyroIONavX;
+
 import frc.robot.subsystems.swerve.io.GyroIOSim;
 import frc.robot.subsystems.swerve.poseEstimator.PoseEstimatorWithVision;
 import frc.robot.utils.LocalADStarAK;
@@ -40,6 +46,7 @@ import java.util.function.BiConsumer;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -48,12 +55,12 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 public class Swerve extends SubsystemBase implements Tuneable {
+    private AHRS ahrs;
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
-
+    BuiltInAccelerometer accelerometer = new BuiltInAccelerometer(Range.k8G);
     private final GyroIO gyroIO = Robot.isSimulation()
             ? new GyroIOSim(fieldsTable.getSubTable("Gyro"))
             : new GyroIONavX(fieldsTable.getSubTable("Gyro"));
-
     // Should be FL, FR, BL, BR
     private final SwerveModule[] modules = {
             new SwerveModule(0, ModuleFL.DRIVE_MOTOR_ID, ModuleFL.ANGLE_MOTOR_ID, ModuleFL.ENCODER_ID,
@@ -139,6 +146,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     @Override
     public void periodic() {
+        fieldsTable.recordOutput("is moving:", ahrs.isMoving());
         for (SwerveModule module : modules) {
             module.periodic();
         }
@@ -154,11 +162,14 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
             gyroYawHelperCCW.update(gyroYawHelperCCW.getMeasuredAngle().plus(Rotation2d.fromRadians(twist.dtheta)));
         }
+        if(!ahrs.isMoving()){
+            //if robot no move, no update location
+            poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
+            callbacksOnPoseUpdate.forEach(callback -> {
+                callback.accept(getPose(), getIsRedAlliance());
+            });
 
-        poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
-        callbacksOnPoseUpdate.forEach(callback -> {
-            callback.accept(getPose(), getIsRedAlliance());
-        });
+        }
 
         fieldsTable.recordOutput("Estimated Robot Pose", getPose());
         fieldsTable.recordOutput("Module States",
@@ -351,4 +362,11 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
         builder.addChild("reset to absolute", new InstantCommand(this::requestResetModulesToAbsolute));
     }
+    public void makeAhrs(){
+        try{
+            ahrs = new AHRS(SPI.Port.kMXP);
+        } catch (RuntimeException ex){
+            DriverStation.reportError("navX bo boom:" + ex.getMessage(), true);
+    }
+}
 }

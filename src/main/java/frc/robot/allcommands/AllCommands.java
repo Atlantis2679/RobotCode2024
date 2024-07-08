@@ -1,11 +1,8 @@
 package frc.robot.allcommands;
 
-import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -138,13 +135,13 @@ public class AllCommands {
                                 .withName("manualIntake");
         }
 
-        public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
-                return Commands.parallel(
-                                closeWrist(),
-                                elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
-                // elevatorCMD.manualControl(elevatorSpeed,
-                // isNegative)).withName("manualElevator");
-        }
+        // public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
+        //         return Commands.parallel(
+        //                         closeWrist(),
+        //                         elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
+        //         // elevatorCMD.manualControl(elevatorSpeed,
+        //         // isNegative)).withName("manualElevator");
+        // }
 
         public Command elevator5seconds() {
                 return Commands.race(Commands.waitSeconds(5),

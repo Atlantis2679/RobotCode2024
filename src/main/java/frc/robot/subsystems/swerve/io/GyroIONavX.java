@@ -12,6 +12,7 @@ public class GyroIONavX extends GyroIO{
     public GyroIONavX(LogFieldsTable fieldsTable) {
         super(fieldsTable);
     }
+    
 
     @Override 
     protected double getYawDegreesCW() {

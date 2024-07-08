@@ -38,10 +38,10 @@ public class SwerveController extends TuneableCommand {
         this.isFieldRelative = isFieldRelative;
         this.isSensetiveMode = isSensetiveMode;
 
-        velocityMultiplierChooser.setDefaultOption("REGULAR (100%)", 1.0);
+        velocityMultiplierChooser.addOption("REGULAR (100%)", 1.0);
         velocityMultiplierChooser.addOption("CHILD (70%)", 0.7);
         velocityMultiplierChooser.addOption("BABY (50%)", 0.5);
-        velocityMultiplierChooser.addOption("EGG (30%)", 0.3);
+        velocityMultiplierChooser.setDefaultOption("EGG (30%)", 0.3);
 
         tuneablesTable.addChild("velocity chooser", velocityMultiplierChooser);
     }

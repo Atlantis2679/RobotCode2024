@@ -11,7 +11,7 @@ public class AllCommandsConstants {
     }
 
     public static class GetReadyToScoreAMP {
-        public static final double AMP_DEGREES = 65;
+        public static final double AMP_DEGREES = 66;
         public static final double KEEPING_NOTE_INSIDE_GRIPPER_SPEED_RPS = 0.08;
     }
 
