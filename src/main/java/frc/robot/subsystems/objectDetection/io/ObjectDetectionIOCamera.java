@@ -13,7 +13,7 @@ public class ObjectDetectionIOCamera extends ObjectDetectionIO {
     public ObjectDetectionIOCamera(LogFieldsTable fieldsTable) {
         super(fieldsTable);
 
-        camera = new PhotonCamera("photonvision");
+        camera = new PhotonCamera("FrontCam");
     }
 
     @Override

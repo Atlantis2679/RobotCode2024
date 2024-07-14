@@ -12,7 +12,8 @@ import frc.lib.logfields.LogFieldsTable;
 public abstract class ObjectDetectionIO extends IOBase {
     public final Supplier<PhotonPipelineResult> result = fields.addObject("result", this::getResult);
     public final BooleanSupplier hasTarget = fields.addBoolean("hasTarget", this::hasTarget);
-    public final Supplier<PhotonTrackedTarget> bestTarget = fields.addObject("bestTarget", this::getBestTarget);
+    public final Supplier<PhotonTrackedTarget> bestTarget = fields.addObject("bestTarget", this::getBestTarget); // להעביר
+                                                                                                                 // לpose3d
 
     public ObjectDetectionIO(LogFieldsTable fieldsTable) {
         super(fieldsTable);
