@@ -22,6 +22,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorCommands;
 import frc.robot.subsystems.gripper.Gripper;
 import frc.robot.subsystems.gripper.GripperCommands;
+import frc.robot.subsystems.objectDetection.ObjectDetection;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.subsystems.wrist.Wrist;
@@ -32,17 +33,20 @@ public class AllCommands {
         private final Wrist wrist;
         private final Gripper gripper;
         private final Elevator elevator;
+        private final ObjectDetection objectDetection;
         private final WristCommands wristCMD;
         private final GripperCommands gripperCMD;
         private final ElevatorCommands elevatorCMD;
         private final SwerveCommands swerveCMD;
         private double counter;
 
-        public AllCommands(Swerve swerve, Wrist wrist, Gripper gripper, Elevator elevator) {
+        public AllCommands(Swerve swerve, Wrist wrist, Gripper gripper, Elevator elevator,
+                        ObjectDetection objectDetection) {
                 this.swerve = swerve;
                 this.wrist = wrist;
                 this.elevator = elevator;
                 this.gripper = gripper;
+                this.objectDetection = objectDetection;
 
                 wristCMD = new WristCommands(wrist);
                 gripperCMD = new GripperCommands(gripper);
@@ -135,12 +139,14 @@ public class AllCommands {
                                 .withName("manualIntake");
         }
 
-        // public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier isNegative) {
-        //         return Commands.parallel(
-        //                         closeWrist(),
-        //                         elevatorCMD.manualControl(elevatorSpeed, isNegative)).withName("manualElevator");
-        //         // elevatorCMD.manualControl(elevatorSpeed,
-        //         // isNegative)).withName("manualElevator");
+        // public Command manualElevator(DoubleSupplier elevatorSpeed, BooleanSupplier
+        // isNegative) {
+        // return Commands.parallel(
+        // closeWrist(),
+        // elevatorCMD.manualControl(elevatorSpeed,
+        // isNegative)).withName("manualElevator");
+        // // elevatorCMD.manualControl(elevatorSpeed,
+        // // isNegative)).withName("manualElevator");
         // }
 
         public Command elevator5seconds() {
@@ -168,4 +174,7 @@ public class AllCommands {
                 return Commands.waitUntil(condition).andThen(command);
         }
 
+        public Command objectDetectedIntake() {
+                return closeWrist().until(() -> objectDetection.hasTarget()).andThen(openIntake());
+        }
 }

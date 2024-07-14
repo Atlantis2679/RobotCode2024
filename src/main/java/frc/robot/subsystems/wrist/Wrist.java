@@ -36,7 +36,7 @@ public class Wrist extends SubsystemBase implements Tuneable {
     private final TuneableArmFeedforward feedForwardWrist = Robot.isSimulation()
             ? new TuneableArmFeedforward(Sim.KS, Sim.KG, Sim.KV, Sim.KA)
             : new TuneableArmFeedforward(KS, KG, KV, KA);
-            
+
     private final PIDController wristPidController = new PIDController(KP, KI, KD);
 
     private final WristVisualizer realStateVisualizer = new WristVisualizer(
