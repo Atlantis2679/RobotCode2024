@@ -162,14 +162,15 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
             gyroYawHelperCCW.update(gyroYawHelperCCW.getMeasuredAngle().plus(Rotation2d.fromRadians(twist.dtheta)));
         }
-        if(!ahrs.isMoving()){
-            //if robot no move, no update location
+        
+         if(ahrs.isMoving()){
+            //if the robot ain't mooving, don't update poseEstimator
             poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
             callbacksOnPoseUpdate.forEach(callback -> {
                 callback.accept(getPose(), getIsRedAlliance());
             });
 
-        }
+         }
 
         fieldsTable.recordOutput("Estimated Robot Pose", getPose());
         fieldsTable.recordOutput("Module States",
