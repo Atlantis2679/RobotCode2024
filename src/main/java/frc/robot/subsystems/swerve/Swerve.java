@@ -177,7 +177,16 @@ public class Swerve extends SubsystemBase implements Tuneable {
         fieldsTable.recordOutput("Yaw Degrees CW", -getYawCCW().getDegrees());
         SmartDashboard.putBoolean("isRedAlliance", getIsRedAlliance());
         fieldsTable.recordOutput("current command", getCurrentCommand() != null ? getCurrentCommand().getName() : null);
-    }
+        fieldsTable.recordOutput("is moving:",gyroIO.isMoving.getAsBoolean());
+
+            if(gyroIO.isMoving.getAsBoolean()){
+               //if the robot ain't mooving, don't update poseEstimator
+               poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
+               callbacksOnPoseUpdate.forEach(callback -> {
+                   callback.accept(getPose(), getIsRedAlliance());
+               });
+            }
+    } 
 
     public void drive(double forward, double sidewaysRightPositive, double angularVelocityCW, boolean isFieldRelative) {
         ChassisSpeeds desiredChassisSpeeds;
