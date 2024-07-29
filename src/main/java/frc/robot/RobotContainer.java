@@ -20,7 +20,6 @@ import frc.lib.tuneables.extensions.TuneableCommand;
 import frc.robot.allcommands.AllCommands;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.gripper.Gripper;
-import frc.robot.subsystems.objectDetection.ObjectDetection;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveCommands;
 import frc.robot.subsystems.wrist.Wrist;
@@ -31,7 +30,6 @@ public class RobotContainer {
         private final Wrist wrist = new Wrist();
         private final Gripper gripper = new Gripper();
         private final Elevator elevator = new Elevator();
-        private final ObjectDetection objectDetection = new ObjectDetection();
 
         private final NaturalXboxController driverController = new NaturalXboxController(
                         RobotMap.Controllers.DRIVER_PORT);
@@ -39,7 +37,7 @@ public class RobotContainer {
                         RobotMap.Controllers.OPERTATOR_PORT);
 
         private final SwerveCommands swerveCommands = new SwerveCommands(swerve);
-        private final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator, objectDetection);
+        private final AllCommands allCommands = new AllCommands(swerve, wrist, gripper, elevator);
 
         private final LoggedDashboardChooser<Supplier<Command>> firstAutoCommandChooser = new LoggedDashboardChooser<>(
                         "First Auto Command");
@@ -147,7 +145,7 @@ public class RobotContainer {
                                                 () -> operatorController.getLeftTriggerAxis(),
                                                 operatorController::getRightTriggerAxis));
 
-                wrist.setDefaultCommand(allCommands.objectDetectedIntake().withName("wrist default"));
+
                 operatorController.a().whileTrue(allCommands.openIntake());
                 operatorController.y().whileTrue(allCommands.deliver());
                 operatorController.povUp().whileTrue(allCommands.eject());
