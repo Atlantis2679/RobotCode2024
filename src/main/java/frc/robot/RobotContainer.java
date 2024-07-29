@@ -58,8 +58,6 @@ public class RobotContainer {
                         CameraServer.startAutomaticCapture();
                 }
 
-                swerve.makeAhrs();
-
                 firstAutoCommandChooser.addDefaultOption("None", () -> new InstantCommand());
 
                 firstAutoCommandChooser.addOption("Eject Note",

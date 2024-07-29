@@ -23,4 +23,9 @@ public class GyroIONavX extends GyroIO{
     protected boolean isConnected() {
         return navX.isConnected();
     }
+
+    @Override
+    protected boolean isMoving(){
+        return navX.isMoving();
+    }
 }

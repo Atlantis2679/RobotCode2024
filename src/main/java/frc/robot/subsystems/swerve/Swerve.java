@@ -55,7 +55,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 public class Swerve extends SubsystemBase implements Tuneable {
-    private AHRS ahrs;
+    //private AHRS ahrs = new AHRS(SPI.Port.kMXP);
     private final LogFieldsTable fieldsTable = new LogFieldsTable(getName());
     BuiltInAccelerometer accelerometer = new BuiltInAccelerometer(Range.k8G);
     private final GyroIO gyroIO = Robot.isSimulation()
@@ -146,7 +146,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
     @Override
     public void periodic() {
-        fieldsTable.recordOutput("is moving:", ahrs.isMoving());
+        fieldsTable.recordOutput("is moving:",gyroIO.isMoving.getAsBoolean());
         for (SwerveModule module : modules) {
             module.periodic();
         }
@@ -163,7 +163,7 @@ public class Swerve extends SubsystemBase implements Tuneable {
             gyroYawHelperCCW.update(gyroYawHelperCCW.getMeasuredAngle().plus(Rotation2d.fromRadians(twist.dtheta)));
         }
         
-         if(ahrs.isMoving()){
+         if(gyroIO.isMoving.getAsBoolean()){
             //if the robot ain't mooving, don't update poseEstimator
             poseEstimator.update(gyroYawHelperCCW.getMeasuredAngle(), getModulesPositions());
             callbacksOnPoseUpdate.forEach(callback -> {
@@ -363,11 +363,4 @@ public class Swerve extends SubsystemBase implements Tuneable {
 
         builder.addChild("reset to absolute", new InstantCommand(this::requestResetModulesToAbsolute));
     }
-    public void makeAhrs(){
-        try{
-            ahrs = new AHRS(SPI.Port.kMXP);
-        } catch (RuntimeException ex){
-            DriverStation.reportError("navX bo boom:" + ex.getMessage(), true);
-    }
-}
 }
