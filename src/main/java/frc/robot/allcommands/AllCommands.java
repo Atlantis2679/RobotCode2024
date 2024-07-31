@@ -3,6 +3,8 @@ package frc.robot.allcommands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -176,5 +178,16 @@ public class AllCommands {
 
         public Command objectDetectedIntake() {
                 return closeWrist().until(() -> objectDetection.hasTarget()).andThen(openIntake());
+        }
+
+        public Command alignToTarget(){
+                if(objectDetection.hasTarget()){
+    PhotonTrackedTarget target = objectDetection.getBestResult();
+    double yaw = target.getYaw();
+    return swerveCMD.
+}
+
+        //  https://docs.photonvision.org/en/latest/docs/programming/photonlib/getting-target-data.html#what-is-a-photon-tracked-target
+        // https://docs.photonvision.org/en/latest/docs/integration/simpleStrategies.html
         }
 }
