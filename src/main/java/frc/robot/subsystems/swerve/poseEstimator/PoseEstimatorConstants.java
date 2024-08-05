@@ -22,4 +22,6 @@ public class PoseEstimatorConstants {
     public final static double VISION_TRUST_LEVEL_X = 0.9;
     public final static double VISION_TRUST_LEVEL_Y = 0.9;
     public final static double VISION_TRUST_LEVEL_Z = 0.9;
+
+    public final static int NUMBER_OF_POSE_CAMERAS = 2;
 }
