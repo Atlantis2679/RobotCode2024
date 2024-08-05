@@ -180,14 +180,12 @@ public class AllCommands {
                 return closeWrist().until(() -> objectDetection.hasTarget()).andThen(openIntake());
         }
 
-        public Command alignToTarget(){
-                if(objectDetection.hasTarget()){
-    PhotonTrackedTarget target = objectDetection.getBestResult();
-    double yaw = target.getYaw();
-    return swerveCMD.
+        // public Command alignToTarget(){
+
+        // return swerveCMD.
 }
 
-        //  https://docs.photonvision.org/en/latest/docs/programming/photonlib/getting-target-data.html#what-is-a-photon-tracked-target
-        // https://docs.photonvision.org/en/latest/docs/integration/simpleStrategies.html
-        }
-}
+// https://docs.photonvision.org/en/latest/docs/programming/photonlib/getting-target-data.html#what-is-a-photon-tracked-target
+// https://docs.photonvision.org/en/latest/docs/integration/simpleStrategies.html
+// }
+// }

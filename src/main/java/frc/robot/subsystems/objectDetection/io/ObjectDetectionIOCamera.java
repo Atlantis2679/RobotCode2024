@@ -32,4 +32,13 @@ public class ObjectDetectionIOCamera extends ObjectDetectionIO {
 
     }
 
+    @Override
+    protected double getYawFromTarget() {
+        if (hasTarget()) {
+            PhotonTrackedTarget target = getBestTarget();
+            double yaw = target.getYaw();
+            return yaw;
+        }
+        return 0;
+    }
 }
