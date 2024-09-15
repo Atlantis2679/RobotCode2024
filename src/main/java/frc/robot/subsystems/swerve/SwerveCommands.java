@@ -12,6 +12,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -92,5 +93,17 @@ public class SwerveCommands {
             return AutoBuilder.followPath(path);
 
         }, Set.of(swerve));
+    }
+
+    public Command alignToTarget(DoubleSupplier yowFromTarget) {
+        PIDController pidController = new PIDController(SwerveContants.AlignToTarget.KP,
+                SwerveContants.AlignToTarget.KI, SwerveContants.AlignToTarget.KP);
+        return Commands.runOnce(() -> {
+            pidController.reset();
+            pidController.setSetpoint(0);
+        }, swerve).andThen(
+                Commands.run(() -> {
+                    swerve.drive(0, 0, pidController.calculate(yowFromTarget.getAsDouble()), false);
+                }, swerve));
     }
 }

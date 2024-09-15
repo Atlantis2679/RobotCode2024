@@ -11,7 +11,7 @@ public class SwerveContants {
     public final static double MAX_VOLTAGE = 11.5;
     public final static double MAX_ANGULAR_VELOCITY = 4.5;
     public final static double MAX_MODULE_SPEED = 4.5;
-    
+
     public final static double TRACK_WIDTH_M = 0.575;
     public final static double TRACK_LENGTH_M = 0.575;
     public final static double TRACK_RADIUS_M = 0.407;
@@ -45,5 +45,12 @@ public class SwerveContants {
         public final static double MAX_ANGULAR_ACCELERATION_RPS = Math.toRadians(620);
         public final static double GOAL_VELOCITY = 0;
         public final static boolean ROTATE_FAST = true;
+    }
+
+    public class AlignToTarget {
+        public final static double KP = 0;
+        public final static double KI = 0;
+        public final static double KD = 0;
+
     }
 }
