@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.logfields.LogFieldsTable;
+import frc.robot.Constants;
 import frc.robot.Robot;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import org.photonvision.PhotonUtils;
 import static frc.robot.subsystems.swerve.poseEstimator.PoseEstimatorConstants.*;
 
 public class PoseEstimatorWithVision {
-    private final VisionAprilTagsIO visionIO;
+    private final VisionAprilTagsIO [] visionIO;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final LogFieldsTable fieldsTable;
 
@@ -28,11 +29,19 @@ public class PoseEstimatorWithVision {
         try {
             AprilTagFieldLayout tagsLayout = AprilTagFieldLayout
                     .loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+            visionIO = new VisionAprilTagsIO [NUMBER_OF_POSE_CAMERAS];
 
-            visionIO = Robot.isSimulation()
-                    ? new VisionAprilTagsIOSim(fieldsTable)
-                    : new VisionAprilTagsIOPhoton(fieldsTable, tagsLayout);
-                    
+            if(NUMBER_OF_POSE_CAMERAS > 0){
+                visionIO[0] = Robot.isSimulation()
+                        ? new VisionAprilTagsIOSim(fieldsTable)
+                        : new VisionAprilTagsIOPhoton(fieldsTable, tagsLayout);
+            }
+            if(NUMBER_OF_POSE_CAMERAS > 1){
+                visionIO[1] = Robot.isSimulation()
+                        ? new VisionAprilTagsIOSim(fieldsTable)
+                        : new VisionAprilTagsIOLimelight(fieldsTable);
+            }  
+                  
         } catch (IOException e) {
             DriverStation.reportError("AprilTagFieldLayout blew up", e.getStackTrace());
             throw new RuntimeException(e);
@@ -50,22 +59,23 @@ public class PoseEstimatorWithVision {
 
     public void update(Rotation2d gyroMeasurmentCCW, SwerveModulePosition[] modulesPositions) {
         poseEstimator.update(gyroMeasurmentCCW, modulesPositions);
-        double visionToEstimateDifferenceMeters = getVisionToEstimateDifferenceMeters();
-        fieldsTable.recordOutput("Vision To Estimate Difference", visionToEstimateDifferenceMeters);
-
-        if (visionIO.hasNewRobotPose.getAsBoolean()) {
-            fieldsTable.recordOutput("Vision Pose3d", visionIO.poseEstimate.get());
-            fieldsTable.recordOutput("Vision Pose2d", visionIO.poseEstimate.get().toPose2d());
-
-            if (visionToEstimateDifferenceMeters < PoseEstimatorConstants.VISION_THRESHOLD_DISTANCE_M) {
-                poseEstimator.addVisionMeasurement(visionIO.poseEstimate.get().toPose2d(),
-                        visionIO.cameraTimestampSeconds.getAsDouble());
+        
+        for(int i = 0; i < NUMBER_OF_POSE_CAMERAS; i++){
+            if (visionIO[i].hasNewRobotPose.getAsBoolean()) {
+                fieldsTable.recordOutput("Vision Pose3d", visionIO[i].poseEstimate.get());
+                fieldsTable.recordOutput("Vision Pose2d", visionIO[i].poseEstimate.get().toPose2d());
+                fieldsTable.recordOutput("Vision To Estimate Difference", getVisionToEstimateDifferenceMeters(i) );
+                
+                if (getVisionToEstimateDifferenceMeters(i) < PoseEstimatorConstants.VISION_THRESHOLD_DISTANCE_M) {
+                    poseEstimator.addVisionMeasurement(visionIO[i].poseEstimate.get().toPose2d(),
+                            visionIO[i].cameraTimestampSeconds.getAsDouble());
+                }
             }
         }
     }
 
-    private double getVisionToEstimateDifferenceMeters() {
-        return PhotonUtils.getDistanceToPose(visionIO.poseEstimate.get().toPose2d(),
+    private double getVisionToEstimateDifferenceMeters(int index) {
+        return PhotonUtils.getDistanceToPose(visionIO[index].poseEstimate.get().toPose2d(),
                 poseEstimator.getEstimatedPosition());
     }
 
